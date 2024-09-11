@@ -21,5 +21,11 @@ def reg():
         print("De jó, POSToltál")
     return render_template("reg.html")
 
+@app.route("/log", methods=["GET", "POST"])
+def log():
+    if request.method == "POST":
+        print("De jó, POSToltál")
+    return render_template("log.html")
+
 if __name__ == '__main__':
     app.run(debug=environ.get('DEBUG', False))
