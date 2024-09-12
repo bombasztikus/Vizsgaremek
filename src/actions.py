@@ -1,6 +1,9 @@
 from .models import User
-from ..app import db
+from . import db
 from flask import flash
+from argon2 import PasswordHasher
+
+ph = PasswordHasher()
 
 def create_user(email: str, full_name: str, password: str, is_employee: bool = True) -> User | None:
     email = str(email).strip().lower()
@@ -19,7 +22,7 @@ def create_user(email: str, full_name: str, password: str, is_employee: bool = T
     new_user = User(
         email = email,
         full_name = full_name,
-        password = password,
+        password = ph.hash(password),
         is_employee = is_employee,
     )
 
