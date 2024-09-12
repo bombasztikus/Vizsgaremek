@@ -4,12 +4,15 @@
 
 {% block page %}
 
+<a href="{{ url_for('index') }}">Főoldal</a>
+<a href="{{ url_for('reg') }}">aaaa</a>
+
 <header> Bejelentkezés</header>
 <form> 
     <label>Felhasználó név:</label><br>
-    <input type="text" name="usern"><br>
+    <input type="text" name="usern" id="usern"><br>
     <label>Jelszó:</label><br>
-    <input type="password" name="password"><br>
-    <button type="button">NYa</button>
+    <input type="password" name="password" id="Passw"><br>
+    <button type="button">Gomb</button>
 </form>
  {% endblock %}
