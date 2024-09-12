@@ -4,8 +4,11 @@
 
 {% block page %}
 
-Felhasználónév: <input type="text"><br>
-Jelszó: <input type="password"><br>
-<button type="submit">regisztráció</button>
+<form>
+    Felhasználónév: <input type="text" name="name"><br>
+    Email: <input type="email" name="email"><br>
+    Jelszó: <input type="password" name="password"><br>
+    <button type="submit">regisztráció</button>
+</form>
 
 {% endblock %}
