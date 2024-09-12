@@ -2,3 +2,7 @@ body {
     background-color: grey;
 }
 
+form {
+    border: 10px;
+    background-color: 10;
+}
