@@ -5,13 +5,13 @@
 {% block page %}
 
 <a href="{{ url_for('routes.index') }}">Főoldal</a>
-<a href="{{ url_for('routes.reg') }}">aaaa</a>
+<a href="{{ url_for('routes.reg') }}">Regisztráció</a>
 
 <header> Bejelentkezés</header>
 <form method="post" action="{{ url_for('routes.log') }}">
     <div class="mb-3">
       <label for="email" class="form-label">Email cím</label>
-      <input type="email" class="form-control" id="email" aria-describedby="emailHelp" name="email">
+      <input type="email" class="form-control" id="email" name="email">
     </div>
     <div class="mb-3">
       <label for="password" class="form-label">Jelszó</label>
