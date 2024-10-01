@@ -8,11 +8,15 @@
 <a href="{{ url_for('routes.reg') }}">aaaa</a>
 
 <header> Bejelentkezés</header>
-<form> 
-    <label>Felhasználó név:</label><br>
-    <input type="text" name="usern" id="usern"><br>
-    <label>Jelszó:</label><br>
-    <input type="password" name="password" id="Passw"><br>
-    <button type="button">Gomb</button>
-</form>
+<form method="post" action="{{ url_for('routes.log') }}">
+    <div class="mb-3">
+      <label for="email" class="form-label">Email cím</label>
+      <input type="email" class="form-control" id="email" aria-describedby="emailHelp" name="email">
+    </div>
+    <div class="mb-3">
+      <label for="password" class="form-label">Jelszó</label>
+      <input type="password" class="form-control" id="password" name="password">
+    </div>
+    <button type="submit" class="btn btn-primary">Küldés</button>
+  </form>
  {% endblock %}
