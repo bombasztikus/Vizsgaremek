@@ -4,8 +4,19 @@
 
 {% block page %}
 
-Felhasználónév: <input type="text"><br>
-Jelszó: <input type="password"><br>
-<button type="submit">regisztráció</button>
-
+<form method="post" action="{{ url_for('routes.reg') }}">
+    <div class="mb-3">
+        <label for="name" class="form-label">Név</label>
+        <input type="text" class="form-control" id="name" name="name">
+      </div>
+    <div class="mb-3">
+      <label for="email" class="form-label">Email cím</label>
+      <input type="email" class="form-control" id="email" name="email">
+    </div>
+    <div class="mb-3">
+      <label for="password" class="form-label">Jelszó</label>
+      <input type="password" class="form-control" id="password" name="password">
+    </div>
+    <button type="submit" class="btn btn-primary">Küldés</button>
+  </form>
 {% endblock %}
