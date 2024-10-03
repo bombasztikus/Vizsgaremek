@@ -14,7 +14,6 @@ def create_user(email: str, full_name: str, password: str, is_employee: bool = T
     if 255 < len(full_name) or len(full_name) < 1:
         return flash("Érvénytelen név hossz", "error")
 
-    # TODO: PASSWORD HASHING, EZ EGY PROOF OF CONCEPT
     password = str(password)
     if 255 < len(password) or len(password) < 1:
         return flash("Érvénytelen jelszó hossz", "error")
