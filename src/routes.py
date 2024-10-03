@@ -18,9 +18,11 @@ def reg():
         )
 
         if user:
+            flash("Sikeres regisztráció!", "success")
             return redirect(url_for("routes.index"))
         else:
-            return flash("Sikeres regisztráció!", "success")
+            flash("Sikertelen regisztráció", "danger")
+            return redirect(url_for("routes.reg"))
     return render_template("reg.html")
 
 @routes.route("/log", methods=["GET", "POST"])
