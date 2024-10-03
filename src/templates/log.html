@@ -4,10 +4,8 @@
 
 {% block page %}
 
-<a href="{{ url_for('routes.index') }}">Főoldal</a>
-<a href="{{ url_for('routes.reg') }}">Regisztráció</a>
 
-<header> Bejelentkezés</header>
+<h1> Bejelentkezés</h1>
 <form method="post" action="{{ url_for('routes.log') }}">
     <div class="mb-3">
       <label for="email" class="form-label">Email cím</label>

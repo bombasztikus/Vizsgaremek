@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
+    {% include "misc/nav.html" %}
     {% with messages = get_flashed_messages() %}
     {% if messages %}
     <ul class=flashes>
