@@ -22,4 +22,6 @@ def reg():
 def log():
     if request.method == "POST":
         print("De jó, POSToltál")
+        print(request.form.get("email"))
+        print(request.form.get("password"))
     return render_template("log.html")
