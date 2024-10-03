@@ -1,4 +1,4 @@
-from flask import render_template, request, Blueprint
+from flask import render_template, request, Blueprint, redirect, url_for, flash
 from .actions import create_user
 
 routes = Blueprint('routes', __name__)
@@ -10,12 +10,17 @@ def index():
 @routes.route("/reg", methods=["GET", "POST"])
 def reg():
     if request.method == "POST":
-        create_user(
+        user = create_user(
             email=request.form.get("email"),
             full_name=request.form.get("name"),
             password=request.form.get("password"),
             is_employee=False,
         )
+
+        if user:
+            return redirect(url_for("routes.index"))
+        else:
+            return flash("Sikeres regisztráció!", "success")
     return render_template("reg.html")
 
 @routes.route("/log", methods=["GET", "POST"])

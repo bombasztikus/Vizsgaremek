@@ -8,6 +8,7 @@ load_dotenv()
 app = Flask(__name__)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = environ.get("DB_URI")
+app.config["SECRET_KEY"] = environ.get("SESSION_SECRET")
 
 db = SQLAlchemy(app)
 
