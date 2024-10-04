@@ -3,6 +3,14 @@
       <a href="{{ url_for('routes.index') }}" class="btn btn-outline-primary me-2">Főoldal</a> 
       <a href="{{ url_for('routes.reg') }}" class="btn btn-sm btn-outline-danger">Regisztráció</a>
       <a href="{{ url_for('routes.log') }}" class="btn btn-sm btn-outline-danger">Bejelentkezés</a>
+      <li class="nav-item dropdown ms-auto">
+        <a class="btn btn-sm btn-outline-danger" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+          Profil
+        </a>
+        <ul class="dropdown-menu">
+          <li><a class="dropdown-item" href="#">Kijelentkezés</a></li>
+        </ul>
+      </li>
     </form>
   
   </nav>
