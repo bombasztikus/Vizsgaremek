@@ -2,4 +2,4 @@ flask
 python-dotenv
 Flask-SQLAlchemy
 argon2-cffi
-PyMySQL
+Flask-Login
