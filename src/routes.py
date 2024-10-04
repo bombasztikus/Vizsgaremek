@@ -32,3 +32,11 @@ def log():
         print(request.form.get("email"))
         print(request.form.get("password"))
     return render_template("log.html")
+
+@routes.route("/rendeles")
+def rendeles():
+    return render_template("rendeles.html")
+
+@routes.route("/kosar")
+def kosar():
+    return render_template("kosar.html")
