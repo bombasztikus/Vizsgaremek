@@ -1,10 +1,11 @@
 from typing import Self
 import flask_login
 
-from src.exceptions import UserCreationException
+from src.exceptions import *
 from sqlalchemy import exc
 from . import db
 from argon2 import PasswordHasher
+from argon2 import exceptions as ph_exc
 
 ph = PasswordHasher()
 
@@ -32,7 +33,7 @@ class User(db.Model):
             if 255 < len(email) or len(email) < 1 or "@" not in email:
                 raise UserCreationException("Érvénytelen email hossz")
             
-            email_exists = db.session.query(User.id).filter_by(email=email).scalar()
+            email_exists = db.session.query(User.email).filter_by(email=email).scalar()
             if email_exists:
                 raise UserCreationException("Az email cím már használatban van")
 
@@ -58,7 +59,23 @@ class User(db.Model):
             return new_user
         except exc.IntegrityError:
             db.session.rollback()
-            raise UserCreationException(flash_message="A felhasználó létrehozása sikertelen volt")
+            raise UserCreationException()
+    
+    @staticmethod
+    def verify(email: str, password: str) -> Self:
+        try:
+            email = str(email).strip().lower()
+            user = db.sesion.query(User.email).filter_by(email=email).first()
+
+            if not user:
+                raise UserNotFoundException()
+            
+            # ez magától is dob exceptiont
+            password_valid = ph.verify(user.password, password)
+
+            return user
+        except ph_exc.VerificationError:
+            raise InvalidCredentialsException()
         
 class SessionUser(flask_login.UserMixin):
     def __init__(
@@ -70,7 +87,7 @@ class SessionUser(flask_login.UserMixin):
             is_anonymous: bool = False,
     ) -> None:
         super().__init__()
-        self.id = str
+        self.id = str(id)
         self.email = email
         self.is_authenticated = is_authenticated
         self.is_active = is_active
@@ -80,7 +97,7 @@ class SessionUser(flask_login.UserMixin):
         return str(self.user_id)
 
     @staticmethod
-    def get_by_id(id: int) -> User | None:
+    def get_by_id(id: str) -> User | None:
         user = User.get_by_id(id)
         if not user:
             return None
