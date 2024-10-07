@@ -89,3 +89,25 @@ class User(db.Model, flask_login.UserMixin):
 
     def get_id(self):
         return str(self.id)
+
+class Meal(db.Model, flask_login.UserMixin):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.String(255), unique=False, nullable=False)
+    price = db.Column(db.String(255), unique=False, nullable=False, default="500")
+    currency = db.Column(db.String(255), unique=False, nullable=False, default="HUF")
+    calories = db.Column(db.Integer, unique=False, nullable=False, default=0)
+    image_url = db.Column(db.String(255), unique=False, nullable=True)
+    description = db.Column(db.String(255), unique=False, nullable=True)
+    stars = db.Column(db.Integer, unique=False, nullable=False, default=0)
+
+    def __repr__(self):
+        return f"<Meal {self.id} ({self.name})>"
+
+    @staticmethod
+    def get_all() -> list[Self]:
+        try:
+            meals = db.session.query(Meal).all()
+            return meals
+        except exc.SQLAlchemyError as e:
+            print(e._message)
+            return []
