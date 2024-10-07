@@ -9,7 +9,7 @@ from argon2 import exceptions as ph_exc
 
 ph = PasswordHasher()
 
-class User(db.Model):
+class User(db.Model, flask_login.UserMixin):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     email = db.Column(db.String(255), unique=True, nullable=False)
     full_name = db.Column(db.String(255), unique=False, nullable=False)
@@ -65,51 +65,27 @@ class User(db.Model):
     def verify(email: str, password: str) -> Self:
         try:
             email = str(email).strip().lower()
-            user = db.sesion.query(User.email).filter_by(email=email).first()
+            user = db.session.query(User).filter_by(email=email).first()
 
             if not user:
                 raise UserNotFoundException()
             
-            # ez magától is dob exceptiont
             password_valid = ph.verify(user.password, password)
+            if not password_valid:
+                raise InvalidCredentialsException()
 
             return user
         except ph_exc.VerificationError:
             raise InvalidCredentialsException()
         
-class SessionUser(flask_login.UserMixin):
-    def __init__(
-            self,
-            id: str,
-            email: str,
-            is_authenticated: bool = False,
-            is_active: bool = True,
-            is_anonymous: bool = False,
-    ) -> None:
-        super().__init__()
-        self.id = str(id)
-        self.email = email
-        self.is_authenticated = is_authenticated
-        self.is_active = is_active
-        self.is_anonymous = is_anonymous
+    def is_authenticated(self):
+        return True
 
-    def get_id(self) -> str:
-        return str(self.user_id)
+    def is_active(self):
+        return True
 
-    @staticmethod
-    def get_by_id(id: str) -> User | None:
-        user = User.get_by_id(id)
-        if not user:
-            return None
-        
-        return SessionUser.from_user(user)
-    
-    @staticmethod
-    def from_user(user: User) -> Self:
-        return SessionUser(
-            id=user.id,
-            email=user.email,
-            is_authenticated=True,
-            is_active=True,
-            is_anonymous=False
-        )
+    def is_anonymous(self):
+        return not self.is_authenticated()
+
+    def get_id(self):
+        return str(self.id)

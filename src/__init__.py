@@ -21,10 +21,10 @@ def create_app():
     login_manager.login_message = "Az oldal megtekintéséhez kérlek jelentkezz be"
     login_manager.login_message_category = "warning"
 
-    from .models import User, SessionUser
+    from .models import User
     @login_manager.user_loader
     def load_user(user_id):
-        return SessionUser.get_by_id(user_id)
+        return User.get_by_id(user_id)
 
     from .routes import routes as routes_blueprint
     app.register_blueprint(routes_blueprint)

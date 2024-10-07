@@ -1,6 +1,6 @@
 from flask import render_template, request, Blueprint, redirect, url_for, flash
 from flask_login import login_required, current_user, login_user, logout_user
-from src.exceptions import FlashedException, UserCreationException
+from src.exceptions import FlashedException
 from .models import User
 
 routes = Blueprint('routes', __name__)
@@ -12,6 +12,9 @@ def index():
 
 @routes.route("/reg", methods=["GET", "POST"])
 def reg():
+    if current_user.is_authenticated:
+        return redirect(url_for("routes.index"))
+
     if request.method == "POST":
         try:
             user = User.create(
@@ -23,7 +26,7 @@ def reg():
 
             flash("Sikeres regisztráció!", "success")
             return redirect(url_for("routes.log"))
-        except UserCreationException as e:
+        except FlashedException as e:
             flash(e.flash_message, e.css_class)
             return redirect(url_for("routes.reg"))
         
@@ -31,6 +34,9 @@ def reg():
 
 @routes.route("/log", methods=["GET", "POST"])
 def log():
+    if current_user.is_authenticated:
+        return redirect(url_for("routes.index"))
+
     if request.method == "POST":
         email = request.form.get("email")
         password = request.form.get("password")
@@ -53,9 +59,11 @@ def out():
     return redirect(url_for("routes.index"))
 
 @routes.route("/rendeles")
+@login_required
 def rendeles():
     return render_template("rendeles.html")
 
 @routes.route("/kosar")
+@login_required
 def kosar():
     return render_template("kosar.html")
