@@ -1,6 +1,6 @@
 from typing import Self
 import flask_login
-
+import enum
 from src.exceptions import *
 from sqlalchemy import exc
 from . import db
@@ -90,6 +90,11 @@ class User(db.Model, flask_login.UserMixin):
     def get_id(self):
         return str(self.id)
 
+class MealType(enum.Enum):
+    BEVERAGE = "BEVERAGE"
+    FOOD = "FOOD"
+    MENU = "MENU"
+
 class Meal(db.Model, flask_login.UserMixin):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(255), unique=False, nullable=False)
@@ -99,6 +104,7 @@ class Meal(db.Model, flask_login.UserMixin):
     image_url = db.Column(db.String(255), unique=False, nullable=True)
     description = db.Column(db.String(255), unique=False, nullable=True)
     stars = db.Column(db.Integer, unique=False, nullable=False, default=0)
+    type = db.Column(db.Enum(MealType), unique=False, nullable=False, default=MealType.FOOD)
 
     def __repr__(self):
         return f"<Meal {self.id} ({self.name})>"
@@ -107,6 +113,15 @@ class Meal(db.Model, flask_login.UserMixin):
     def get_all() -> list[Self]:
         try:
             meals = db.session.query(Meal).all()
+            return meals
+        except exc.SQLAlchemyError as e:
+            print(e._message)
+            return []
+
+    @staticmethod
+    def get_all_by_type(meal_type: MealType) -> list[Self]:
+        try:
+            meals = db.session.query(Meal).filter_by(type=meal_type).all()
             return meals
         except exc.SQLAlchemyError as e:
             print(e._message)
