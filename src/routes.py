@@ -6,7 +6,6 @@ from .models import User, Meal
 routes = Blueprint('routes', __name__)
 
 @routes.get("/")
-@login_required
 def index():
     meals = Meal.get_all()
     return render_template("index.html", meals=meals)
