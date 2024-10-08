@@ -1,14 +1,22 @@
 from flask import render_template, request, Blueprint, redirect, url_for, flash
 from flask_login import login_required, current_user, login_user, logout_user
 from src.exceptions import FlashedException
-from .models import User, Meal
+from .models import User, Meal, MealType
 
 routes = Blueprint('routes', __name__)
 
 @routes.get("/")
 def index():
-    meals = Meal.get_all()
-    return render_template("index.html", meals=meals)
+    foods = Meal.get_all_by_type(MealType.FOOD)
+    beverages = Meal.get_all_by_type(MealType.BEVERAGE)
+    menus = Meal.get_all_by_type(MealType.MENU)
+    
+    return render_template(
+        "index.html",
+        foods=foods,
+        beverages=beverages,
+        menus=menus
+    )
 
 @routes.route("/reg", methods=["GET", "POST"])
 def reg():

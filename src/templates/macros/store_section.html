@@ -1,0 +1,17 @@
+{% from 'macros/meal_card.html' import meal_card %}
+
+{% macro store_section(title, meals) %}
+<section>
+    <header class="mb-4 pt-3">
+        <h2 class="display-4 fw-bold">{{ title }}</h1>
+        <hr>
+    </header>
+    <div class="row g-3 row-cols-4">
+        {% for meal in meals %}
+        <div class="col col-3">
+            {{ meal_card(meal) }}
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endmacro %}
