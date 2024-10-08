@@ -9,6 +9,7 @@
     - [Python plugin](https://marketplace.visualstudio.com/items?itemName=ms-python.python)
     - [Python Environment Manager plugin](https://marketplace.visualstudio.com/items?itemName=donjayamanne.python-environment-manager)
     - [Python Auto Venv plugin](https://marketplace.visualstudio.com/items?itemName=WolfiesHorizon.python-auto-venv)
+    - [SQLite3 Editor](https://marketplace.visualstudio.com/items?itemName=yy0931.vscode-sqlite3-editor)
 - [Python 3.11.4 64bit](https://www.python.org/downloads)
 
 
