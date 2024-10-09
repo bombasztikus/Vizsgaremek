@@ -89,8 +89,16 @@ class User(db.Model, flask_login.UserMixin):
 
     def get_id(self):
         return str(self.id)
+    
+    def to_dto(self) -> dict:
+        return {
+            "id": int(self.id),
+            "email": str(self.email),
+            "full_name": str(self.full_name),
+            "is_employee": bool(self.is_employee)
+        }
 
-class MealType(enum.Enum):
+class MealType(str, enum.Enum):
     BEVERAGE = "BEVERAGE"
     FOOD = "FOOD"
     MENU = "MENU"
@@ -126,3 +134,16 @@ class Meal(db.Model, flask_login.UserMixin):
         except exc.SQLAlchemyError as e:
             print(e._message)
             return []
+        
+    def to_dto(self) -> dict:
+        return {
+            "id": int(self.id),
+            "name": str(self.name),
+            "price": str(self.price),
+            "currency": str(self.currency),
+            "calories": int(self.calories),
+            "image_url": str(self.image_url) if self.image_url else None,
+            "description": str(self.description) if self.description else None,
+            "stars": int(self.stars),
+            "type": self.type
+        }

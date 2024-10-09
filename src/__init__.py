@@ -29,4 +29,7 @@ def create_app():
     from .routes import routes as routes_blueprint
     app.register_blueprint(routes_blueprint)
 
+    from .endpoints import api as endpoints_blueprint
+    app.register_blueprint(endpoints_blueprint)
+
     return app
