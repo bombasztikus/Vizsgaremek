@@ -6,9 +6,9 @@
         <h2 class="display-4 fw-bold">{{ title }}</h1>
         <hr>
     </header>
-    <div class="row g-3 row-cols-4">
+    <div class="row g-3 row-cols-sm-2 row-cols-md-3 row-cols-lg-4">
         {% for meal in meals %}
-        <div class="col col-3">
+        <div class="col">
             {{ meal_card(meal) }}
         </div>
         {% endfor %}
