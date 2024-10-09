@@ -106,8 +106,8 @@ class MealType(str, enum.Enum):
 class Meal(db.Model, flask_login.UserMixin):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(255), unique=False, nullable=False)
-    price = db.Column(db.String(255), unique=False, nullable=False, default="500")
-    currency = db.Column(db.String(255), unique=False, nullable=False, default="HUF")
+    price = db.Column(db.String(255), unique=False, nullable=False, default="0")
+    currency = db.Column(db.String(3), unique=False, nullable=False, default="HUF")
     calories = db.Column(db.Integer, unique=False, nullable=False, default=0)
     image_url = db.Column(db.String(255), unique=False, nullable=True)
     description = db.Column(db.String(255), unique=False, nullable=True)
