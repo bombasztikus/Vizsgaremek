@@ -56,10 +56,15 @@ def meal_type_to_display_name(meal_type: MealType) -> str:
 
 def currency_to_display_name(value: str) -> str:
     value = str(value).strip().upper()
-    names = {
-        "HUF": "{} Ft",
-        "EUR": "{}€",
-        "USD": "${}"
-    }
 
-    return names[value]
+    match value:
+        case "HUF":
+            return "{} Ft"
+        case "EUR":
+            return "{}€"
+        case "USD":
+            return "${}"
+        case "JPY":
+            return "¥{}"
+        case _:
+            return "{} " + value

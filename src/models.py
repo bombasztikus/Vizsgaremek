@@ -145,5 +145,6 @@ class Meal(db.Model, flask_login.UserMixin):
             "image_url": str(self.image_url) if self.image_url else None,
             "description": str(self.description) if self.description else None,
             "stars": int(self.stars),
-            "type": self.type
+            "type": self.type,
+            "is_free": bool(str(self.price) == "0")
         }
