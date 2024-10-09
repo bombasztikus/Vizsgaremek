@@ -95,7 +95,8 @@ class User(db.Model, flask_login.UserMixin):
             "id": int(self.id),
             "email": str(self.email),
             "full_name": str(self.full_name),
-            "is_employee": bool(self.is_employee)
+            "is_employee": bool(self.is_employee),
+            "is_error": False,
         }
 
 class MealType(str, enum.Enum):
@@ -146,5 +147,6 @@ class Meal(db.Model, flask_login.UserMixin):
             "description": str(self.description) if self.description else None,
             "stars": int(self.stars),
             "type": self.type,
-            "is_free": bool(str(self.price) == "0")
+            "is_free": bool(str(self.price) == "0"),
+            "is_error": False,
         }

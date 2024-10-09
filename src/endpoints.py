@@ -3,7 +3,7 @@ from flask import jsonify, Blueprint
 from src.utils import flashed_exception_to_dto, currency_to_display_name, meal_type_to_display_name, meals_to_dto, str_to_meal_type
 from .models import User, Meal
 from flask_login import login_required, current_user, login_user, logout_user
-from src.exceptions import FlashedException
+from src.exceptions import FlashedException, InvalidUserIDException, UserNotFoundException
 
 api = Blueprint('api', __name__, url_prefix='/api')
 
@@ -27,4 +27,26 @@ def meal(meal_type: str):
     except FlashedException as e:
         return flashed_exception_to_dto(e)
     except Exception as e:
+        print(e)
+        return flashed_exception_to_dto(FlashedException())
+    
+@api.get("/users/<user_id>")
+def user(user_id: int):
+    try:
+        if not user_id:
+            raise InvalidUserIDException()
+        
+        try:
+            user = User.get_by_id(int(user_id))
+            if not user:    
+                raise UserNotFoundException()
+            
+            return jsonify(user.to_dto())
+        except ValueError:
+            raise InvalidUserIDException()
+        
+    except FlashedException as e:
+        return flashed_exception_to_dto(e)
+    except Exception as e:
+        print(e)
         return flashed_exception_to_dto(FlashedException())

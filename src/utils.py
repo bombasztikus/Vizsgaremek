@@ -5,7 +5,9 @@ from src.models import Meal, MealType
 def flashed_exception_to_dto(exc: FlashedException) -> dict:
     return {
         "error": exc.flash_message,
-        "css_class": exc.css_class
+        "css_class": exc.css_class,
+        "http_code": exc.http_code,
+        "is_error": True,
     }
 
 def meals_to_dto(meals: list[Meal], type_display_name: str = None, meal_type: str = None) -> dict:
@@ -17,7 +19,8 @@ def meals_to_dto(meals: list[Meal], type_display_name: str = None, meal_type: st
         meal_dtos.append(dto)
 
     dto = {
-        "items": meal_dtos
+        "items": meal_dtos,
+        "is_error": False,
     }
 
     if type_display_name:
