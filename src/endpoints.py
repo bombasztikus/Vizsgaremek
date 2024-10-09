@@ -1,7 +1,7 @@
-from flask import jsonify, Blueprint, url_for, redirect
+from flask import jsonify, Blueprint
 
-from src.utils import flashed_exception_to_dto, is_valid_meal_type, meal_type_to_display_name, meals_to_dto, str_to_meal_type
-from .models import User, Meal, MealType
+from src.utils import flashed_exception_to_dto, currency_to_display_name, meal_type_to_display_name, meals_to_dto, str_to_meal_type
+from .models import User, Meal
 from flask_login import login_required, current_user, login_user, logout_user
 from src.exceptions import FlashedException
 
