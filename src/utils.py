@@ -1,6 +1,6 @@
+from enum import Enum
 from src.exceptions import FlashedException
 from src.models import Meal, MealType
-
 
 def flashed_exception_to_dto(exc: FlashedException) -> dict:
     return {
@@ -31,11 +31,11 @@ def meals_to_dto(meals: list[Meal], type_display_name: str = None, meal_type: st
 
     return dto
 
-def get_valid_meal_types() -> list[str]:
-    return [e.value.upper() for e in MealType]
+def get_valid_enum_values(en: Enum) -> list[str]:
+    return [e.value.upper() for e in en]
 
-def is_valid_meal_type(value: str) -> bool:
-    return str(value).upper() in get_valid_meal_types()
+def is_valid_enum_value(value: str, en: Enum) -> bool:
+    return str(value).upper() in get_valid_enum_values(en)
 
 def str_to_meal_type(value: str) -> MealType | None:
     match str(value).upper().strip():

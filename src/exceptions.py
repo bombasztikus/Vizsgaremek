@@ -24,3 +24,31 @@ class UserNotFoundException(NotFoundException):
 class InvalidUserIDException(FlashedException):
     def __init__(self, flash_message = "Érvénytelen felhasználó azonosító", css_class = "danger", http_code = 400, *args):
         super().__init__(flash_message, css_class, http_code, *args)
+
+class InvalidEnumValueException(FlashedException):
+    def __init__(self, flash_message: str = "Az érték nem egyezik a lehetséges értékek egyikével sem", css_class: str = "danger", http_code: int = 400, *args: object) -> None:
+        super().__init__(flash_message, css_class, http_code, *args)
+
+class InvalidPriceException(FlashedException):
+    def __init__(self, flash_message: str = "Érvénytelen ár vagy egyéb pénzösszeg", css_class: str = "danger", http_code: int = 400, *args: object) -> None:
+        super().__init__(flash_message, css_class, http_code, *args)
+
+class MealCreationException(FlashedException):
+    def __init__(self, flash_message: str = "Ismeretlen hiba történt a termék létrehozása közben", css_class: str = "danger", http_code: int = 500, *args: object) -> None:
+        super().__init__(flash_message, css_class, http_code, *args)
+
+class InvalidCurrencyException(FlashedException):
+    def __init__(self, flash_message: str = "Érvénytelen valuta (valószínűleg nem követi az ISO 4217-es betű szabványt)", css_class: str = "danger", http_code: int = 400, *args: object) -> None:
+        super().__init__(flash_message, css_class, http_code, *args)
+
+class InvalidCaloriesException(FlashedException):
+    def __init__(self, flash_message: str = "Érvénytelen kalória érték", css_class: str = "danger", http_code: int = 400, *args: object) -> None:
+        super().__init__(flash_message, css_class, http_code, *args)
+
+class InvalidURLException(FlashedException):
+    def __init__(self, flash_message: str = "Érvénytelen URL", css_class: str = "danger", http_code: int = 400, *args: object) -> None:
+        super().__init__(flash_message, css_class, http_code, *args)
+
+class InvalidStarsException(FlashedException):
+    def __init__(self, flash_message: str = "Érvénytelen értékelés szám", css_class: str = "danger", http_code: int = 500, *args: object) -> None:
+        super().__init__(flash_message, css_class, http_code, *args)

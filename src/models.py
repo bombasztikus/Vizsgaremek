@@ -1,8 +1,10 @@
-from typing import Self
+from typing import Optional, Self
 import flask_login
 import enum
 from src.exceptions import *
 from sqlalchemy import exc
+
+from src.utils import is_valid_enum_value
 from . import db
 from argon2 import PasswordHasher
 from argon2 import exceptions as ph_exc
@@ -150,3 +152,49 @@ class Meal(db.Model, flask_login.UserMixin):
             "is_free": bool(str(self.price) == "0"),
             "is_error": False,
         }
+        
+    @staticmethod
+    def create(name: str, price: str = "0", currency: str = "HUF", calories: int = 0, image_url: Optional[str] = None, description: Optional[str] = None, stars: int = 0, type: Optional[MealType] = MealType.FOOD) -> Self:
+        try:
+            if not is_valid_enum_value(type, MealType()):
+                raise InvalidEnumValueException()
+
+            try:
+                price = int(price)
+            except ValueError:
+                raise InvalidPriceException()
+
+            if price < 0:
+                raise InvalidPriceException()
+
+            currency = currency.upper().strip()
+            if len(str(currency)) != 3:
+                raise InvalidCurrencyException()
+            
+            try:
+                calories = int(calories)
+            except ValueError:
+                raise InvalidCaloriesException()
+
+            if calories < 0:
+                raise InvalidCaloriesException()
+
+            if image_url:
+                image_url = str(image_url).lower().strip()
+                if not image_url.startswith("https://") or not image_url.startswith("http://"):
+                    raise InvalidURLException("Érvénytelen illusztráció URL")
+                
+            if description:
+                description = description.strip()
+
+            try:
+                stars = int(stars)
+            except ValueError:
+                raise InvalidStarsException()
+            
+            if stars < 0 or stars > 5:
+                raise InvalidStarsException()
+
+        except FlashedException as e:
+            db.session.rollback()
+            raise MealCreationException(e.flash_message, e.css_class, e.http_code)
