@@ -5,6 +5,14 @@ class FlashedException(Exception):
         self.css_class = css_class
         self.http_code = http_code
 
+    def to_dto(self) -> dict:
+        return {
+        "error": self.flash_message,
+        "css_class": self.css_class,
+        "http_code": self.http_code,
+        "is_error": True,
+    }
+
 class UserCreationException(FlashedException):
     def __init__(self, flash_message: str = "Ismeretlen hiba történt a fiók létrehozása közben", css_class: str = "danger", http_code: int = 500, *args: object) -> None:
         super().__init__(flash_message, css_class, http_code, *args)

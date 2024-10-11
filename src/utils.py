@@ -5,14 +5,6 @@ from src.exceptions import FlashedException, InvalidEnumValueException
 if TYPE_CHECKING:
     from src.models import Meal, MealType
 
-def flashed_exception_to_dto(exc: FlashedException) -> dict:
-    return {
-        "error": exc.flash_message,
-        "css_class": exc.css_class,
-        "http_code": exc.http_code,
-        "is_error": True,
-    }
-
 def meals_to_dto(meals: list["Meal"], type_display_name: str = None, meal_type: str = None) -> dict:
     meal_dtos = []
 

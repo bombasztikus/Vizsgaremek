@@ -1,5 +1,5 @@
 from flask import jsonify, Blueprint
-from src.utils import flashed_exception_to_dto, meal_type_to_display_name, meals_to_dto, str_to_enum_value
+from src.utils import meal_type_to_display_name, meals_to_dto, str_to_enum_value
 from .models import MealType, User, Meal
 from src.exceptions import *
 from flask_jwt_extended import jwt_required, current_user
@@ -9,11 +9,12 @@ api = Blueprint('api', __name__, url_prefix='/api')
 
 @api.app_errorhandler(FlashedException)
 def handle_exception(e):
-    return jsonify(flashed_exception_to_dto(e)), int(e.http_code)
+    return jsonify(e.to_dto()), int(e.http_code)
 
 @api.app_errorhandler(wkz_exc.NotFound)
 def not_found(e):
-    return jsonify(flashed_exception_to_dto(NotFoundException())), 404
+    _ = NotFoundException()
+    return jsonify(_.to_dto()), int(_.http_code)
 
 @api.app_errorhandler(Exception)
 def wildcard_exception(e):
@@ -22,7 +23,7 @@ def wildcard_exception(e):
     
     print(e)
     _ = FlashedException()
-    return jsonify(flashed_exception_to_dto(_)), int(_.http_code)
+    return jsonify(_.to_dto()), int(_.http_code)
 
 @api.get("/meals/<meal_type>")
 def get_meal(meal_type: str):
@@ -47,4 +48,3 @@ def get_user(user_id: int):
         return jsonify(user.to_dto())
     except ValueError:
         raise InvalidUserIDException()
-    
