@@ -1,33 +1,32 @@
 from os import environ
 from dotenv import load_dotenv
 from flask import Flask
+from flask_jwt_extended import JWTManager
 from flask_sqlalchemy import SQLAlchemy
-import flask_login
 
 load_dotenv()
 db = SQLAlchemy()
+jwt = JWTManager()
 
 def create_app():
     app = Flask(__name__)
 
     app.config['SQLALCHEMY_DATABASE_URI'] = environ.get("DB_URI")
     app.config["SECRET_KEY"] = environ.get("SESSION_SECRET")
+    app.config["JWT_SECRET_KEY"] = environ.get("JWT_SECRET")
 
     db.init_app(app)
-
-    login_manager = flask_login.LoginManager()
-    login_manager.init_app(app)
-    login_manager.login_view = "routes.log"
-    login_manager.login_message = "Az oldal megtekintéséhez kérlek jelentkezz be"
-    login_manager.login_message_category = "warning"
+    jwt.init_app(app)
 
     from .models import User
-    @login_manager.user_loader
-    def load_user(user_id):
-        return User.get_by_id_or_none(user_id)
-
-    from .routes import routes as routes_blueprint
-    app.register_blueprint(routes_blueprint)
+    @jwt.user_identity_loader
+    def user_identity_lookup(user: User) -> str:
+        return str(user.id)
+    
+    @jwt.user_lookup_loader
+    def user_lookup_callback(_jwt_header, jwt_data):
+        identity = jwt_data["sub"]
+        return User.get_by_id_or_none(identity)
 
     from .endpoints import api as endpoints_blueprint
     app.register_blueprint(endpoints_blueprint)
