@@ -22,7 +22,7 @@ class User(db.Model, flask_login.UserMixin):
         return f"<User {self.id} ({self.email})>"
     
     @staticmethod  
-    def get_by_id(id: int) -> Self | None:
+    def get_by_id_or_none(id: int) -> Self | None:
         try:
             return db.session.query(User).filter_by(id=id).first()
         except:
@@ -195,6 +195,22 @@ class Meal(db.Model, flask_login.UserMixin):
             if stars < 0 or stars > 5:
                 raise InvalidStarsException()
 
+            new_meal = Meal(
+                name=name,
+                price=price,
+                currency=currency,
+                calories=calories,
+                image_url=image_url,
+                description=description,
+                stars=stars,
+                type=type,
+            )
+
+            db.session.add(new_meal)
+            db.session.commit()
+            db.session.refresh(new_meal)
+
+            return new_meal
         except FlashedException as e:
             db.session.rollback()
             raise MealCreationException(e.flash_message, e.css_class, e.http_code)

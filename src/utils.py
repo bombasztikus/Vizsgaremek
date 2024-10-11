@@ -1,6 +1,9 @@
 from enum import Enum
-from src.exceptions import FlashedException
-from src.models import Meal, MealType
+from typing import TYPE_CHECKING, TypeVar
+from src.exceptions import FlashedException, InvalidEnumValueException
+
+if TYPE_CHECKING:
+    from src.models import Meal, MealType
 
 def flashed_exception_to_dto(exc: FlashedException) -> dict:
     return {
@@ -10,7 +13,7 @@ def flashed_exception_to_dto(exc: FlashedException) -> dict:
         "is_error": True,
     }
 
-def meals_to_dto(meals: list[Meal], type_display_name: str = None, meal_type: str = None) -> dict:
+def meals_to_dto(meals: list["Meal"], type_display_name: str = None, meal_type: str = None) -> dict:
     meal_dtos = []
 
     for meal in meals:
@@ -31,28 +34,33 @@ def meals_to_dto(meals: list[Meal], type_display_name: str = None, meal_type: st
 
     return dto
 
-def get_valid_enum_values(en: Enum) -> list[str]:
-    return [e.value.upper() for e in en]
+def get_valid_enum_values(en: Enum) -> list[Enum]:
+    return [v.value for v in en]
+
+def get_valid_enum_values_str(en: Enum) -> list[str]:
+    return [s for s in get_valid_enum_values()]
 
 def is_valid_enum_value(value: str, en: Enum) -> bool:
-    return str(value).upper() in get_valid_enum_values(en)
+    return str(value).upper() in get_valid_enum_values_str(en)
 
-def str_to_meal_type(value: str) -> MealType | None:
-    match str(value).upper().strip():
-        case MealType.MENU:
-            return MealType.MENU
-        case MealType.FOOD:
-            return MealType.FOOD
-        case MealType.BEVERAGE:
-            return MealType.BEVERAGE
-        case _:
-            return None
-        
-def meal_type_to_display_name(meal_type: MealType) -> str:
+T = TypeVar("T")
+def str_to_enum_value(value: str, en: Enum) -> T:
+    if not is_valid_enum_value(value, en):
+        raise InvalidEnumValueException()
+    
+    enum_values = get_valid_enum_values(en)
+
+    for v in enum_values:
+        if v == str(value).strip().upper():
+            return v
+
+    raise InvalidEnumValueException()
+
+def meal_type_to_display_name(meal_type: "MealType") -> str:
     names = {
-        MealType.MENU: "Menük",
-        MealType.FOOD: "Ételek",
-        MealType.BEVERAGE: "Italok"
+        "MENU": "Menük",
+        "FOOD": "Ételek",
+        "BEVERAGE": "Italok"
     }
 
     return names[meal_type]

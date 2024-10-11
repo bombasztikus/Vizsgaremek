@@ -24,7 +24,7 @@ def create_app():
     from .models import User
     @login_manager.user_loader
     def load_user(user_id):
-        return User.get_by_id(user_id)
+        return User.get_by_id_or_none(user_id)
 
     from .routes import routes as routes_blueprint
     app.register_blueprint(routes_blueprint)
