@@ -26,7 +26,7 @@ class InvalidUserIDException(FlashedException):
         super().__init__(flash_message, css_class, http_code, *args)
 
 class InvalidEnumValueException(FlashedException):
-    def __init__(self, flash_message: str = "Az érték nem egyezik a lehetséges értékek egyikével sem", css_class: str = "danger", http_code: int = 422, *args: object) -> None:
+    def __init__(self, flash_message: str = "Az érték nem egyezik az elfogadott értékek egyikével sem", css_class: str = "danger", http_code: int = 422, *args: object) -> None:
         super().__init__(flash_message, css_class, http_code, *args)
 
 class InvalidPriceException(FlashedException):

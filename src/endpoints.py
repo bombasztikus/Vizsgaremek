@@ -34,13 +34,13 @@ def get_user(user_id: int):
         if not user_id:
             raise InvalidUserIDException()
         
-        if str(user_id).strip() != current_user.get_id():
-            raise UnauthorizedException()
-        
         try:
             user = User.get_by_id_or_none(int(user_id))
             if not user:    
                 raise UserNotFoundException()
+            
+            if str(user_id).strip() != current_user.get_id():
+                raise UnauthorizedException()
             
             return jsonify(user.to_dto())
         except ValueError:
@@ -51,3 +51,4 @@ def get_user(user_id: int):
     except Exception as e:
         print(e)
         return flashed_exception_to_dto(FlashedException())
+    

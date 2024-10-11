@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import TYPE_CHECKING, TypeVar
+from typing import TYPE_CHECKING, List, TypeVar
 from src.exceptions import FlashedException, InvalidEnumValueException
 
 if TYPE_CHECKING:
@@ -34,24 +34,26 @@ def meals_to_dto(meals: list["Meal"], type_display_name: str = None, meal_type: 
 
     return dto
 
-def get_valid_enum_values(en: Enum) -> list[Enum]:
-    return [v.value for v in en]
+# Type variable constrained to Enum
+T = TypeVar("T", bound=Enum)
 
-def get_valid_enum_values_str(en: Enum) -> list[str]:
-    return [s for s in get_valid_enum_values()]
+def get_valid_enum_values(en: T) -> List[T]:
+    return list(en)
 
-def is_valid_enum_value(value: str, en: Enum) -> bool:
-    return str(value).upper() in get_valid_enum_values_str(en)
+def get_valid_enum_values_str(en: T) -> List[str]:
+    return [v.value for v in get_valid_enum_values(en)]
 
-T = TypeVar("T")
-def str_to_enum_value(value: str, en: Enum) -> T:
+def is_valid_enum_value(value: str, en: T) -> bool:
+    return value.upper() in get_valid_enum_values_str(en)
+
+def str_to_enum_value(value: str, en: T) -> T:
     if not is_valid_enum_value(value, en):
         raise InvalidEnumValueException()
-    
+
     enum_values = get_valid_enum_values(en)
 
     for v in enum_values:
-        if v == str(value).strip().upper():
+        if v.value == value.strip().upper():
             return v
 
     raise InvalidEnumValueException()
