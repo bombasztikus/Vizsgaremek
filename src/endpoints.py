@@ -1,8 +1,8 @@
-from flask import jsonify, Blueprint
+from flask import jsonify, Blueprint, request
 from src.utils import meal_type_to_display_name, meals_to_dto, str_to_enum_value
 from .models import MealType, User, Meal
 from src.exceptions import *
-from flask_jwt_extended import jwt_required, current_user
+from flask_jwt_extended import jwt_required, current_user, create_access_token
 import werkzeug.exceptions as wkz_exc
 
 api = Blueprint('api', __name__, url_prefix='/api')
@@ -48,3 +48,13 @@ def get_user(user_id: int):
         return jsonify(user.to_dto())
     except ValueError:
         raise InvalidUserIDException()
+    
+@api.post("/token/obtain")
+def post_obtain_token():
+    email = request.json.get("email")
+    password = request.json.get("password")
+
+    user = User.verify(email, password)
+    access_token = create_access_token(user.id)
+
+    return jsonify(helo="world"), 200
