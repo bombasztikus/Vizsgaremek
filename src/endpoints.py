@@ -30,13 +30,14 @@ def wildcard_exception(e):
     return jsonify(_.to_dto()), int(_.http_code)
 
 @api.get("/meals/<meal_type>")
+@jwt_required(optional=True)
 def get_meal(meal_type: str):
     meal_type_as_enum = str_to_enum_value(meal_type, MealType) 
     items = Meal.get_all_by_type(meal_type_as_enum)
     return jsonify(meals_to_dto(items, meal_type_to_display_name(meal_type_as_enum), meal_type_as_enum)), 200
     
 @api.get("/users/<user_id>")
-@jwt_required()
+@jwt_required(optional=True)
 def get_user(user_id: int):
     if not user_id:
         raise InvalidUserIDException()
@@ -46,7 +47,7 @@ def get_user(user_id: int):
         if not user:    
             raise UserNotFoundException()
         
-        if str(user_id).strip() != current_user.get_id():
+        if not current_user or str(user_id).strip() != current_user.get_id():
             raise UnauthorizedException()
         
         return jsonify(user.to_dto())
