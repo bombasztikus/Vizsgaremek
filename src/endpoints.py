@@ -18,8 +18,12 @@ def not_found(e):
 
 @api.app_errorhandler(Exception)
 def wildcard_exception(e):
-    if isinstance(e, FlashedException) or isinstance(e, wkz_exc.HTTPException):
+    if isinstance(e, FlashedException):
         return e
+    elif isinstance(e, wkz_exc.HTTPException):
+        r = e.get_response()
+        _ = FlashedException(flash_message=e.name, http_code=r.status_code)
+        return jsonify(_.to_dto()), int(_.http_code)
     
     print(e)
     _ = FlashedException()
