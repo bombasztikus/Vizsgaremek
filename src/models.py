@@ -70,7 +70,7 @@ class User(db.Model, flask_login.UserMixin):
             user = db.session.query(User).filter_by(email=email).first()
 
             if not user:
-                raise UserNotFoundException()
+                raise InvalidCredentialsException()
             
             password_valid = ph.verify(user.password, password)
             if not password_valid:

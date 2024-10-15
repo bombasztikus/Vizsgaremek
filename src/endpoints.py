@@ -2,8 +2,9 @@ from flask import jsonify, Blueprint, request
 from src.utils import meal_type_to_display_name, meals_to_dto, str_to_enum_value
 from .models import MealType, User, Meal
 from src.exceptions import *
-from flask_jwt_extended import jwt_required, current_user, create_access_token
+from flask_jwt_extended import jwt_required, current_user, create_access_token, create_refresh_token
 import werkzeug.exceptions as wkz_exc
+from datetime import timedelta
 
 api = Blueprint('api', __name__, url_prefix='/api')
 
@@ -60,6 +61,11 @@ def post_obtain_token():
     password = request.json.get("password")
 
     user = User.verify(email, password)
-    access_token = create_access_token(user.id)
 
-    return jsonify(helo="world"), 200
+    access_token_expiry = timedelta(days=30)
+    access_token = create_access_token(user, expires_delta=access_token_expiry)
+
+    return jsonify({
+        "access_token": str(access_token),
+        "expiry": int(access_token_expiry.total_seconds())
+    }), 200
