@@ -69,3 +69,15 @@ def post_obtain_token():
         "access_token": str(access_token),
         "expiry": int(access_token_expiry.total_seconds())
     }), 200
+
+@api.post("/auth/register")
+def post_auth_register():
+    email = request.json.get("email")
+    password = request.json.get("password")
+    full_name = request.json.get("full_name")
+
+    if User.email_taken(email):
+        return UserCreationException(flash_message="Az email cím már foglalt", http_code=409)
+    
+    created_user = User.create(email, full_name, password, False)
+    return jsonify(created_user.to_dto()), 201

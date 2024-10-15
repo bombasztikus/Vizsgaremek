@@ -101,6 +101,11 @@ class User(db.Model, flask_login.UserMixin):
             "is_error": False,
         }
 
+    @staticmethod
+    def email_taken(email: str) -> bool:
+        user = db.session.query(User.email).filter_by(email=email).first()
+        return True if user else False
+
 class MealType(str, enum.Enum):
     BEVERAGE = "BEVERAGE"
     FOOD = "FOOD"
