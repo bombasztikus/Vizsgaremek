@@ -122,21 +122,13 @@ class Meal(db.Model, flask_login.UserMixin):
 
     @staticmethod
     def get_all() -> list[Self]:
-        try:
-            meals = db.session.query(Meal).all()
-            return meals
-        except exc.SQLAlchemyError as e:
-            print(e._message)
-            return []
+        meals = db.session.query(Meal).all()
+        return meals
 
     @staticmethod
     def get_all_by_type(meal_type: MealType) -> list[Self]:
-        try:
-            meals = db.session.query(Meal).filter_by(type=meal_type).all()
-            return meals
-        except exc.SQLAlchemyError as e:
-            print(e._message)
-            return []
+        meals = db.session.query(Meal).filter_by(type=meal_type).all()
+        return meals
         
     def to_dto(self) -> dict:
         return {
