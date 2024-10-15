@@ -55,7 +55,7 @@ def get_user(user_id: int):
     except ValueError:
         raise InvalidUserIDException()
     
-@api.post("/token/obtain")
+@api.post("/auth/login")
 def post_obtain_token():
     email = request.json.get("email")
     password = request.json.get("password")
