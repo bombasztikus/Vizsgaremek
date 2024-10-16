@@ -48,7 +48,10 @@ def get_user(user_id: int):
         if not user:    
             raise UserNotFoundException()
         
-        if not current_user or str(user_id).strip() != current_user.get_id():
+        if current_user:
+            if str(user_id).strip() != current_user.get_id() and not current_user.is_employee:
+                raise UnauthorizedException()
+        else:
             raise UnauthorizedException()
         
         return jsonify(user.to_dto())
@@ -77,7 +80,7 @@ def post_auth_register():
     full_name = request.json.get("full_name")
 
     if User.email_taken(email):
-        return UserCreationException(flash_message="Az email cím már foglalt", http_code=409)
+        raise UserCreationException(flash_message="Az email cím már foglalt", http_code=409)
     
     created_user = User.create(email, full_name, password, False)
     return jsonify(created_user.to_dto()), 201
