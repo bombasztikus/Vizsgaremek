@@ -1,5 +1,5 @@
 from flask import jsonify, Blueprint, request
-from src.utils import meal_type_to_display_name, meals_to_dto, str_to_enum_value
+from src.utils import is_valid_enum_value, meal_type_to_display_name, meals_to_dto, str_to_enum_value
 from .models import MealType, User, Meal
 from src.exceptions import *
 from flask_jwt_extended import jwt_required, current_user, create_access_token, create_refresh_token
@@ -84,3 +84,29 @@ def post_auth_register():
     
     created_user = User.create(email, full_name, password, False)
     return jsonify(created_user.to_dto()), 201
+
+@api.post("/meals/<meal_type>")
+@jwt_required()
+def post_meal(meal_type: str):
+    if not current_user or not current_user.is_employee:
+        raise UnauthorizedException("Nem rendelkezel a megfelelő jogosultságokkal ételek létrehozásához")
+
+    name = request.json.get("name")
+    price = request.json.get("price")
+    currency = request.json.get("currency")
+    calories = request.json.get("currency")
+    image_url = request.json.get("image_url")
+    description = request.json.get("description")
+    meal_type_as_enum = str_to_enum_value(meal_type, MealType)
+
+    created_meal = Meal.create(
+        name=name,
+        price=price,
+        currency=currency,
+        calories=calories,
+        image_url=image_url,
+        description=description,
+        type=meal_type_as_enum
+    )
+
+    return jsonify(created_meal.to_dto()), 201

@@ -33,7 +33,7 @@ def get_valid_enum_values(en: T) -> List[T]:
     return list(en)
 
 def get_valid_enum_values_str(en: T) -> List[str]:
-    return [v.value for v in get_valid_enum_values(en)]
+    return [v.value.upper() for v in get_valid_enum_values(en)]
 
 def is_valid_enum_value(value: str, en: T) -> bool:
     return value.upper() in get_valid_enum_values_str(en)
@@ -45,7 +45,7 @@ def str_to_enum_value(value: str, en: T) -> T:
     enum_values = get_valid_enum_values(en)
 
     for v in enum_values:
-        if v.value == value.strip().upper():
+        if v.value.upper() == value.strip().upper():
             return v
 
     raise InvalidEnumValueException()
