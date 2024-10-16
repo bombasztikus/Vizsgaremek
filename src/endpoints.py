@@ -80,7 +80,7 @@ def post_auth_register():
     full_name = request.json.get("full_name")
 
     if User.email_taken(email):
-        raise UserCreationException(flash_message="Az email cím már foglalt", http_code=409)
+        raise EmailUnavailableException()
     
     created_user = User.create(email, full_name, password, False)
     return jsonify(created_user.to_dto()), 201
