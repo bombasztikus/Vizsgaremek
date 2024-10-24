@@ -70,3 +70,7 @@ class UnauthorizedException(FlashedException):
 class EmailUnavailableException(FlashedException):
     def __init__(self, flash_message: str = "Az email cím nem használható", css_class: str = "danger", http_code: int = 409, error_code: str = "email_unavailable", *args: object) -> None:
         super().__init__(flash_message, css_class, http_code, error_code, *args)
+
+class InvalidPayloadException(FlashedException):
+    def __init__(self, flash_message: str = "Érvénytelen kérés", css_class: str = "danger", http_code: int = 422, error_code: str = "invalid_payload", *args: object) -> None:
+        super().__init__(flash_message, css_class, http_code, error_code, *args)

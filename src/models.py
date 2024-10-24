@@ -65,6 +65,9 @@ class User(db.Model, flask_login.UserMixin):
     
     @staticmethod
     def verify(email: str, password: str) -> Self:
+        if not email or not password:
+            raise InvalidPayloadException("Hiányos JSON mezők")
+
         try:
             email = str(email).strip().lower()
             user = db.session.query(User).filter_by(email=email).first()
