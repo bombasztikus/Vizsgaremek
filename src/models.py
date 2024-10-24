@@ -5,6 +5,7 @@ from src.exceptions import *
 from sqlalchemy import exc
 
 from src.utils import is_valid_enum_value
+from src.validation import *
 from . import db
 from argon2 import PasswordHasher
 from argon2 import exceptions as ph_exc
@@ -31,21 +32,15 @@ class User(db.Model, flask_login.UserMixin):
     @staticmethod
     def create(email: str, full_name: str, password: str, is_employee: bool = True) -> Self:
         try:
-            email = str(email).strip().lower()
-            if 255 < len(email) or len(email) < 1 or "@" not in email:
-                raise UserCreationException("Érvénytelen email hossz")
+            email = validate_email(email)
             
             email_exists = db.session.query(User.email).filter_by(email=email).scalar()
             if email_exists:
                 raise UserCreationException("Az email cím már használatban van")
 
-            full_name = str(full_name).strip()
-            if 255 < len(full_name) or len(full_name) < 1:
-                raise UserCreationException("Érvénytelen név hossz")
+            full_name = validate_full_name(full_name)
 
-            password = str(password)
-            if 255 < len(password) or len(password) < 1:
-                raise UserCreationException("Érvénytelen jelszó hossz")
+            password = validate_password(password)
 
             new_user = User(
                 email = email,
@@ -156,44 +151,15 @@ class Meal(db.Model, flask_login.UserMixin):
     @staticmethod
     def create(name: str, price: str = "0", currency: str = "HUF", calories: int = 0, image_url: Optional[str] = None, description: Optional[str] = None, stars: int = 0, type: Optional[MealType] = MealType.FOOD) -> Self:
         try:
-            if not is_valid_enum_value(type, MealType()):
+            if not is_valid_enum_value(type, MealType):
                 raise InvalidEnumValueException()
 
-            try:
-                price = int(price)
-            except ValueError:
-                raise InvalidPriceException()
-
-            if price < 0:
-                raise InvalidPriceException()
-
-            currency = currency.upper().strip()
-            if len(str(currency)) != 3:
-                raise InvalidCurrencyException()
-            
-            try:
-                calories = int(calories)
-            except ValueError:
-                raise InvalidCaloriesException()
-
-            if calories < 0:
-                raise InvalidCaloriesException()
-
-            if image_url:
-                image_url = str(image_url).lower().strip()
-                if not image_url.startswith("https://") or not image_url.startswith("http://"):
-                    raise InvalidURLException("Érvénytelen illusztráció URL")
-                
-            if description:
-                description = description.strip()
-
-            try:
-                stars = int(stars)
-            except ValueError:
-                raise InvalidStarsException()
-            
-            if stars < 0 or stars > 5:
-                raise InvalidStarsException()
+            price = validate_meal_price(price)
+            currency = validate_currency(currency)
+            calories = validate_meal_calories(calories)
+            image_url = validate_image_url(image_url)
+            description = validate_description(description)
+            stars = validate_meal_stars(stars)
 
             new_meal = Meal(
                 name=name,

@@ -74,3 +74,15 @@ class EmailUnavailableException(FlashedException):
 class InvalidPayloadException(FlashedException):
     def __init__(self, flash_message: str = "Érvénytelen kérés", css_class: str = "danger", http_code: int = 422, error_code: str = "invalid_payload", *args: object) -> None:
         super().__init__(flash_message, css_class, http_code, error_code, *args)
+
+class InvalidEmailException(FlashedException):
+    def __init__(self, flash_message: str = "Érvénytelen email cím", css_class: str = "danger", http_code: int = 400, error_code: str = "invalid_email", *args: object) -> None:
+        super().__init__(flash_message, css_class, http_code, error_code, *args)
+
+class InvalidFullNameException(FlashedException):
+    def __init__(self, flash_message: str = "Érvénytelen név", css_class: str = "danger", http_code: int = 400, error_code: str = "invalid_full_name", *args: object) -> None:
+        super().__init__(flash_message, css_class, http_code, error_code, *args)
+
+class InvalidPasswordException(FlashedException):
+    def __init__(self, flash_message: str = "Érvénytelen jelszó", css_class: str = "danger", http_code: int = 400, error_code: str = "invalid_password", *args: object) -> None:
+        super().__init__(flash_message, css_class, http_code, error_code, *args)
