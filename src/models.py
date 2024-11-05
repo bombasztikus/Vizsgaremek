@@ -1,9 +1,8 @@
 from typing import Optional, Self
-import flask_login
 import enum
 from src.exceptions import *
 from sqlalchemy import exc
-
+from flask import request
 from src.utils import is_valid_enum_value
 from src.validation import *
 from . import db
@@ -12,7 +11,7 @@ from argon2 import exceptions as ph_exc
 
 ph = PasswordHasher()
 
-class User(db.Model, flask_login.UserMixin):
+class User(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     email = db.Column(db.String(255), unique=True, nullable=False)
     full_name = db.Column(db.String(255), unique=False, nullable=False)
@@ -77,15 +76,6 @@ class User(db.Model, flask_login.UserMixin):
             return user
         except ph_exc.VerificationError:
             raise InvalidCredentialsException()
-        
-    def is_authenticated(self):
-        return True
-
-    def is_active(self):
-        return True
-
-    def is_anonymous(self):
-        return not self.is_authenticated()
 
     def get_id(self):
         return str(self.id)
@@ -109,7 +99,7 @@ class MealType(str, enum.Enum):
     FOOD = "FOOD"
     MENU = "MENU"
 
-class Meal(db.Model, flask_login.UserMixin):
+class Meal(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(255), unique=False, nullable=False)
     price = db.Column(db.String(255), unique=False, nullable=False, default="0")
@@ -134,13 +124,17 @@ class Meal(db.Model, flask_login.UserMixin):
         return meals
         
     def to_dto(self) -> dict:
+        image_url = str(self.image_url) if self.image_url else None
+        if image_url and image_url.lower().startswith("/static/"):
+            image_url = request.url_root + image_url.removeprefix("/")
+
         return {
             "id": int(self.id),
             "name": str(self.name),
             "price": str(self.price),
             "currency": str(self.currency),
             "calories": int(self.calories),
-            "image_url": str(self.image_url) if self.image_url else None,
+            "image_url": image_url,
             "description": str(self.description) if self.description else None,
             "stars": int(self.stars),
             "type": self.type,
