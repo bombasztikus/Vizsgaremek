@@ -6,7 +6,7 @@ from flask_jwt_extended import jwt_required, current_user, create_access_token, 
 import werkzeug.exceptions as wkz_exc
 from datetime import timedelta
 
-api = Blueprint('api', __name__, url_prefix='/api')
+api = Blueprint('api', __name__)
 
 @api.app_errorhandler(FlashedException)
 def handle_exception(e):
