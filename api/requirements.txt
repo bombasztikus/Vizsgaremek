@@ -2,5 +2,5 @@ flask
 python-dotenv
 Flask-SQLAlchemy
 argon2-cffi
-Flask-Login
+flask-cors
 flask-jwt-extended

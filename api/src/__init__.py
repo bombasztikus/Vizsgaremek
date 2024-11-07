@@ -4,10 +4,14 @@ from flask import Flask, jsonify
 from flask_jwt_extended import JWTManager
 from flask_sqlalchemy import SQLAlchemy
 from src.exceptions import UnauthorizedException
+from flask_cors import CORS
 
 load_dotenv()
 db = SQLAlchemy()
 jwt = JWTManager()
+cors = CORS(
+    origins="*"
+)
 
 def create_app():
     app = Flask(__name__)
@@ -18,6 +22,7 @@ def create_app():
 
     db.init_app(app)
     jwt.init_app(app)
+    cors.init_app(app)
 
     from .models import User
     @jwt.user_identity_loader
