@@ -37,6 +37,12 @@ def get_meal(meal_type: str):
     items = Meal.get_all_by_type(meal_type_as_enum)
     return jsonify(meals_to_dto(items, meal_type_to_display_name(meal_type_as_enum), meal_type_as_enum)), 200
     
+@api.get("/meals")
+@jwt_required(optional=True)
+def get_all_meals():
+    items = Meal.get_all()
+    return jsonify(meals_to_dto(items)), 200
+
 @api.get("/users/<user_id>")
 @jwt_required(optional=True)
 def get_user(user_id: int):
