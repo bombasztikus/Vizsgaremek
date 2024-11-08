@@ -1,3 +1,5 @@
+![kép](https://github.com/bombasztikus/Vizsgaremek/blob/main/docs/img/wip/index.jpg)
+
 # EttermiFoglaloRendszer
 
 - Iskola: Pogány Frigyes Technikum
