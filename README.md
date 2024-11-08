@@ -10,5 +10,9 @@
 # Dokumentáció
 https://1drv.ms/w/s!AtApH5_A2yFwfj4DsSru2pBM1gk?e=sQ85K7
 
+# Repository struktúra
+- `api/` - Backend/REST API
+- `frontend/` - Web/Kiosk felület
+
 # Utasítások a futtatáshoz
 Hamarosan
