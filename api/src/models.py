@@ -127,7 +127,14 @@ class Meal(db.Model):
         image_url = str(self.image_url) if self.image_url else None
         if image_url and image_url.lower().startswith("/static/"):
             image_url = request.url_root + image_url.removeprefix("/")
-
+        elif not image_url:
+            if self.type == MealType.BEVERAGE:
+                image_url = request.url_root + "static/fallback/beverage.jpg"
+            elif self.type == MealType.MENU:
+                image_url = request.url_root + "static/fallback/menu.jpg"
+            elif self.type == MealType.FOOD:
+                image_url = request.url_root + "static/fallback/food.jpg"
+            
         return {
             "id": int(self.id),
             "name": str(self.name),
