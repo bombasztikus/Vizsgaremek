@@ -98,6 +98,7 @@ class MealType(str, enum.Enum):
     BEVERAGE = "BEVERAGE"
     FOOD = "FOOD"
     MENU = "MENU"
+    DESSERT = "DESSERT"
 
 class Meal(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -130,7 +131,7 @@ class Meal(db.Model):
         elif not image_url:
             if self.type == MealType.BEVERAGE:
                 image_url = request.url_root + "static/fallback/beverage.jpg"
-            elif self.type == MealType.MENU:
+            elif self.type == MealType.MENU or self.type == MealType.DESSERT:
                 image_url = request.url_root + "static/fallback/menu.jpg"
             elif self.type == MealType.FOOD:
                 image_url = request.url_root + "static/fallback/food.jpg"
@@ -151,6 +152,8 @@ class Meal(db.Model):
         
     @staticmethod
     def create(name: str, price: str = "0", currency: str = "HUF", calories: int = 0, image_url: Optional[str] = None, description: Optional[str] = None, stars: int = 0, type: Optional[MealType] = MealType.FOOD) -> Self:
+        new_meal = None
+
         try:
             if not is_valid_enum_value(type, MealType):
                 raise InvalidEnumValueException()
@@ -175,9 +178,12 @@ class Meal(db.Model):
 
             db.session.add(new_meal)
             db.session.commit()
-            db.session.refresh(new_meal)
 
             return new_meal
         except FlashedException as e:
             db.session.rollback()
             raise MealCreationException(e.flash_message, e.css_class, e.http_code)
+            
+        finally:
+            db.session.refresh(new_meal)
+            return new_meal

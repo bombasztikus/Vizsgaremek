@@ -7,6 +7,7 @@ type ComposableType = {
     [MealType.FOOD]: Meal[];
     [MealType.BEVERAGE]: Meal[];
     [MealType.MENU]: Meal[];
+    [MealType.DESSERT]: Meal[];
 };
 
 export function useMeals() {
@@ -34,5 +35,6 @@ export function useMeals() {
         [MealType.FOOD]: meals.value.filter((meal) => meal.type === MealType.FOOD),
         [MealType.BEVERAGE]: meals.value.filter((meal) => meal.type === MealType.BEVERAGE),
         [MealType.MENU]: meals.value.filter((meal) => meal.type === MealType.MENU),
+        [MealType.DESSERT]: meals.value.filter((meal) => meal.type === MealType.DESSERT),
     }));
 }

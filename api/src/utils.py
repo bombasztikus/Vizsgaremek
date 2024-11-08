@@ -54,7 +54,8 @@ def meal_type_to_display_name(meal_type: "MealType") -> str:
     names = {
         "MENU": "Menük",
         "FOOD": "Ételek",
-        "BEVERAGE": "Italok"
+        "BEVERAGE": "Italok",
+        "DESSERT": "Desszertek"
     }
 
     return names[meal_type]

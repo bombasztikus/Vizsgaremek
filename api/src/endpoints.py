@@ -100,7 +100,7 @@ def post_meal(meal_type: str):
     name = request.json.get("name")
     price = request.json.get("price")
     currency = request.json.get("currency")
-    calories = request.json.get("currency")
+    calories = request.json.get("calories")
     image_url = request.json.get("image_url")
     description = request.json.get("description")
     meal_type_as_enum = str_to_enum_value(meal_type, MealType)

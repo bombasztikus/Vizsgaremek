@@ -43,6 +43,7 @@ export enum MealType {
     FOOD = 'FOOD',
     BEVERAGE = 'BEVERAGE',
     MENU = 'MENU',
+    DESSERT = 'DESSERT',
 }
 
 export type Meal = APIModel & {

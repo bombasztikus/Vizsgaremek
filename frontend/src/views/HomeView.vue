@@ -22,5 +22,6 @@ const meals = useMeals();
         <StoreSection :meals="meals.MENU" title="Menük" v-if="meals.MENU.length > 0" />
         <StoreSection :meals="meals.FOOD" title="Ételek" v-if="meals.FOOD.length > 0" />
         <StoreSection :meals="meals.BEVERAGE" title="Italok" v-if="meals.BEVERAGE.length > 0" />
+        <StoreSection :meals="meals.DESSERT" title="Desszertek" v-if="meals.DESSERT.length > 0" />
     </main>
 </template>
