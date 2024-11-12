@@ -52,6 +52,8 @@ export type Meal = APIModel & {
     currency: string;
     calories: number;
     image_url: string | null;
+    has_image_url: boolean;
+    fallback_image_url: string;
     description: string | null;
     stars: number;
     type: string;

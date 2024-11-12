@@ -123,18 +123,27 @@ class Meal(db.Model):
     def get_all_by_type(meal_type: MealType) -> list[Self]:
         meals = db.session.query(Meal).filter_by(type=meal_type).all()
         return meals
-        
+
+    def get_fallback_image_url(self, url_root: str) -> Optional[str]:
+        match self.type:
+            case MealType.BEVERAGE:
+                return url_root + "static/fallback/beverage.jpg"
+            case MealType.MENU:
+                return url_root + "static/fallback/menu.jpg"
+            case MealType.FOOD:
+                return url_root + "static/fallback/food.jpg"
+            case MealType.DESSERT:
+                return url_root + "static/fallback/dessert.jpg"
+            case _:
+                return url_root + "static/fallback/menu.jpg"
+
     def to_dto(self) -> dict:
         image_url = str(self.image_url) if self.image_url else None
+        has_image_url = bool(not self.image_url is None)
         if image_url and image_url.lower().startswith("/static/"):
             image_url = request.url_root + image_url.removeprefix("/")
         elif not image_url:
-            if self.type == MealType.BEVERAGE:
-                image_url = request.url_root + "static/fallback/beverage.jpg"
-            elif self.type == MealType.MENU or self.type == MealType.DESSERT:
-                image_url = request.url_root + "static/fallback/menu.jpg"
-            elif self.type == MealType.FOOD:
-                image_url = request.url_root + "static/fallback/food.jpg"
+            image_url = self.get_fallback_image_url(request.url_root)
             
         return {
             "id": int(self.id),
@@ -143,13 +152,15 @@ class Meal(db.Model):
             "currency": str(self.currency),
             "calories": int(self.calories),
             "image_url": image_url,
+            "has_image_url": has_image_url,
+            "fallback_image_url": self.get_fallback_image_url(request.url_root),
             "description": str(self.description) if self.description else None,
             "stars": int(self.stars),
             "type": self.type,
             "is_free": bool(str(self.price) == "0"),
             "is_error": False,
         }
-        
+
     @staticmethod
     def create(name: str, price: str = "0", currency: str = "HUF", calories: int = 0, image_url: Optional[str] = None, description: Optional[str] = None, stars: int = 0, type: Optional[MealType] = MealType.FOOD) -> Self:
         new_meal = None

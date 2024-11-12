@@ -9,6 +9,9 @@ def meals_to_dto(meals: list["Meal"], type_display_name: str = None, meal_type: 
     meal_dtos = []
 
     for meal in meals:
+        if not meal:
+            continue
+        
         dto = meal.to_dto()
         dto["display_price"] = currency_to_display_name(meal.currency).format(meal.price)
         meal_dtos.append(dto)
