@@ -8,15 +8,16 @@ from src.validation import *
 from . import db
 from argon2 import PasswordHasher
 from argon2 import exceptions as ph_exc
+from sqlalchemy import Column, Integer, String, Boolean, Enum as sqla_Enum
 
 ph = PasswordHasher()
 
 class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    email = db.Column(db.String(255), unique=True, nullable=False)
-    full_name = db.Column(db.String(255), unique=False, nullable=False)
-    is_employee = db.Column(db.Boolean, unique=False, nullable=False, default=False)
-    password = db.Column(db.String(255), unique=False, nullable=False)
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    email = Column(String(255), unique=True, nullable=False)
+    full_name = Column(String(255), unique=False, nullable=False)
+    is_employee = Column(Boolean, unique=False, nullable=False, default=False)
+    password = Column(String(255), unique=False, nullable=False)
 
     def __repr__(self):
         return f"<User {self.id} ({self.email})>"
@@ -101,15 +102,15 @@ class MealType(str, enum.Enum):
     DESSERT = "DESSERT"
 
 class Meal(db.Model):
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    name = db.Column(db.String(255), unique=False, nullable=False)
-    price = db.Column(db.String(255), unique=False, nullable=False, default="0")
-    currency = db.Column(db.String(3), unique=False, nullable=False, default="HUF")
-    calories = db.Column(db.Integer, unique=False, nullable=False, default=0)
-    image_url = db.Column(db.String(255), unique=False, nullable=True)
-    description = db.Column(db.String(255), unique=False, nullable=True)
-    stars = db.Column(db.Integer, unique=False, nullable=False, default=0)
-    type = db.Column(db.Enum(MealType), unique=False, nullable=False, default=MealType.FOOD)
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String(255), unique=False, nullable=False)
+    price = Column(String(255), unique=False, nullable=False, default="0")
+    currency = Column(String(3), unique=False, nullable=False, default="HUF")
+    calories = Column(Integer, unique=False, nullable=False, default=0)
+    image_url = Column(String(255), unique=False, nullable=True)
+    description = Column(String(255), unique=False, nullable=True)
+    stars = Column(Integer, unique=False, nullable=False, default=0)
+    type = Column(sqla_Enum(MealType), unique=False, nullable=False, default=MealType.FOOD)
 
     def __repr__(self):
         return f"<Meal {self.id} ({self.name})>"
