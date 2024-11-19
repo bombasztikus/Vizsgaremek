@@ -45,10 +45,12 @@ def validate_image_url(image_url: Optional[str]) -> Optional[str]:
         return None
     
     image_url = str(image_url).lower().strip()
-    if not image_url.startswith("https://") or not image_url.startswith("http://"):
-        raise InvalidURLException("Érvénytelen illusztráció URL")
+    
+    if not (image_url.startswith("http://") or image_url.startswith("https://")):
+        raise InvalidURLException("Érvénytelen illusztráció URL (hiányzó protokol: http:// vagy https://)")
         
     return image_url
+
 
 def validate_description(description: Optional[str]) -> Optional[str]:
     if not description:
@@ -65,8 +67,10 @@ def validate_meal_stars(stars: Optional[str]) -> int:
     except ValueError:
         raise InvalidStarsException()
     
-    if stars < 0 or stars > 5:
-        raise InvalidStarsException()
+    min_stars = 0
+    max_stars = 5
+    if stars < min_stars or stars > max_stars:
+        raise InvalidStarsException(f"Érvénytelen értékelés szám (legalább {min_stars} és legfeljebb {max_stars} lehet)")
     
     return stars
     
