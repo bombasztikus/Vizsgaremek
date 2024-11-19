@@ -9,6 +9,7 @@ from . import db
 from argon2 import PasswordHasher
 from argon2 import exceptions as ph_exc
 from sqlalchemy import Column, Integer, String, Boolean, Enum as sqla_Enum
+import traceback
 
 ph = PasswordHasher()
 
@@ -27,6 +28,7 @@ class User(db.Model):
         try:
             return db.session.query(User).filter_by(id=id).first()
         except:
+            print(traceback.format_exc())
             return None
     
     @staticmethod
@@ -55,6 +57,7 @@ class User(db.Model):
 
             return new_user
         except exc.IntegrityError:
+            print(traceback.format_exc())
             db.session.rollback()
             raise UserCreationException()
     
@@ -76,6 +79,7 @@ class User(db.Model):
 
             return user
         except ph_exc.VerificationError:
+            print(traceback.format_exc())
             raise InvalidCredentialsException()
 
     def get_id(self):
@@ -191,11 +195,9 @@ class Meal(db.Model):
             db.session.add(new_meal)
             db.session.commit()
 
-            return new_meal
-        except FlashedException as e:
-            db.session.rollback()
-            raise MealCreationException(e.flash_message, e.css_class, e.http_code)
-            
-        finally:
             db.session.refresh(new_meal)
             return new_meal
+        except FlashedException as e:
+            print(traceback.format_exc())
+            db.session.rollback()
+            raise MealCreationException(e.flash_message, e.css_class, e.http_code)
