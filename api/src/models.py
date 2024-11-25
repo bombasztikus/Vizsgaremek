@@ -32,7 +32,7 @@ class User(db.Model):
             return None
     
     @staticmethod
-    def create(email: str, full_name: str, password: str, is_employee: bool = True) -> Self:
+    def create(email: str, full_name: str, password: str, is_employee: bool = False) -> Self:
         try:
             email = validate_email(email)
             
