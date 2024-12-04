@@ -37,6 +37,8 @@ def validate_meal_calories(calories: Optional[str]) -> int:
     
     if calories < 0:
         raise InvalidCaloriesException()
+    if calories > 100_000:
+        raise InvalidCaloriesException()
     
     return calories
     
