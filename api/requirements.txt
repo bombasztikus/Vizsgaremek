@@ -4,3 +4,4 @@ Flask-SQLAlchemy
 argon2-cffi
 flask-cors
 flask-jwt-extended
+pytest
