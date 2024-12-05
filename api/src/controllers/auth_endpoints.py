@@ -2,32 +2,9 @@ from flask import jsonify, Blueprint, request
 from ..models import User
 from src.exceptions import *
 from flask_jwt_extended import create_access_token
-import werkzeug.exceptions as wkz_exc
 from datetime import timedelta
 
 api = Blueprint("auth", __name__, url_prefix="/auth")
-
-@api.app_errorhandler(FlashedException)
-def handle_exception(e):
-    return jsonify(e.to_dto()), int(e.http_code)
-
-@api.app_errorhandler(wkz_exc.NotFound)
-def not_found(e):
-    _ = NotFoundException()
-    return jsonify(_.to_dto()), int(_.http_code)
-
-@api.app_errorhandler(Exception)
-def wildcard_exception(e):
-    if isinstance(e, FlashedException):
-        return e
-    elif isinstance(e, wkz_exc.HTTPException):
-        r = e.get_response()
-        _ = FlashedException(flash_message=e.name, http_code=r.status_code)
-        return jsonify(_.to_dto()), int(_.http_code)
-    
-    print(e)
-    _ = FlashedException()
-    return jsonify(_.to_dto()), int(_.http_code)
     
 @api.post("/login")
 def post_obtain_token():

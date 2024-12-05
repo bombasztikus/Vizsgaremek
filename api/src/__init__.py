@@ -3,7 +3,8 @@ from dotenv import load_dotenv
 from flask import Flask, jsonify
 from flask_jwt_extended import JWTManager
 from flask_sqlalchemy import SQLAlchemy
-from src.exceptions import UnauthorizedException
+from .handlers import generic_exception_handler
+from src.exceptions import *
 from flask_cors import CORS
 
 load_dotenv()
@@ -53,4 +54,6 @@ def create_app():
     from .controllers import meal_endpoints
     app.register_blueprint(meal_endpoints.api)
     
+    app.register_error_handler(Exception, generic_exception_handler)
+
     return app
