@@ -44,7 +44,13 @@ def create_app():
         _ = UnauthorizedException()
         return jsonify(_.to_dto()), int(_.http_code)
 
-    from .endpoints import api as endpoints_blueprint
-    app.register_blueprint(endpoints_blueprint)
+    from .controllers import auth_endpoints
+    app.register_blueprint(auth_endpoints.api)
 
+    from .controllers import user_endpoints
+    app.register_blueprint(user_endpoints.api)
+
+    from .controllers import meal_endpoints
+    app.register_blueprint(meal_endpoints.api)
+    
     return app
