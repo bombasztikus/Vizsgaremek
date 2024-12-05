@@ -28,7 +28,7 @@ def validate_currency(currency: Optional[str]) -> str:
 
 def validate_meal_calories(calories: Optional[str]) -> int:
     if not calories:
-        InvalidCaloriesException()
+        raise InvalidCaloriesException()
 
     try:
         calories = int(calories)
@@ -52,7 +52,6 @@ def validate_image_url(image_url: Optional[str]) -> Optional[str]:
         raise InvalidURLException("Érvénytelen illusztráció URL (hiányzó protokol: http:// vagy https://)")
         
     return image_url
-
 
 def validate_description(description: Optional[str]) -> Optional[str]:
     if not description:
