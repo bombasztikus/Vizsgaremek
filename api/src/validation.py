@@ -81,7 +81,7 @@ def validate_email(email: Optional[str]) -> str:
 
     email = str(email).strip().lower()
 
-    if 255 < len(email) or len(email) < 1 or "@" not in email:
+    if 255 < len(email) or len(email) < 3 or "@" not in email:
         raise InvalidEmailException("Érvénytelen email hossz")
     
     return email
