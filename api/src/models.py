@@ -197,3 +197,11 @@ class Meal(db.Model):
             print(traceback.format_exc())
             db.session.rollback()
             raise MealCreationException(e.flash_message, e.css_class, e.http_code)
+
+    @staticmethod
+    def get_by_id_or_none(id: int) -> Optional[Self]:
+        try:
+            return db.session.query(Meal).filter_by(id=id).first()
+        except:
+            print(traceback.format_exc())
+            return None
