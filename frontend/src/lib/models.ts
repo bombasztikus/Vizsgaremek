@@ -8,7 +8,6 @@ export enum APIErrorCode {
     invalid_enum_value = 'invalid_enum_value',
     invalid_price = 'invalid_price',
     meal_creation_error = 'meal_creation_error',
-    invalid_currency = 'invalid_currency',
     invalid_calories = 'invalid_calories',
     invalid_url = 'invalid_url',
     invalid_stars = 'invalid_stars',
@@ -49,7 +48,6 @@ export enum MealType {
 export type Meal = APIModel & {
     name: string;
     price: string;
-    currency: string;
     calories: number;
     image_url: string | null;
     has_image_url: boolean;
