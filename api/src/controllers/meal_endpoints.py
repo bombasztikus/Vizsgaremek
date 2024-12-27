@@ -12,14 +12,14 @@ def get_all_meals():
     items = Meal.get_all()
     return jsonify(meals_to_dto(items)), 200
 
-@api.get("/<meal_type>")
+@api.get("/<string:meal_type>")
 @jwt_required(optional=True)
 def get_meal(meal_type: str):
     meal_type_as_enum = str_to_enum_value(meal_type, MealType) 
     items = Meal.get_all_by_type(meal_type_as_enum)
     return jsonify(meals_to_dto(items, meal_type_to_display_name(meal_type_as_enum), meal_type_as_enum)), 200
 
-@api.post("/<meal_type>")
+@api.post("/<string:meal_type>")
 @jwt_required()
 def post_meal(meal_type: str):
     if not current_user or not current_user.is_employee:
@@ -42,3 +42,13 @@ def post_meal(meal_type: str):
     )
 
     return jsonify(created_meal.to_dto()), 201
+
+@api.get("/<int:meal_id>")
+@jwt_required(optional=True)
+def get_individual_meal(meal_id: str):
+    meal = Meal.get_by_id_or_none(id=meal_id)
+
+    if not meal:
+        raise NotFoundException()
+    
+    return jsonify(meal.to_dto()), 200
