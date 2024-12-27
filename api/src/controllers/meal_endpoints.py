@@ -27,7 +27,6 @@ def post_meal(meal_type: str):
 
     name = request.json.get("name")
     price = request.json.get("price")
-    currency = request.json.get("currency")
     calories = request.json.get("calories")
     image_url = request.json.get("image_url")
     description = request.json.get("description")
@@ -36,7 +35,6 @@ def post_meal(meal_type: str):
     created_meal = Meal.create(
         name=name,
         price=price,
-        currency=currency,
         calories=calories,
         image_url=image_url,
         description=description,

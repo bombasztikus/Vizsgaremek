@@ -109,7 +109,6 @@ class Meal(db.Model):
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(255), unique=False, nullable=False)
     price = Column(String(255), unique=False, nullable=False, default="0")
-    currency = Column(String(3), unique=False, nullable=False, default="HUF")
     calories = Column(Integer, unique=False, nullable=False, default=0)
     image_url = Column(String(255), unique=False, nullable=True)
     description = Column(String(255), unique=False, nullable=True)
@@ -154,7 +153,6 @@ class Meal(db.Model):
             "id": int(self.id),
             "name": str(self.name),
             "price": str(self.price),
-            "currency": str(self.currency),
             "calories": int(self.calories),
             "image_url": image_url,
             "has_image_url": has_image_url,
@@ -167,7 +165,7 @@ class Meal(db.Model):
         }
 
     @staticmethod
-    def create(name: str, price: str = "0", currency: str = "HUF", calories: int = 0, image_url: Optional[str] = None, description: Optional[str] = None, stars: int = 0, type: Optional[MealType] = MealType.FOOD) -> Self:
+    def create(name: str, price: str = "0", calories: int = 0, image_url: Optional[str] = None, description: Optional[str] = None, stars: int = 0, type: Optional[MealType] = MealType.FOOD) -> Self:
         new_meal = None
 
         try:
@@ -175,7 +173,6 @@ class Meal(db.Model):
                 raise InvalidEnumValueException()
 
             price = validate_meal_price(price)
-            currency = validate_currency(currency)
             calories = validate_meal_calories(calories)
             image_url = validate_image_url(image_url)
             description = validate_description(description)
@@ -184,7 +181,6 @@ class Meal(db.Model):
             new_meal = Meal(
                 name=name,
                 price=price,
-                currency=currency,
                 calories=calories,
                 image_url=image_url,
                 description=description,

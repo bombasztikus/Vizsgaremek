@@ -13,7 +13,7 @@ def meals_to_dto(meals: list["Meal"], type_display_name: str = None, meal_type: 
             continue
         
         dto = meal.to_dto()
-        dto["display_price"] = currency_to_display_name(meal.currency).format(meal.price)
+        dto["display_price"] = f"{meal.price} Ft"
         meal_dtos.append(dto)
 
     dto = {
@@ -62,18 +62,3 @@ def meal_type_to_display_name(meal_type: "MealType") -> str:
     }
 
     return names[meal_type]
-
-def currency_to_display_name(value: str) -> str:
-    value = str(value).strip().upper()
-
-    match value:
-        case "HUF":
-            return "{} Ft"
-        case "EUR":
-            return "{}€"
-        case "USD":
-            return "${}"
-        case "JPY":
-            return "¥{}"
-        case _:
-            return "{} " + value

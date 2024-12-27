@@ -14,17 +14,6 @@ def validate_meal_price(price: Optional[str]) -> int:
         raise InvalidPriceException()
     
     return price
-    
-def validate_currency(currency: Optional[str]) -> str:
-    if not currency:
-        raise InvalidCurrencyException()
-    
-    currency = currency.upper().strip()
-
-    if len(str(currency)) != 3:
-        raise InvalidCurrencyException()
-    
-    return currency
 
 def validate_meal_calories(calories: Optional[str]) -> int:
     if not calories:

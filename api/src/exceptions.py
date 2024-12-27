@@ -47,10 +47,6 @@ class MealCreationException(FlashedException):
     def __init__(self, flash_message: str = "Ismeretlen hiba történt a termék létrehozása közben", css_class: str = "danger", http_code: int = 500, error_code: str = "meal_creation_error", *args: object) -> None:
         super().__init__(flash_message, css_class, http_code, error_code, *args)
 
-class InvalidCurrencyException(FlashedException):
-    def __init__(self, flash_message: str = "Érvénytelen valuta (valószínűleg nem követi az ISO 4217-es betű szabványt)", css_class: str = "danger", http_code: int = 422, error_code: str = "invalid_currency", *args: object) -> None:
-        super().__init__(flash_message, css_class, http_code, error_code, *args)
-
 class InvalidCaloriesException(FlashedException):
     def __init__(self, flash_message: str = "Érvénytelen kalória érték", css_class: str = "danger", http_code: int = 422, error_code: str = "invalid_calories", *args: object) -> None:
         super().__init__(flash_message, css_class, http_code, error_code, *args)
