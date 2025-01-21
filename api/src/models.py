@@ -108,7 +108,7 @@ class MealType(str, enum.Enum):
 class Meal(db.Model):
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(255), unique=False, nullable=False)
-    price = Column(String(255), unique=False, nullable=False, default="0")
+    price = Column(Integer, unique=False, nullable=False, default=0)
     calories = Column(Integer, unique=False, nullable=False, default=0)
     image_url = Column(String(255), unique=False, nullable=True)
     description = Column(String(255), unique=False, nullable=True)
@@ -152,16 +152,18 @@ class Meal(db.Model):
         return {
             "id": int(self.id),
             "name": str(self.name),
-            "price": str(self.price),
+            "price": int(self.price),
             "calories": int(self.calories),
             "image_url": image_url,
             "has_image_url": has_image_url,
             "fallback_image_url": self.get_fallback_image_url(request.url_root),
-            "description": str(self.description) if self.description else None,
+            "description": str(self.description or "Ennek az ételnek vagy italnak nincs leírása, de biztosan nagyon finom."),
+            "has_description": bool(not self.description is None),
             "stars": int(self.stars),
             "type": self.type,
             "is_free": bool(str(self.price) == "0"),
             "is_error": False,
+            "display_price": f"{self.price} Ft"
         }
 
     @staticmethod

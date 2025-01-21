@@ -12,8 +12,7 @@ def import_data_from_csv(csv_file, db_session):
             product = Meal(
                 id=int(row['id']),
                 name=row['name'],
-                price=float(row['price']),
-                currency=row['currency'],
+                price=int(row['price']),
                 calories=int(row['calories']),
                 image_url=row['image_url'],
                 description=row['description'],
@@ -27,6 +26,8 @@ def import_data_from_csv(csv_file, db_session):
 def main():
     app = create_app()
     with app.app_context():
+        db.create_all()
+        
         import_data_from_csv(path.join(sys_path[0], "instance", "seed.csv"), db.session)
 
 if __name__ == "__main__":

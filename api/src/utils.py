@@ -13,7 +13,6 @@ def meals_to_dto(meals: list["Meal"], type_display_name: str = None, meal_type: 
             continue
         
         dto = meal.to_dto()
-        dto["display_price"] = f"{meal.price} Ft"
         meal_dtos.append(dto)
 
     dto = {
