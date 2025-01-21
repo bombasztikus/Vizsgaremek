@@ -2,6 +2,7 @@ from flask import jsonify, Blueprint
 from ..models import User
 from src.exceptions import *
 from flask_jwt_extended import jwt_required, current_user
+from src.utils import users_to_dto
 
 api = Blueprint("users", __name__, url_prefix="/users")
 
@@ -25,3 +26,12 @@ def get_user(user_id: int):
         return jsonify(user.to_dto())
     except ValueError:
         raise InvalidUserIDException()
+    
+@api.get("/")
+@jwt_required(optional=False)
+def get_users():
+    if not current_user or not current_user.is_employee:
+        raise UnauthorizedException("Nem rendelkezel a megfelelő jogosultságokkal a felhasználók lekérdezéséhez")
+    
+    items = User.get_all()
+    return jsonify(users_to_dto(items)), 200

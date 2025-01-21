@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING, List, TypeVar
 from src.exceptions import FlashedException, InvalidEnumValueException
 
 if TYPE_CHECKING:
-    from src.models import Meal, MealType
+    from src.models import Meal, MealType, User
 
 def meals_to_dto(meals: list["Meal"], type_display_name: str = None, meal_type: str = None) -> dict:
     meal_dtos = []
@@ -61,3 +61,18 @@ def meal_type_to_display_name(meal_type: "MealType") -> str:
     }
 
     return names[meal_type]
+
+def users_to_dto(users: list["User"]) -> dict:
+    user_dtos = []
+
+    for user in users:
+        if not user:
+            continue
+
+        dto = user.to_dto()
+        user_dtos.append(dto)
+
+    return {
+        "items": user_dtos,
+        "is_error": False
+    }

@@ -32,6 +32,11 @@ class User(db.Model):
             return None
     
     @staticmethod
+    def get_all() -> list[Self]:
+        users = db.session.query(User).all()
+        return users
+
+    @staticmethod
     def create(email: str, full_name: str, password: str, is_employee: bool = False) -> Self:
         try:
             email = validate_email(email)
