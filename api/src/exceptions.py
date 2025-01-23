@@ -82,3 +82,31 @@ class InvalidFullNameException(FlashedException):
 class InvalidPasswordException(FlashedException):
     def __init__(self, flash_message: str = "Érvénytelen jelszó", css_class: str = "danger", http_code: int = 400, error_code: str = "invalid_password", *args: object) -> None:
         super().__init__(flash_message, css_class, http_code, error_code, *args)
+
+class OrderCreationException(FlashedException):
+    def __init__(self, flash_message: str = "Ismeretlen hiba történt a rendelés létrehozása közben", css_class: str = "danger", http_code: int = 500, error_code: str = "order_creation_error", *args: object) -> None:
+        super().__init__(flash_message, css_class, http_code, error_code, *args)
+
+class InvalidAddressException(FlashedException):
+    def __init__(self, flash_message: str = "Érvénytelen cím", css_class: str = "danger", http_code: int = 422, error_code: str = "invalid_address", *args: object) -> None:
+        super().__init__(flash_message, css_class, http_code, error_code, *args)
+
+class OrderItemCreationException(FlashedException):
+    def __init__(self, flash_message: str = "Ismeretlen hiba történt a rendelés elemének létrehozása közben", css_class: str = "danger", http_code: int = 500, error_code: str = "order_item_creation_error", *args: object) -> None:
+        super().__init__(flash_message, css_class, http_code, error_code, *args)
+
+class InvalidQuantityException(FlashedException):
+    def __init__(self, flash_message: str = "Érvénytelen mennyiség", css_class: str = "danger", http_code: int = 422, error_code: str = "invalid_quantity", *args: object) -> None:
+        super().__init__(flash_message, css_class, http_code, error_code, *args)
+
+class OrderNotFoundException(NotFoundException):
+    def __init__(self, flash_message: str = "A rendelés nem található", error_code: str = "order_not_found", *args: object) -> None:
+        super().__init__(flash_message, error_code=error_code, *args)
+
+class MealNotFoundException(NotFoundException):
+    def __init__(self, flash_message: str = "A termék nem található", error_code: str = "meal_not_found", *args: object) -> None:
+        super().__init__(flash_message, error_code=error_code, *args)
+
+class InvalidOrderIDException(FlashedException):
+    def __init__(self, flash_message = "Érvénytelen rendelés azonosító", css_class = "danger", http_code = 422, error_code: str = "invalid_order_id", *args):
+        super().__init__(flash_message, css_class, http_code, error_code, *args)

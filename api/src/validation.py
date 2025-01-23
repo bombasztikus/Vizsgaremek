@@ -96,3 +96,28 @@ def validate_password(password: Optional[str]) -> str:
         raise InvalidPasswordException("Érvénytelen jelszó hossz")
     
     return password
+
+def validate_address(address: Optional[str]) -> str:
+    if not address:
+        raise InvalidAddressException("Hiányzó cím")
+    
+    address = str(address).strip()
+
+    if 255 < len(address) or len(address) < 1:
+        raise InvalidAddressException("Érvénytelen cím hossz")
+    
+    return address
+
+def validate_quantity(quantity: Optional[str]) -> int:
+    if not quantity:
+        raise InvalidQuantityException("Hiányzó mennyiség")
+    
+    try:
+        quantity = int(quantity)
+    except ValueError:
+        raise InvalidQuantityException()
+    
+    if quantity < 1 or 100 < quantity:
+        raise InvalidQuantityException("Érvénytelen mennyiség")
+    
+    return quantity

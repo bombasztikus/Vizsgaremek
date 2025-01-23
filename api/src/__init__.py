@@ -53,6 +53,9 @@ def create_app():
 
     from .controllers import meal_endpoints
     app.register_blueprint(meal_endpoints.api)
+
+    from .controllers import order_endpoints
+    app.register_blueprint(order_endpoints.api)
     
     app.register_error_handler(Exception, generic_exception_handler)
 

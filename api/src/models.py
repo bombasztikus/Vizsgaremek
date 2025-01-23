@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Optional, Self
 import enum
 from src.exceptions import *
@@ -8,12 +9,14 @@ from src.validation import *
 from . import db
 from argon2 import PasswordHasher
 from argon2 import exceptions as ph_exc
-from sqlalchemy import Column, Integer, String, Boolean, Enum as sqla_Enum
+from sqlalchemy import Column, Integer, String, Boolean, Enum as sqla_Enum, DateTime, ForeignKey
 import traceback
 
 ph = PasswordHasher()
 
 class User(db.Model):
+    __tablename__ = "Users"
+
     id = Column(Integer, primary_key=True, autoincrement=True)
     email = Column(String(255), unique=True, nullable=False)
     full_name = Column(String(255), unique=False, nullable=False)
@@ -111,6 +114,8 @@ class MealType(str, enum.Enum):
     DESSERT = "DESSERT"
 
 class Meal(db.Model):
+    __tablename__ = "Meals"
+
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(255), unique=False, nullable=False)
     price = Column(Integer, unique=False, nullable=False, default=0)
@@ -212,3 +217,155 @@ class Meal(db.Model):
         except:
             print(traceback.format_exc())
             return None
+        
+class Order(db.Model):
+    __tablename__ = "Orders"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    user_id = Column(Integer, db.ForeignKey(User.id), unique=False, nullable=False)
+    date_created = Column(DateTime, unique=False, nullable=False, default=datetime.now())
+    address = Column(String(255), unique=False, nullable=False)
+    is_completed = Column(Boolean, unique=False, nullable=False, default=False)
+
+    def __repr__(self):
+        return f"<Order {self.id} ({self.user_id})>"
+    
+    @staticmethod
+    def get_by_id_or_none(id: int) -> Self | None:
+        try:
+            return db.session.query(Order).filter_by(id=id).first()
+        except:
+            print(traceback.format_exc())
+            return None
+
+    @staticmethod
+    def get_all() -> list[Self]:
+        orders = db.session.query(Order).all()
+        return orders
+    
+    @staticmethod
+    def create(user_id: int, address: str) -> Self:
+        try:
+            user = User.get_by_id_or_none(user_id)
+            if not user:
+                raise UserNotFoundException()
+
+            address = validate_address(address)
+
+            new_order = Order(
+                user_id=user_id,
+                address=address,
+            )
+
+            db.session.add(new_order)
+            db.session.commit()
+            db.session.refresh(new_order)
+
+            return new_order
+        except exc.IntegrityError:
+            print(traceback.format_exc())
+            db.session.rollback()
+            raise OrderCreationException()
+        
+    def to_dto(self) -> dict:
+        return {
+            "id": int(self.id),
+            "user_id": int(self.user_id),
+            "date_created": self.date_created,
+            "address": str(self.address),
+            "is_completed": bool(self.is_completed),
+            "is_error": False,
+        }
+    
+    def mark_as_completed(self) -> Self:
+        self.is_completed = True
+        db.session.commit()
+        db.session.refresh(self)
+        return self
+    
+    def mark_as_uncompleted(self) -> Self:
+        self.is_completed = False
+        db.session.commit()
+        db.session.refresh(self)
+        return self
+    
+    def delete(self) -> None:
+        db.session.delete(self)
+        db.session.commit()
+
+    def add_item(self, meal_id: int, quantity: Optional[int] = 1) -> "OrderItem":
+        new_order_item = OrderItem.create(
+            order_id=self.id,
+            meal_id=meal_id,
+            quantity=quantity,
+        )
+
+        return new_order_item
+    
+    def get_items(self) -> list["OrderItem"]:
+        return OrderItem.get_by_order_id_or_none(self.id) or []
+
+class OrderItem(db.Model):
+    __tablename__ = "OrderItems"
+
+    order_id = Column(Integer, primary_key=True)
+    meal_id = Column(Integer, primary_key=True)
+    quantity = Column(Integer, unique=False, nullable=False, default=1)
+
+    __table_args__ = (
+        db.PrimaryKeyConstraint(
+            order_id,
+            meal_id,
+        ),
+    )
+
+    def __repr__(self):
+        return f"<OrderItem {self.order_id} ({self.meal_id})>"
+    
+    @staticmethod
+    def get_by_order_id_or_none(order_id: int) -> list[Self]:
+        try:
+            return db.session.query(OrderItem).filter_by(order_id=order_id).all()
+        except:
+            print(traceback.format_exc())
+            return []
+    
+    @staticmethod
+    def create(order_id: int, meal_id: int, quantity: Optional[int] = 1) -> Self:
+        if not order_id or not meal_id:
+            raise InvalidPayloadException("Hiányos JSON mezők")
+        
+        try:
+            order = Order.get_by_id_or_none(order_id)
+            if not order:
+                raise OrderNotFoundException()
+            
+            meal = Meal.get_by_id_or_none(meal_id)
+            if not meal:
+                raise MealNotFoundException()
+            
+            quantity = validate_quantity(quantity)
+
+            new_order_item = OrderItem(
+                order_id=order_id,
+                meal_id=meal_id,
+                quantity=quantity,
+            )
+
+            db.session.add(new_order_item)
+            db.session.commit()
+            db.session.refresh(new_order_item)
+
+            return new_order_item
+        except exc.IntegrityError:
+            print(traceback.format_exc())
+            db.session.rollback()
+            raise OrderItemCreationException()
+        
+    def to_dto(self) -> dict:
+        return {
+            "order_id": int(self.order_id),
+            "meal_id": int(self.meal_id),
+            "quantity": int(self.quantity),
+            "is_error": False,
+        }
