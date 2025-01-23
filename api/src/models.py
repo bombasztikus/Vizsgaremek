@@ -304,6 +304,10 @@ class Order(db.Model):
     
     def get_items(self) -> list["OrderItem"]:
         return OrderItem.get_by_order_id_or_none(self.id) or []
+    
+    def get_all_by_user_id(user_id: int) -> list[Self]:
+        orders = db.session.query(Order).filter_by(user_id=user_id).all()
+        return orders
 
 class OrderItem(db.Model):
     __tablename__ = "OrderItems"

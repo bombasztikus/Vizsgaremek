@@ -10,10 +10,10 @@ api = Blueprint("orders", __name__, url_prefix="/orders")
 @api.get("/")
 @jwt_required()
 def get_orders():
-    if not current_user or not current_user.is_employee:
+    if not current_user:
         raise UnauthorizedException("Nem rendelkezel a megfelelő jogosultságokkal az összes rendelés lekérdezéséhez")
     
-    orders = Order.get_all()
+    orders = Order.get_all() if current_user.is_employee else Order.get_all_by_user_id(current_user.id)
     return jsonify(orders_to_dto(orders)), 200
 
 @api.get("/<order_id>")
