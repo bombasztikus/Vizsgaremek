@@ -49,6 +49,6 @@ def get_individual_meal(meal_id: str):
     meal = Meal.get_by_id_or_none(id=meal_id)
 
     if not meal:
-        raise NotFoundException()
+        raise MealNotFoundException()
     
     return jsonify(meal.to_dto()), 200
