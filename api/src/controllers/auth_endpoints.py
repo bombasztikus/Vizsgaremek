@@ -23,7 +23,8 @@ def post_obtain_token():
 
     return jsonify({
         "access_token": str(access_token),
-        "expiry": int(access_token_expiry.total_seconds())
+        "expiry": int(access_token_expiry.total_seconds()),
+        "is_error": False
     }), 200
 
 @api.post("/register")
