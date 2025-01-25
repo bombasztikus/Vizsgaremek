@@ -11,6 +11,11 @@ def post_obtain_token():
     email = request.json.get("email")
     password = request.json.get("password")
 
+    if not email:
+        raise InvalidEmailException("Az email cím megadása kötelező")
+    elif not password:
+        raise InvalidPasswordException("A jelszó megadása kötelező")
+
     user = User.verify(email, password)
 
     access_token_expiry = timedelta(days=30)
@@ -26,6 +31,13 @@ def post_auth_register():
     email = request.json.get("email")
     password = request.json.get("password")
     full_name = request.json.get("full_name")
+
+    if not email:
+        raise InvalidEmailException("Az email cím megadása kötelező")
+    elif not password:
+        raise InvalidPasswordException("A jelszó megadása kötelező")
+    elif not full_name:
+        raise InvalidFullNameException("A teljes név megadása kötelező")
 
     if User.email_taken(email):
         raise EmailUnavailableException()
