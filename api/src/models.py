@@ -271,7 +271,7 @@ class Order(db.Model):
         return {
             "id": int(self.id),
             "user_id": int(self.user_id),
-            "date_created": self.date_created,
+            "date_created": f'{self.date_created.isoformat()}Z',
             "address": str(self.address),
             "is_completed": bool(self.is_completed),
             "is_error": False,
