@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Optional, Self
 import enum
 from src.exceptions import *
@@ -8,15 +9,19 @@ from src.validation import *
 from . import db
 from argon2 import PasswordHasher
 from argon2 import exceptions as ph_exc
+from sqlalchemy import Column, Integer, String, Boolean, Enum as sqla_Enum, DateTime, ForeignKey
+import traceback
 
 ph = PasswordHasher()
 
 class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    email = db.Column(db.String(255), unique=True, nullable=False)
-    full_name = db.Column(db.String(255), unique=False, nullable=False)
-    is_employee = db.Column(db.Boolean, unique=False, nullable=False, default=False)
-    password = db.Column(db.String(255), unique=False, nullable=False)
+    __tablename__ = "Users"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    email = Column(String(255), unique=True, nullable=False)
+    full_name = Column(String(255), unique=False, nullable=False)
+    is_employee = Column(Boolean, unique=False, nullable=False, default=False)
+    password = Column(String(255), unique=False, nullable=False)
 
     def __repr__(self):
         return f"<User {self.id} ({self.email})>"
@@ -26,10 +31,16 @@ class User(db.Model):
         try:
             return db.session.query(User).filter_by(id=id).first()
         except:
+            print(traceback.format_exc())
             return None
     
     @staticmethod
-    def create(email: str, full_name: str, password: str, is_employee: bool = True) -> Self:
+    def get_all() -> list[Self]:
+        users = db.session.query(User).all()
+        return users
+
+    @staticmethod
+    def create(email: str, full_name: str, password: str, is_employee: bool = False) -> Self:
         try:
             email = validate_email(email)
             
@@ -54,6 +65,7 @@ class User(db.Model):
 
             return new_user
         except exc.IntegrityError:
+            print(traceback.format_exc())
             db.session.rollback()
             raise UserCreationException()
     
@@ -75,6 +87,7 @@ class User(db.Model):
 
             return user
         except ph_exc.VerificationError:
+            print(traceback.format_exc())
             raise InvalidCredentialsException()
 
     def get_id(self):
@@ -98,17 +111,25 @@ class MealType(str, enum.Enum):
     BEVERAGE = "BEVERAGE"
     FOOD = "FOOD"
     MENU = "MENU"
+    DESSERT = "DESSERT"
 
 class Meal(db.Model):
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    name = db.Column(db.String(255), unique=False, nullable=False)
-    price = db.Column(db.String(255), unique=False, nullable=False, default="0")
-    currency = db.Column(db.String(3), unique=False, nullable=False, default="HUF")
-    calories = db.Column(db.Integer, unique=False, nullable=False, default=0)
-    image_url = db.Column(db.String(255), unique=False, nullable=True)
-    description = db.Column(db.String(255), unique=False, nullable=True)
-    stars = db.Column(db.Integer, unique=False, nullable=False, default=0)
-    type = db.Column(db.Enum(MealType), unique=False, nullable=False, default=MealType.FOOD)
+    __tablename__ = "Meals"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String(255), unique=False, nullable=False)
+    price = Column(Integer, unique=False, nullable=False, default=0)
+    calories = Column(Integer, unique=False, nullable=False, default=0)
+    image_url = Column(String(255), unique=False, nullable=True)
+    description = Column(String(255), unique=False, nullable=True)
+    stars = Column(Integer, unique=False, nullable=False, default=0)
+    type = Column(sqla_Enum(MealType), unique=False, nullable=False, default=MealType.FOOD)
+
+    __table_args__ = (
+        db.Index("idx_name", "name"),
+        db.Index("idx_description", "description")
+    )
+
 
     def __repr__(self):
         return f"<Meal {self.id} ({self.name})>"
@@ -122,34 +143,54 @@ class Meal(db.Model):
     def get_all_by_type(meal_type: MealType) -> list[Self]:
         meals = db.session.query(Meal).filter_by(type=meal_type).all()
         return meals
-        
+
+    def get_fallback_image_url(self, url_root: str) -> Optional[str]:
+        match self.type:
+            case MealType.BEVERAGE:
+                return url_root + "static/fallback/beverage.jpg"
+            case MealType.MENU:
+                return url_root + "static/fallback/menu.jpg"
+            case MealType.FOOD:
+                return url_root + "static/fallback/food.jpg"
+            case MealType.DESSERT:
+                return url_root + "static/fallback/dessert.jpg"
+            case _:
+                return url_root + "static/fallback/menu.jpg"
+
     def to_dto(self) -> dict:
         image_url = str(self.image_url) if self.image_url else None
+        has_image_url = bool(not self.image_url is None)
         if image_url and image_url.lower().startswith("/static/"):
             image_url = request.url_root + image_url.removeprefix("/")
-
+        elif not image_url:
+            image_url = self.get_fallback_image_url(request.url_root)
+            
         return {
             "id": int(self.id),
             "name": str(self.name),
-            "price": str(self.price),
-            "currency": str(self.currency),
+            "price": int(self.price),
             "calories": int(self.calories),
             "image_url": image_url,
-            "description": str(self.description) if self.description else None,
+            "has_image_url": has_image_url,
+            "fallback_image_url": self.get_fallback_image_url(request.url_root),
+            "description": str(self.description or "Ennek az ételnek vagy italnak nincs leírása, de biztosan nagyon finom."),
+            "has_description": bool(not self.description is None),
             "stars": int(self.stars),
             "type": self.type,
             "is_free": bool(str(self.price) == "0"),
             "is_error": False,
+            "display_price": f"{self.price} Ft"
         }
-        
+
     @staticmethod
-    def create(name: str, price: str = "0", currency: str = "HUF", calories: int = 0, image_url: Optional[str] = None, description: Optional[str] = None, stars: int = 0, type: Optional[MealType] = MealType.FOOD) -> Self:
+    def create(name: str, price: str = "0", calories: int = 0, image_url: Optional[str] = None, description: Optional[str] = None, stars: int = 0, type: Optional[MealType] = MealType.FOOD) -> Self:
+        new_meal = None
+
         try:
             if not is_valid_enum_value(type, MealType):
                 raise InvalidEnumValueException()
 
             price = validate_meal_price(price)
-            currency = validate_currency(currency)
             calories = validate_meal_calories(calories)
             image_url = validate_image_url(image_url)
             description = validate_description(description)
@@ -158,7 +199,6 @@ class Meal(db.Model):
             new_meal = Meal(
                 name=name,
                 price=price,
-                currency=currency,
                 calories=calories,
                 image_url=image_url,
                 description=description,
@@ -168,9 +208,179 @@ class Meal(db.Model):
 
             db.session.add(new_meal)
             db.session.commit()
-            db.session.refresh(new_meal)
 
+            db.session.refresh(new_meal)
             return new_meal
         except FlashedException as e:
+            print(traceback.format_exc())
             db.session.rollback()
             raise MealCreationException(e.flash_message, e.css_class, e.http_code)
+
+    @staticmethod
+    def get_by_id_or_none(id: int) -> Optional[Self]:
+        try:
+            return db.session.query(Meal).filter_by(id=id).first()
+        except:
+            print(traceback.format_exc())
+            return None
+        
+class Order(db.Model):
+    __tablename__ = "Orders"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    user_id = Column(Integer, db.ForeignKey(User.id), unique=False, nullable=False)
+    date_created = Column(DateTime, unique=False, nullable=False, default=datetime.now())
+    address = Column(String(255), unique=False, nullable=False)
+    is_completed = Column(Boolean, unique=False, nullable=False, default=False)
+
+    __table_args__ = (
+        db.Index("idx_user_id", "user_id"),
+        db.Index("idx_date_created", "date_created")
+    )
+
+    def __repr__(self):
+        return f"<Order {self.id} ({self.user_id})>"
+    
+    @staticmethod
+    def get_by_id_or_none(id: int) -> Self | None:
+        try:
+            return db.session.query(Order).filter_by(id=id).first()
+        except:
+            print(traceback.format_exc())
+            return None
+
+    @staticmethod
+    def get_all() -> list[Self]:
+        orders = db.session.query(Order).all()
+        return orders
+    
+    @staticmethod
+    def create(user_id: int, address: str) -> Self:
+        try:
+            user = User.get_by_id_or_none(user_id)
+            if not user:
+                raise UserNotFoundException()
+
+            address = validate_address(address)
+
+            new_order = Order(
+                user_id=user_id,
+                address=address,
+            )
+
+            db.session.add(new_order)
+            db.session.commit()
+            db.session.refresh(new_order)
+
+            return new_order
+        except exc.IntegrityError:
+            print(traceback.format_exc())
+            db.session.rollback()
+            raise OrderCreationException()
+        
+    def to_dto(self) -> dict:
+        return {
+            "id": int(self.id),
+            "user_id": int(self.user_id),
+            "date_created": f'{self.date_created.isoformat()}Z',
+            "address": str(self.address),
+            "is_completed": bool(self.is_completed),
+            "is_error": False,
+        }
+    
+    def mark_as_completed(self) -> Self:
+        self.is_completed = True
+        db.session.commit()
+        db.session.refresh(self)
+        return self
+    
+    def mark_as_uncompleted(self) -> Self:
+        self.is_completed = False
+        db.session.commit()
+        db.session.refresh(self)
+        return self
+    
+    def delete(self) -> None:
+        db.session.delete(self)
+        db.session.commit()
+
+    def add_item(self, meal_id: int, quantity: Optional[int] = 1) -> "OrderItem":
+        new_order_item = OrderItem.create(
+            order_id=self.id,
+            meal_id=meal_id,
+            quantity=quantity,
+        )
+
+        return new_order_item
+    
+    def get_items(self) -> list["OrderItem"]:
+        return OrderItem.get_by_order_id_or_none(self.id) or []
+    
+    def get_all_by_user_id(user_id: int) -> list[Self]:
+        orders = db.session.query(Order).filter_by(user_id=user_id).all()
+        return orders
+
+class OrderItem(db.Model):
+    __tablename__ = "OrderItems"
+
+    order_id = Column(Integer, primary_key=True)
+    meal_id = Column(Integer, primary_key=True)
+    quantity = Column(Integer, unique=False, nullable=False, default=1)
+
+    __table_args__ = (
+        db.PrimaryKeyConstraint(
+            order_id,
+            meal_id,
+        ),
+    )
+
+    def __repr__(self):
+        return f"<OrderItem {self.order_id} ({self.meal_id})>"
+    
+    @staticmethod
+    def get_by_order_id_or_none(order_id: int) -> list[Self]:
+        try:
+            return db.session.query(OrderItem).filter_by(order_id=order_id).all()
+        except:
+            print(traceback.format_exc())
+            return []
+    
+    @staticmethod
+    def create(order_id: int, meal_id: int, quantity: Optional[int] = 1) -> Self:
+        if not order_id or not meal_id:
+            raise InvalidPayloadException("Hiányos JSON mezők")
+        
+        try:
+            order = Order.get_by_id_or_none(order_id)
+            if not order:
+                raise OrderNotFoundException()
+            
+            meal = Meal.get_by_id_or_none(meal_id)
+            if not meal:
+                raise MealNotFoundException()
+            
+            quantity = validate_quantity(quantity)
+
+            new_order_item = OrderItem(
+                order_id=order_id,
+                meal_id=meal_id,
+                quantity=quantity,
+            )
+
+            db.session.add(new_order_item)
+            db.session.commit()
+            db.session.refresh(new_order_item)
+
+            return new_order_item
+        except exc.IntegrityError:
+            print(traceback.format_exc())
+            db.session.rollback()
+            raise OrderItemCreationException()
+        
+    def to_dto(self) -> dict:
+        return {
+            "order_id": int(self.order_id),
+            "meal_id": int(self.meal_id),
+            "quantity": int(self.quantity),
+            "is_error": False,
+        }
