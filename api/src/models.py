@@ -230,7 +230,7 @@ class Order(db.Model):
     __table_args__ = (
         db.Index(
             "idx_user_id", "user_id"
-        )
+        ),
     )
 
     def __repr__(self):
