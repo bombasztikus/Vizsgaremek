@@ -1,5 +1,5 @@
 from typing import Optional
-from flask import jsonify, Blueprint, request
+from flask import jsonify, Blueprint, request, Response
 from ..models import Order
 from src.exceptions import *
 from flask_jwt_extended import jwt_required, current_user
@@ -61,7 +61,9 @@ def post_order():
     items = request.json.get("items", [])
 
     if len(items) == 0:
-        raise InvalidPayloadException("A rendelésnek tartalmaznia kell elemeket")
+        raise InvalidPayloadException()
+    elif not address:
+        raise InvalidAddressException()
 
     created_order: Order = Order.create(
         user_id=current_user.id,
@@ -70,9 +72,17 @@ def post_order():
 
     created_items = []
     for item in items:
+        meal_id = item.get("id")
+        quantity = item.get("quantity")
+
+        if not meal_id:
+            raise InvalidMealIDException()
+        elif not quantity:
+            raise InvalidQuantityException()
+        
         created_items.append(created_order.add_item(
-            meal_id=item.get("id"),
-            quantity=item.get("quantity")
+            meal_id=meal_id,
+            quantity=quantity
         ))
 
     return jsonify(order_to_dto_with_items(
@@ -89,18 +99,38 @@ def put_order(order_id: int):
     if not current_user or not current_user.is_employee:
         raise UnauthorizedException("Nem rendelkezel a megfelelő jogosultságokkal a rendelés utólagos módosításához")
     
-    return jsonify({}), 200
+    try:
+        order = Order.get_by_id_or_none(int(order_id))
+        if not order:    
+            raise OrderNotFoundException()
+
+        address = request.json.get("address", None)
+        if address:
+            order = order.set_address(address)
+    except ValueError:
+        raise InvalidOrderIDException()
+    
+    return jsonify(order.to_dto()), 200
 
 @api.delete("/<order_id>")
 @jwt_required()
 def delete_order(order_id: int):
     if not order_id:
         raise InvalidOrderIDException()
-
+    
     if not current_user or not current_user.is_employee:
         raise UnauthorizedException("Nem rendelkezel a megfelelő jogosultságokkal a rendelés törléséhez")
     
-    return jsonify({}), 200
+    try:
+        order = Order.get_by_id_or_none(int(order_id))
+        if not order:    
+            raise OrderNotFoundException()
+        
+        order.delete()
+    except ValueError:
+        raise InvalidOrderIDException()
+    
+    return Response(status=204)
 
 @api.put("/<order_id>/items/<item_id>")
 @jwt_required()
@@ -115,4 +145,8 @@ def update_order_item(order_id: int, item_id: int):
 @api.delete("/<order_id>/items/<item_id>")
 @jwt_required()
 def delete_order_item(order_id: int, item_id: int):
+    if not order_id:
+        raise InvalidOrderIDException()
+    elif not item_id:
+        raise InvalidOrderItemIDException()
     return jsonify({}), 200

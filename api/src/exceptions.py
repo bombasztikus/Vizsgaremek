@@ -118,3 +118,7 @@ class OrderItemNotFoundException(NotFoundException):
 class InvalidOrderItemIDException(FlashedException):
     def __init__(self, flash_message = "Érvénytelen rendelés elem azonosító", css_class = "danger", http_code = 422, error_code: str = "invalid_order_item_id", *args):
         super().__init__(flash_message, css_class, http_code, error_code, *args)
+
+class InvalidMealIDException(FlashedException):
+    def __init__(self, flash_message = "Érvénytelen termék azonosító", css_class = "danger", http_code = 422, error_code: str = "invalid_meal_id", *args):
+        super().__init__(flash_message, css_class, http_code, error_code, *args)

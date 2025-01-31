@@ -300,6 +300,10 @@ class Order(db.Model):
         db.session.commit()
 
     def add_item(self, meal_id: int, quantity: Optional[int] = 1) -> "OrderItem":
+        meal = Meal.get_by_id_or_none(meal_id)
+        if not meal:
+            raise MealNotFoundException()
+        
         new_order_item = OrderItem.create(
             order_id=self.id,
             meal_id=meal_id,
@@ -314,6 +318,15 @@ class Order(db.Model):
     def get_all_by_user_id(user_id: int) -> list[Self]:
         orders = db.session.query(Order).filter_by(user_id=user_id).all()
         return orders
+    
+    def set_address(self, address: Optional[str]) -> Self:
+        self.address = validate_address(
+            address=address
+        )
+
+        db.session.commit()
+        db.session.refresh(self)
+        return self
 
 class OrderItem(db.Model):
     __tablename__ = "OrderItems"
