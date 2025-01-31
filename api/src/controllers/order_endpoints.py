@@ -83,9 +83,36 @@ def post_order():
 @api.put("/<order_id>")
 @jwt_required()
 def put_order(order_id: int):
+    if not order_id:
+        raise InvalidOrderIDException()
+    
+    if not current_user or not current_user.is_employee:
+        raise UnauthorizedException("Nem rendelkezel a megfelelő jogosultságokkal a rendelés utólagos módosításához")
+    
     return jsonify({}), 200
 
 @api.delete("/<order_id>")
 @jwt_required()
 def delete_order(order_id: int):
+    if not order_id:
+        raise InvalidOrderIDException()
+
+    if not current_user or not current_user.is_employee:
+        raise UnauthorizedException("Nem rendelkezel a megfelelő jogosultságokkal a rendelés törléséhez")
+    
+    return jsonify({}), 200
+
+@api.put("/<order_id>/items/<item_id>")
+@jwt_required()
+def update_order_item(order_id: int, item_id: int):
+    if not order_id:
+        raise InvalidOrderIDException()
+    elif not item_id:
+        raise InvalidOrderItemIDException()
+    
+    return jsonify({}), 200
+
+@api.delete("/<order_id>/items/<item_id>")
+@jwt_required()
+def delete_order_item(order_id: int, item_id: int):
     return jsonify({}), 200
