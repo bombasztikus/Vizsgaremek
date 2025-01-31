@@ -227,6 +227,12 @@ class Order(db.Model):
     address = Column(String(255), unique=False, nullable=False)
     is_completed = Column(Boolean, unique=False, nullable=False, default=False)
 
+    __table_args__ = (
+        db.Index(
+            "idx_user_id", "user_id"
+        )
+    )
+
     def __repr__(self):
         return f"<Order {self.id} ({self.user_id})>"
     

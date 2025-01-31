@@ -11,7 +11,6 @@ def __map_http_exception_to_flashed_exception(e: HTTPException) -> FlashedExcept
 
     if resp.status_code == 404:
         return NotFoundException()
-    # elif resp.status_code
 
     return FlashedException(
         flash_message=e.name,
