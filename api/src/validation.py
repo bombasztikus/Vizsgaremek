@@ -121,3 +121,18 @@ def validate_quantity(quantity: Optional[str]) -> int:
         raise InvalidQuantityException("Érvénytelen mennyiség")
     
     return quantity
+
+def validate_dto_or_exception(dto: dict, fields: dict) -> dict:
+    """
+    Leellenőrzi, hogy a dto tartalmazza-e az összes kötelező mezőt.
+    fields formátuma:
+    {
+        "field_name": ExceptionType,
+    }
+    """
+
+    for field, exception in fields.items():
+        if not field in dto:
+            raise exception
+        
+    return dto

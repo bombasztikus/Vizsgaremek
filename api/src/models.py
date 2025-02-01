@@ -75,7 +75,7 @@ class User(db.Model):
             raise InvalidPayloadException("Hiányos JSON mezők")
 
         try:
-            email = str(email).strip().lower()
+            email = validate_email(email)
             user = db.session.query(User).filter_by(email=email).first()
 
             if not user:
