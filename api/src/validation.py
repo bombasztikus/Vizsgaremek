@@ -92,7 +92,7 @@ def validate_password(password: Optional[str]) -> str:
     
     password = str(password)
 
-    if 255 < len(password) or len(password) < 1:
+    if 255 < len(password) or len(password) < 6:
         raise InvalidPasswordException("Érvénytelen jelszó hossz")
     
     return password
