@@ -243,6 +243,16 @@ class Order(db.Model):
         except:
             print(traceback.format_exc())
             return None
+        
+    @staticmethod
+    def get_by_id_or_exception(id: int) -> Self:
+        try:
+            result = db.session.query(Order).filter_by(id=id).first()
+            if not result:
+                raise OrderNotFoundException()
+        except:
+            print(traceback.format_exc())
+            raise OrderNotFoundException()
 
     @staticmethod
     def get_all() -> list[Self]:
@@ -354,6 +364,24 @@ class OrderItem(db.Model):
             return []
     
     @staticmethod
+    def get_by_id_or_none(order_id: int, meal_id: int) -> Self | None:
+        try:
+            return db.session.query(OrderItem).filter_by(order_id=order_id, meal_id=meal_id).first()
+        except:
+            print(traceback.format_exc())
+            return []
+        
+    @staticmethod
+    def get_by_id_or_exception(order_id: int, meal_id: int) -> Self:
+        try:
+            result = db.session.query(OrderItem).filter_by(order_id=order_id, meal_id=meal_id).first()
+            if not result:
+                raise OrderItemNotFoundException()
+        except:
+            print(traceback.format_exc())
+            raise OrderItemNotFoundException()
+    
+    @staticmethod
     def create(order_id: int, meal_id: int, quantity: Optional[int] = 1) -> Self:
         if not order_id or not meal_id:
             raise InvalidPayloadException("Hiányos JSON mezők")
@@ -392,3 +420,15 @@ class OrderItem(db.Model):
             "quantity": int(self.quantity),
             "is_error": False,
         }
+    
+    def delete(self) -> None:
+        db.session.delete(self)
+        db.session.commit()
+
+    def set_quantity(self, quantity: Optional[int]) -> Self:
+        quantity = validate_quantity(quantity)
+        self.quantity = quantity
+
+        db.session.commit()
+        db.session.refresh(self)
+        return self
