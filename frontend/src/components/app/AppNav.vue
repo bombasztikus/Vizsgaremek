@@ -2,6 +2,9 @@
     <nav class="navbar navbar-dark bg-dark">
         <form class="container-fluid justify-content-start">
             <RouterLink :to="{ name: 'home' }" class="btn btn-outline-primary me-2">Főoldal</RouterLink>
+            <RouterLink :to="{ name: 'login' }" class="btn btn-outline-primary me-2">Bejelentkezés</RouterLink>
+            <RouterLink :to="{ name: 'register' }" class="btn btn-outline-primary me-2">Regisztráció</RouterLink>
+
             <!-- <a href="{{ url_for('routes.rendeles') }}" class="btn btn-sm btn-outline-danger">Rendelés</a> -->
             <!-- {% if current_user.is_authenticated %}
             <li class="nav-item dropdown ms-aut">
