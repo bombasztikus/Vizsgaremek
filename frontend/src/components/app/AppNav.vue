@@ -1,26 +1,15 @@
 <template>
-    <nav class="navbar navbar-dark bg-dark">
-        <form class="container-fluid justify-content-start">
-            <RouterLink :to="{ name: 'home' }" class="btn btn-outline-primary me-2">Főoldal</RouterLink>
-            <RouterLink :to="{ name: 'login' }" class="btn btn-outline-primary me-2">Bejelentkezés</RouterLink>
-            <RouterLink :to="{ name: 'register' }" class="btn btn-outline-primary me-2">Regisztráció</RouterLink>
-
-            <!-- <a href="{{ url_for('routes.rendeles') }}" class="btn btn-sm btn-outline-danger">Rendelés</a> -->
-            <!-- {% if current_user.is_authenticated %}
-            <li class="nav-item dropdown ms-aut">
-                <a class="btn btn-sm btn-outline-danger" href="#" role="button" data-bs-toggle="dropdown"
-                    aria-expanded="false">
-                    Profil
-                </a>
-                <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="{{ url_for('routes.kosar') }}">Kosár</a></li>
-                    <li><a class="dropdown-item" href="{{ url_for('routes.out') }}">Kijelentkezés</a></li>
-                </ul>
-            </li>
-            {% else %}
-            <a href="{{ url_for('routes.reg') }}" class="btn btn-sm btn-outline-danger">Regisztráció</a>
-            <a href="{{ url_for('routes.log') }}" class="btn btn-sm btn-outline-danger">Bejelentkezés</a>
-            {% endif %} -->
-        </form>
+    <nav class="navbar navbar-expand-lg bg-black">
+        <div class="container-fluid">
+            <button class="navbar-toggler border-white ms-auto" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                <i class="bi bi-list text-white p-2 fs-3"></i>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+            <div class="navbar-nav gap-3 ms-auto fw-semibold">
+                <RouterLink :to="{ name: 'home' }" class="nav-link text-white">Főoldal</RouterLink>
+                <RouterLink :to="{ name: 'register' }" class="btn btn-light rounded-pill fw-bold text-uppercase">RENDELÉS</RouterLink>
+            </div>
+            </div>
+        </div>
     </nav>
 </template>
