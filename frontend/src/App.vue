@@ -7,3 +7,16 @@ import AppNav from './components/app/AppNav.vue';
     <AppNav />
     <RouterView />
 </template>
+
+<style>
+body,
+html,
+#app {
+  min-height: 100vh;
+}
+
+#app {
+    display: flex;
+    flex-direction: column;
+}
+</style>
