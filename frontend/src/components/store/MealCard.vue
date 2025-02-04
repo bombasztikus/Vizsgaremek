@@ -5,10 +5,10 @@ defineProps<{
     meal: Meal;
 }>();
 </script>
- 
+
 <template>
     <article class="card h-100 rounded-4 overflow-hidden" style="min-height: 400;">
-        <img :src="meal.has_image_url ? meal.image_url : meal.fallback_image_url" class="card-img-top h-10 p-2" :alt="`${meal.name} illusztrációja`">
+        <img :src="meal.has_image_url ? meal.image_url : meal.fallback_image_url" class="card-img-top h-10 p-2" :alt="`${meal.name} illusztrációja`" :class="[$style.grow]">
         <div class="card-body d-flex flex-column">
             <h5 class="card-title fw-bolder fs-4 text-truncate lh-base">{{ meal.name }}</h5>
             <p class="card-subtitle">
@@ -30,3 +30,13 @@ defineProps<{
         </div>
     </article>
 </template>
+
+<style module>
+.grow {
+    transition: all .1s;
+}
+
+article:hover > .grow {
+    transform: scale(1.15) rotate(3deg);
+}
+</style>
