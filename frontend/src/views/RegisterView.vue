@@ -41,7 +41,7 @@ const submit = () => {
                     <div class="mb-3">
                         <label for="fullNameHelp" class="form-label text-uppercase fw-bold">Teljes név</label>
                         <input type="text" class="form-control border-dark rounded-3" id="inputEmail" aria-describedby="fullNameHelp" v-model="fullName" placeholder="Példa Pista">
-                        <div id="fullNameHelp" class="form-text">Futáraink számára szükséges</div>
+                        <div id="fullNameHelp" class="form-text">A rendelések beazonosításához szükséges</div>
                     </div>
                     <div class="mb-3">
                         <label for="inputEmail" class="form-label text-uppercase fw-bold">Email cím</label>
