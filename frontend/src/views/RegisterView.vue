@@ -30,7 +30,7 @@ const submit = () => {
 <template>
     <div class="justify-content-center align-items-center d-flex flex-grow-1" :class="[$style.bg]">
         <div class="card rounded-4 overflow-hidden shadow-lg" style="min-width: 400px;">
-                <div class="card-body bg-black border-5 border border-white border-bottom-0 rounded-4 text-white d-flex flex-column justify-content-center align-items-center gap-3">
+                <div class="card-body bg-black bg-gradient border-5 border border-white border-bottom-0 rounded-4 text-white d-flex flex-column justify-content-center align-items-center gap-3">
                     <i class="bi bi-patch-check display-4"></i>
                     <h1 class="display-6" :class="[$style.title]">Regisztráció</h1>
                 </div>
