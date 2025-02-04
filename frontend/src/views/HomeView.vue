@@ -8,7 +8,7 @@ const meals = useMeals();
 
 <template>
     <main class="container-lg">
-        <section class="row flex-lg-row-reverse align-items-center g-5 py-2 px-3 bg-dark text-white rounded-bottom-5">
+        <section class="row flex-lg-row-reverse align-items-center g-5 py-4 px-5 bg-black bg-gradient text-white rounded-5 mt-md-4 mb-2 shadow-lg">
             <div class="col-10 col-sm-8 col-lg-6 mx-auto d-none d-lg-flex">
                 <img :src="HeroImage" class="d-block mx-lg-auto img-fluid" alt="" width="500" height="500">
             </div>
