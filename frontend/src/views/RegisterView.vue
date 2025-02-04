@@ -34,7 +34,7 @@ const submit = () => {
                     <i class="bi bi-patch-check display-4"></i>
                     <h1 class="display-6" :class="[$style.title]">Regisztráció</h1>
                 </div>
-                <form class="card-body px-4 pb-4 pt-3" @submit.prevent="submit">
+                <form class="card-body p-3" @submit.prevent="submit">
                     <div class="alert" :class="[errorClass]" role="alert" v-if="error">
                         {{ error.error }}
                     </div>
