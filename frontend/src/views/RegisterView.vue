@@ -2,8 +2,11 @@
 import { useRegistration } from '@/composables/useRegistration';
 import type { APIError } from '@/lib/models';
 import router from '@/router';
+import { useTitle } from '@vueuse/core';
 import { computed, ref, watch, watchEffect } from 'vue';
 import { RouterLink } from 'vue-router';
+
+useTitle("Regisztráció");
 
 const email = ref<string>("");
 const password = ref<string>("");
@@ -29,9 +32,9 @@ const submit = () => {
 
 <template>
     <div class="justify-content-center align-items-center d-flex flex-grow-1" :class="[$style.bg]">
-        <div class="card rounded-4 overflow-hidden shadow-lg" style="min-width: 400px;">
-                <div class="card-body bg-black bg-gradient border-5 border border-white border-bottom-0 rounded-4 text-white d-flex flex-column justify-content-center align-items-center gap-3">
-                    <i class="bi bi-patch-check display-4"></i>
+        <div class="card rounded-4 overflow-hidden shadow-lg border-0" style="min-width: 400px;">
+                <div class="card-body bg-black bg-gradient text-white d-flex flex-column justify-content-center align-items-center gap-2">
+                    <i class="bi bi-emoji-heart-eyes display-4"></i>
                     <h1 class="display-6" :class="[$style.title]">Regisztráció</h1>
                 </div>
                 <form class="card-body p-3" @submit.prevent="submit">
