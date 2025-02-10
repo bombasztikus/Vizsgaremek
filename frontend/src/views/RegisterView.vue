@@ -2,17 +2,20 @@
 import AppAlert from '@/components/app/AppAlert.vue';
 import { useRegistration } from '@/composables/useRegistration';
 import type { APIError } from '@/lib/models';
-import { useTitle } from '@vueuse/core';
-import { ref } from 'vue';
+import { useLocalStorage, useTitle } from '@vueuse/core';
+import { onBeforeMount, ref, watch } from 'vue';
 import { RouterLink, useRouter } from 'vue-router';
 
 useTitle("Regisztráció");
+
+const session = useLocalStorage<string | null>("session", null);
 const router = useRouter();
 
 const email = ref<string>("");
 const password = ref<string>("");
 const fullName = ref<string>("");
 const error = ref<APIError | null>(null);
+
 const reset = () => {
     email.value = "";
     password.value = "";
@@ -34,6 +37,16 @@ const submit = async () => {
         console.error(e);
     }
 };
+
+const onSessionPreset = () => {
+    if (session.value) {
+        console.warn("Already logged in, redirecting...")
+        router.push({ name: "home" });
+    }
+}
+
+watch([session], onSessionPreset);
+onBeforeMount(onSessionPreset);
 </script>
 
 <template>

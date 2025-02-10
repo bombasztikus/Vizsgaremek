@@ -2,12 +2,14 @@
 import AppAlert from '@/components/app/AppAlert.vue';
 import { useLogin } from '@/composables/useLogin';
 import type { APIError } from '@/lib/models';
-import router from '@/router';
-import { useTitle } from '@vueuse/core';
-import { ref } from 'vue';
-import { RouterLink } from 'vue-router';
+import { useLocalStorage, useTitle } from '@vueuse/core';
+import { onBeforeMount, ref, watch } from 'vue';
+import { RouterLink, useRouter } from 'vue-router';
 
 useTitle("Bejelentkezés");
+
+const session = useLocalStorage<string | null>("session", null);
+const router = useRouter();
 
 const email = ref<string>("");
 const password = ref<string>("");
@@ -27,12 +29,22 @@ const submit = async () => {
             error.value = response;
         } else {
             reset();
-            router.push({ name: "home" });
+            session.value = response.access_token;
         }
     } catch (e) {
         console.error(e);
     }
 };
+
+const onSessionPreset = () => {
+    if (session.value) {
+        console.warn("Already logged in, redirecting...")
+        router.push({ name: "home" });
+    }
+}
+
+watch([session], onSessionPreset);
+onBeforeMount(onSessionPreset);
 </script>
 
 <template>
