@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { useSession } from '@/composables/useSession';
+import { useCartStore } from '@/stores/cart';
 import { useRouter } from 'vue-router';
 
 const { clearSession, isAuthenticated } = useSession();
 const router = useRouter();
+const { itemCount } = useCartStore();
 
 const signOut = () => {
     clearSession();
@@ -21,11 +23,12 @@ const signOut = () => {
                 <i class="bi bi-list text-white p-2 fs-3"></i>
             </button>
             <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-            <div class="navbar-nav gap-3 ms-auto fw-semibold">
-                <RouterLink :to="{ name: 'home' }" class="nav-link text-white">Főoldal</RouterLink>
-                <button @click="signOut" class="btn btn-outline-light rounded-pill fw-bold text-uppercase" v-if="isAuthenticated">KIJELENTKEZÉS</button>
-                <RouterLink :to="{ name: 'register' }" class="btn btn-light rounded-pill fw-bold text-uppercase" v-else>REGISZTRÁCIÓ</RouterLink>
-            </div>
+                <div class="navbar-nav gap-3 ms-auto fw-semibold">
+                    <RouterLink :to="{ name: 'home' }" class="nav-link text-white">FŐOLDAL</RouterLink>
+                    <button @click="signOut" class="nav-link text-white" v-if="isAuthenticated">KIJELENTKEZÉS</button>
+                    <RouterLink :to="{ name: 'register' }" class="nav-link text-white" v-else>REGISZTRÁCIÓ</RouterLink>
+                    <RouterLink :to="{ name: 'register' }" class="btn btn-light rounded-pill fw-bold text-uppercase"><i class="bi bi-cart2 me-2"></i>{{ itemCount }}</RouterLink>
+                </div>
             </div>
         </div>
     </nav>
