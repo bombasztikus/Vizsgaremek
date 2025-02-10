@@ -23,7 +23,7 @@ const signOut = () => {
             <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
             <div class="navbar-nav gap-3 ms-auto fw-semibold">
                 <RouterLink :to="{ name: 'home' }" class="nav-link text-white">Főoldal</RouterLink>
-                <button @click="signOut" class="btn btn-danger rounded-pill fw-bold text-uppercase" v-if="session">KIJELENTKEZÉS</button>
+                <button @click="signOut" class="btn btn-outline-light rounded-pill fw-bold text-uppercase" v-if="session">KIJELENTKEZÉS</button>
                 <RouterLink :to="{ name: 'register' }" class="btn btn-light rounded-pill fw-bold text-uppercase" v-else>REGISZTRÁCIÓ</RouterLink>
             </div>
             </div>
