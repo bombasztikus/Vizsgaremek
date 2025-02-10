@@ -1,46 +1,52 @@
 <script setup lang="ts">
+import AppAlert from '@/components/app/AppAlert.vue';
 import { useRegistration } from '@/composables/useRegistration';
 import type { APIError } from '@/lib/models';
-import router from '@/router';
 import { useTitle } from '@vueuse/core';
-import { computed, ref, watch, watchEffect } from 'vue';
-import { RouterLink } from 'vue-router';
+import { computed, ref } from 'vue';
+import { RouterLink, useRouter } from 'vue-router';
 
 useTitle("Regisztráció");
+const router = useRouter();
 
 const email = ref<string>("");
 const password = ref<string>("");
 const fullName = ref<string>("");
 const error = ref<APIError | null>(null);
-const errorClass = computed(() => error.value?.css_class ? `alert-${error.value.css_class}` : "");
+const errorClass = computed(() => error.value?.css_class ? `alert-${error.value.css_class}` : "alert-info");
 
-const submit = () => {
-    const response = useRegistration(email.value, password.value, fullName.value);
+const reset = () => {
+    email.value = "";
+    password.value = "";
+    fullName.value = "";
+    error.value = null;
+}
 
-    watchEffect(() => {
-        if (!response.value) return;
+const submit = async () => {
+    try {
+        const response = await useRegistration(email.value, password.value, fullName.value);
 
-        if ((response.value as APIError).is_error) {
-            error.value = response.value as APIError;
+        if (response?.is_error) {
+            error.value = response;
         } else {
-            error.value = null;
-            // router.push({ name: 'login' }); // Uncomment when ready
+            reset();
+            router.push({ name: "login" });
         }
-    });
+    } catch (e) {
+        console.error(e);
+    }
 };
 </script>
 
 <template>
     <div class="justify-content-center align-items-center d-flex flex-grow-1" :class="[$style.bg]">
         <div class="card rounded-4 overflow-hidden shadow-lg border-0" style="min-width: 400px;">
-                <div class="card-body bg-black bg-gradient text-white d-flex flex-column justify-content-center align-items-center gap-2">
-                    <i class="bi bi-emoji-heart-eyes display-4"></i>
-                    <h1 class="display-6" :class="[$style.title]">Regisztráció</h1>
-                </div>
-                <form class="card-body p-3" @submit.prevent="submit">
-                    <div class="alert" :class="[errorClass]" role="alert" v-if="error">
-                        {{ error.error }}
-                    </div>
+            <div class="card-body bg-black bg-gradient text-white d-flex flex-column justify-content-center align-items-center gap-2">
+                <i class="bi bi-emoji-heart-eyes display-4"></i>
+                <h1 class="display-6" :class="[$style.title]">Regisztráció</h1>
+            </div>
+            <form class="card-body p-3" @submit.prevent="submit">
+                    <AppAlert :text="error.error" :type="error?.css_class" v-if="error" />
                     <div class="mb-3">
                         <label for="fullNameHelp" class="form-label text-uppercase fw-bold">Teljes név</label>
                         <input type="text" class="form-control border-dark rounded-3" id="inputEmail" aria-describedby="fullNameHelp" v-model="fullName" placeholder="Példa Pista">

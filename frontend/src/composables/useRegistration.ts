@@ -1,14 +1,22 @@
 import { API_BASE, POST_REGISTER } from "@/lib/endpoints";
 import type { APIError, User } from "@/lib/models";
 import { useFetch } from "@vueuse/core";
-import { computed } from "vue";
+import { toValue } from "vue";
 
-export function useRegistration(email: string, password: string, fullName: string) {
-    const { data, error } = useFetch<User | APIError>(API_BASE + POST_REGISTER, {
+export async function useRegistration(email: string, password: string, fullName: string) {
+    const { data, execute } = useFetch<User | APIError>(API_BASE + POST_REGISTER, {
+        immediate: false,
         afterFetch(ctx) {
-            if (!ctx.response.ok) {
-                console.error((ctx.data as APIError).error);
+            return ctx;
+        },
+        onFetchError(ctx) {
+            if (ctx.response) {
+                return ctx.response.json().then((errorData: APIError) => {
+                    data.value = errorData;
+                    return ctx;
+                });
             }
+
             return ctx;
         },
     }).post({
@@ -17,5 +25,7 @@ export function useRegistration(email: string, password: string, fullName: strin
         full_name: fullName
     }).json();
 
-    return computed(() => data.value ?? error.value);
+    await execute();
+
+    return toValue(data);
 }

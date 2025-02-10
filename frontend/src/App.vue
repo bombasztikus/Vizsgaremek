@@ -19,4 +19,9 @@ html,
     display: flex;
     flex-direction: column;
 }
+
+.alert {
+    border: none;
+    padding: .7rem;
+}
 </style>
