@@ -6,7 +6,7 @@ from src.utils import users_to_dto
 
 api = Blueprint("users", __name__, url_prefix="/users")
 
-@api.get("/<user_id>")
+@api.get("/<int:user_id>")
 @jwt_required(optional=True)
 def get_user(user_id: int):
     if not user_id:
@@ -35,3 +35,18 @@ def get_users():
     
     items = User.get_all()
     return jsonify(users_to_dto(items)), 200
+
+@api.get("/me")
+@jwt_required()
+def get_me():
+    try:
+        if not current_user:
+            raise UnauthorizedException()
+
+        user = User.get_by_id_or_none(current_user.id)
+        if not user:
+            raise UserNotFoundException()
+        
+        return jsonify(user.to_dto()), 200
+    except ValueError:
+        raise InvalidUserIDException()
