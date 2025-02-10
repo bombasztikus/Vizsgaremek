@@ -46,7 +46,7 @@ const onSessionPreset = () => {
 }
 
 watch([session], onSessionPreset);
-onBeforeMount(onSessionPreset);
+// onBeforeMount(onSessionPreset);
 </script>
 
 <template>

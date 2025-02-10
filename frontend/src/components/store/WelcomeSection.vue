@@ -4,7 +4,7 @@ import { useUser } from '@/composables/useUser';
 import { computed } from 'vue';
 
 const user = await useUser();
-const greeting = computed(() => user ? `Szia ${user.full_name}!` : "Rendelj kényelmesen");
+const greeting = computed(() => user?.value ? `Szia ${user.value?.full_name}!` : "Rendelj kényelmesen");
 </script>
 
 <template>

@@ -1,12 +1,13 @@
-import { API_BASE, GET_ME, GET_USER } from "@/lib/endpoints";
+import { API_BASE, GET_ME } from "@/lib/endpoints";
 import type { APIError, User } from "@/lib/models";
-import { useFetch, useLocalStorage } from "@vueuse/core";
-import { toValue } from "vue";
+import { useFetch } from "@vueuse/core";
+import { computed, toValue } from "vue";
+import { useSession } from "./useSession";
 
-export async function useUser(): Promise<User | null> {
-    const session = useLocalStorage<string | null>("session", null);
+export async function useUser() {
+    const { session, isAuthenticated } = useSession();
 
-    if (!session.value) {
+    if (!isAuthenticated.value) {
         return null;
     }
 
@@ -30,5 +31,11 @@ export async function useUser(): Promise<User | null> {
 
     await execute();
 
-    return toValue(data);
+    return computed(() => {
+        if (isAuthenticated.value) {
+            return toValue(data);
+        }
+
+        return null;
+    });
 }

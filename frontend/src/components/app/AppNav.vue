@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import { useLocalStorage } from '@vueuse/core';
+import { useSession } from '@/composables/useSession';
 import { useRouter } from 'vue-router';
 
-const session = useLocalStorage<string | null>("session", null);
+const { clearSession, isAuthenticated } = useSession();
 const router = useRouter();
 
 const signOut = () => {
-    session.value = null;
-    router.push({ name: "login" });
-};
+    clearSession();
+    router.push({ name: 'home' });
+}
 </script>
 
 <template>
@@ -23,7 +23,7 @@ const signOut = () => {
             <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
             <div class="navbar-nav gap-3 ms-auto fw-semibold">
                 <RouterLink :to="{ name: 'home' }" class="nav-link text-white">Főoldal</RouterLink>
-                <button @click="signOut" class="btn btn-outline-light rounded-pill fw-bold text-uppercase" v-if="session">KIJELENTKEZÉS</button>
+                <button @click="signOut" class="btn btn-outline-light rounded-pill fw-bold text-uppercase" v-if="isAuthenticated">KIJELENTKEZÉS</button>
                 <RouterLink :to="{ name: 'register' }" class="btn btn-light rounded-pill fw-bold text-uppercase" v-else>REGISZTRÁCIÓ</RouterLink>
             </div>
             </div>
