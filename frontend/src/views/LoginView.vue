@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { useRegistration } from '@/composables/useRegistration';
+import AppAlert from '@/components/app/AppAlert.vue';
+import { useLogin } from '@/composables/useLogin';
 import type { APIError } from '@/lib/models';
 import router from '@/router';
 import { useTitle } from '@vueuse/core';
-import { computed, ref, watch, watchEffect } from 'vue';
+import { ref } from 'vue';
 import { RouterLink } from 'vue-router';
 
 useTitle("Bejelentkezés");
@@ -11,21 +12,26 @@ useTitle("Bejelentkezés");
 const email = ref<string>("");
 const password = ref<string>("");
 const error = ref<APIError | null>(null);
-const errorClass = computed(() => error.value?.css_class ? `alert-${error.value.css_class}` : "");
 
-const submit = () => {
-    // const response = useRegistration(email.value, password.value, fullName.value);
+const reset = () => {
+    email.value = "";
+    password.value = "";
+    error.value = null;
+}
 
-    // watchEffect(() => {
-    //     if (!response.value) return;
+const submit = async () => {
+    try {
+        const response = await useLogin(email.value, password.value);
 
-    //     if ((response.value as APIError).is_error) {
-    //         error.value = response.value as APIError;
-    //     } else {
-    //         error.value = null;
-    //         // router.push({ name: 'login' }); // Uncomment when ready
-    //     }
-    // });
+        if (response?.is_error) {
+            error.value = response;
+        } else {
+            reset();
+            router.push({ name: "home" });
+        }
+    } catch (e) {
+        console.error(e);
+    }
 };
 </script>
 
@@ -37,9 +43,7 @@ const submit = () => {
                     <h1 class="display-6" :class="[$style.title]">Bejelentkezés</h1>
                 </div>
                 <form class="card-body p-3" @submit.prevent="submit">
-                    <div class="alert" :class="[errorClass]" role="alert" v-if="error">
-                        {{ error.error }}
-                    </div>
+                    <AppAlert :text="error.error" :type="error?.css_class" v-if="error" />
                     <div class="mb-3">
                         <label for="inputEmail" class="form-label text-uppercase fw-bold">Email cím</label>
                         <input type="email" class="form-control border-dark rounded-3" id="inputEmail" v-model="email" placeholder="valaki@pelda.hu">
