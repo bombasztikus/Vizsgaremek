@@ -9,6 +9,7 @@ api = Blueprint("auth", __name__, url_prefix="/auth")
     
 @api.post("/login")
 def post_obtain_token():
+    print(request.json)
     dto = validate_dto_or_exception(request.json, {
         "email": InvalidEmailException("Az email cím megadása kötelező"),
         "password": InvalidPasswordException("A jelszó megadása kötelező")

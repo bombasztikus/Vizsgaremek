@@ -71,8 +71,10 @@ class User(db.Model):
     
     @staticmethod
     def verify(email: str, password: str) -> Self:
-        if not email or not password:
-            raise InvalidPayloadException("Hiányos JSON mezők")
+        if not email:
+            raise InvalidEmailException("Az email cím megadása kötelező")
+        elif not password:
+            raise InvalidPasswordException("A jelszó megadása kötelező")
 
         try:
             email = validate_email(email)
