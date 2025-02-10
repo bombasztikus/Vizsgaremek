@@ -3,7 +3,7 @@ import AppAlert from '@/components/app/AppAlert.vue';
 import { useRegistration } from '@/composables/useRegistration';
 import type { APIError } from '@/lib/models';
 import { useTitle } from '@vueuse/core';
-import { computed, ref } from 'vue';
+import { ref } from 'vue';
 import { RouterLink, useRouter } from 'vue-router';
 
 useTitle("Regisztráció");
@@ -13,8 +13,6 @@ const email = ref<string>("");
 const password = ref<string>("");
 const fullName = ref<string>("");
 const error = ref<APIError | null>(null);
-const errorClass = computed(() => error.value?.css_class ? `alert-${error.value.css_class}` : "alert-info");
-
 const reset = () => {
     email.value = "";
     password.value = "";
