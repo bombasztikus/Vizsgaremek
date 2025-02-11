@@ -30,6 +30,15 @@ const router = createRouter({
                 requiresAuth: false,
                 preventAuthedEnter: true,
             }
+        },
+        {
+            path: '/cart',
+            name: 'cart',
+            component: () => import('../views/CartView.vue'),
+            meta: {
+                requiresAuth: false,
+                preventAuthedEnter: false,
+            }
         }
     ],
 });

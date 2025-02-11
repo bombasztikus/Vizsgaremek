@@ -1,9 +1,25 @@
 <script setup lang="ts">
 import type { Meal } from '@/lib/models';
+import { useCartStore } from '@/stores/cart';
 
-defineProps<{
+const props = defineProps<{
     meal: Meal;
 }>();
+
+const { items: cart } = useCartStore();
+
+const addToCart = () => {
+    const idx = cart.findIndex((i) => i.productId === props.meal.id);
+
+    if (idx === -1) {
+        cart.push({
+            productId: props.meal.id,
+            quantity: 1
+        });
+    } else {
+        cart[idx].quantity++;
+    }
+};
 </script>
 
 <template>
@@ -19,14 +35,14 @@ defineProps<{
             <p class="card-text text-body-secondary mt-2 meal-description">
                 {{ meal.description ?? "Ennek az ételnek vagy italnak nincs leírása, de biztosan nagyon finom." }}
             </p>
-            <a href="#" class="btn btn-outline-dark fw-bold w-100 mt-auto rounded-pill text-uppercase">
+            <button @click="addToCart" class="btn btn-outline-dark fw-bold w-100 mt-auto rounded-pill text-uppercase">
                 <template v-if="meal.is_free">
                     <i class="bi bi-gift me-1"></i>INGYEN
                 </template>
                 <template v-else>
                     <i class="bi bi-cart-plus me-1"></i>{{ meal.display_price }}
                 </template>
-            </a>
+            </button>
         </div>
     </article>
 </template>
