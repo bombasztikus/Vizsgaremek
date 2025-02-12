@@ -29,5 +29,5 @@ export function useMeals(filter_ids?: number[]) {
         },
     );
 
-    return meals;
+    return computed(() => meals.value);
 }
