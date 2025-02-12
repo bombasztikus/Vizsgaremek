@@ -134,6 +134,10 @@ class Meal(db.Model):
     def get_all() -> list[Self]:
         meals = db.session.query(Meal).all()
         return meals
+    
+    @staticmethod
+    def get_all_by_ids(ids: list[int]) -> list[Self]:
+        return db.session.query(Meal).filter(Meal.id.in_(ids)).all()
 
     @staticmethod
     def get_all_by_type(meal_type: MealType) -> list[Self]:

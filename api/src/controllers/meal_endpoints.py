@@ -9,7 +9,9 @@ api = Blueprint("meals", __name__, url_prefix="/meals")
 @api.get("/")
 @jwt_required(optional=True)
 def get_all_meals():
-    items = Meal.get_all()
+    filter_ids = request.args.get("ids", "").split(",")
+    safe_ids = [int(_id) for _id in filter_ids if _id.isdigit()]
+    items = Meal.get_all() if len(safe_ids) == 0 else Meal.get_all_by_ids(safe_ids)
     return jsonify(meals_to_dto(items)), 200
 
 @api.get("/<string:meal_type>")

@@ -10,10 +10,15 @@ type ComposableType = {
     [MealType.DESSERT]: Meal[];
 };
 
-export function useMeals() {
+export function useMeals(filter_ids?: number[]) {
     const meals = ref<Meal[]>([]);
 
-    const { data, error } = useFetch<MealsResponse | APIError>(API_BASE + GET_ALL_MEALS).json();
+    const url = new URL(API_BASE + GET_ALL_MEALS);
+    if (Array.isArray(filter_ids) && filter_ids.length > 0) {
+        url.searchParams.set("ids", filter_ids.join(","));
+    }
+
+    const { data, error } = useFetch<MealsResponse | APIError>(url.toString()).json();
 
     watch(
         [data, error],
@@ -31,10 +36,5 @@ export function useMeals() {
         },
     );
 
-    return computed<ComposableType>(() => ({
-        [MealType.FOOD]: meals.value.filter((meal) => meal.type === MealType.FOOD),
-        [MealType.BEVERAGE]: meals.value.filter((meal) => meal.type === MealType.BEVERAGE),
-        [MealType.MENU]: meals.value.filter((meal) => meal.type === MealType.MENU),
-        [MealType.DESSERT]: meals.value.filter((meal) => meal.type === MealType.DESSERT),
-    }));
+    return computed<Meal[]>(() => data.value);
 }

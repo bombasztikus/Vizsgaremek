@@ -4,10 +4,21 @@ import StoreSection from '@/components/store/StoreSection.vue';
 import { useMeals } from '@/composables/useMeals';
 import WelcomeSection from '@/components/store/WelcomeSection.vue';
 import { useTitle } from '@vueuse/core';
+import { computed } from 'vue';
+import { MealType, type Meal } from '@/lib/models';
 
 useTitle("Főoldal")
 
-const meals = useMeals();
+const meals = computed(() => {
+    const items = useMeals();
+
+    return {
+        [MealType.FOOD]: items.value.filter((item: Meal) => item.type === MealType.FOOD),
+        [MealType.BEVERAGE]: items.value.filter((item: Meal) => item.type === MealType.BEVERAGE),
+        [MealType.MENU]: items.value.filter((item: Meal) => item.type === MealType.MENU),
+        [MealType.DESSERT]: items.value.filter((item: Meal) => item.type === MealType.DESSERT),
+    }
+});
 </script>
 
 <template>

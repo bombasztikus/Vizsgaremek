@@ -3,7 +3,7 @@ import AppAlert from '@/components/app/AppAlert.vue';
 import { useRegistration } from '@/composables/useRegistration';
 import type { APIError } from '@/lib/models';
 import { useLocalStorage, useTitle } from '@vueuse/core';
-import { onBeforeMount, ref, watch } from 'vue';
+import { ref, watch } from 'vue';
 import { RouterLink, useRouter } from 'vue-router';
 
 useTitle("Regisztráció");
