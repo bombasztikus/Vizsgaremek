@@ -3,6 +3,9 @@ import DeliveryAdImage from '@/assets/img/delivery_ad.jpg';
 import StoreSection from '@/components/store/StoreSection.vue';
 import { useMeals } from '@/composables/useMeals';
 import WelcomeSection from '@/components/store/WelcomeSection.vue';
+import { useTitle } from '@vueuse/core';
+
+useTitle("Főoldal")
 
 const meals = useMeals();
 </script>
