@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { useSession } from '@/composables/useSession';
 import { useCartStore } from '@/stores/cart';
+import { storeToRefs } from 'pinia';
 import { useRouter } from 'vue-router';
 
 const { clearSession, isAuthenticated } = useSession();
 const router = useRouter();
-const { itemCount } = useCartStore();
+const { itemCount } = storeToRefs(useCartStore());
 
 const signOut = () => {
     clearSession();

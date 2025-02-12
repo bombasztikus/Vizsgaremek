@@ -3,13 +3,6 @@ import { MealType, type APIError, type Meal, type MealsResponse } from '@/lib/mo
 import { useFetch } from '@vueuse/core';
 import { computed, ref, watch } from 'vue';
 
-type ComposableType = {
-    [MealType.FOOD]: Meal[];
-    [MealType.BEVERAGE]: Meal[];
-    [MealType.MENU]: Meal[];
-    [MealType.DESSERT]: Meal[];
-};
-
 export function useMeals(filter_ids?: number[]) {
     const meals = ref<Meal[]>([]);
 
@@ -36,5 +29,5 @@ export function useMeals(filter_ids?: number[]) {
         },
     );
 
-    return computed<Meal[]>(() => data.value);
+    return meals;
 }

@@ -9,8 +9,8 @@ import { MealType, type Meal } from '@/lib/models';
 
 useTitle("Főoldal")
 
+const items = useMeals();
 const meals = computed(() => {
-    const items = useMeals();
 
     return {
         [MealType.FOOD]: items.value.filter((item: Meal) => item.type === MealType.FOOD),
