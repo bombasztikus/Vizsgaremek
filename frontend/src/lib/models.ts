@@ -47,7 +47,7 @@ export enum MealType {
 
 export type Meal = APIModel & {
     name: string;
-    price: string;
+    price: number;
     calories: number;
     image_url: string | null;
     has_image_url: boolean;

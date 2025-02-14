@@ -1,17 +1,22 @@
-import { API_BASE, GET_ALL_MEALS } from '@/lib/endpoints';
-import { MealType, type APIError, type Meal, type MealsResponse } from '@/lib/models';
+import { computed, shallowRef, watch } from 'vue';
 import { useFetch } from '@vueuse/core';
-import { computed, ref, watch } from 'vue';
+import { API_BASE, GET_ALL_MEALS } from '@/lib/endpoints';
+import { type APIError, type Meal, type MealsResponse } from '@/lib/models';
 
 export function useMeals(filter_ids?: number[]) {
-    const meals = ref<Meal[]>([]);
+    const meals = shallowRef<Meal[]>([]);
 
-    const url = new URL(API_BASE + GET_ALL_MEALS);
-    if (Array.isArray(filter_ids) && filter_ids.length > 0) {
-        url.searchParams.set("ids", filter_ids.join(","));
-    }
 
-    const { data, error } = useFetch<MealsResponse | APIError>(url.toString()).json();
+    // Use computed to prevent unnecessary reactivity
+    const fetchUrl = computed(() => {
+        const url = new URL(API_BASE + GET_ALL_MEALS);
+        if (Array.isArray(filter_ids) && filter_ids.length > 0) {
+            url.searchParams.set("ids", filter_ids.join(","));
+        }
+        return url.toString();
+    });
+
+    const { data, error } = useFetch<MealsResponse | APIError>(fetchUrl).json();
 
     watch(
         [data, error],
@@ -24,10 +29,8 @@ export function useMeals(filter_ids?: number[]) {
                 meals.value = (data.value as MealsResponse).items;
             }
         },
-        {
-            immediate: true,
-        },
+        { immediate: true },
     );
 
-    return computed(() => meals.value);
+    return meals;
 }
