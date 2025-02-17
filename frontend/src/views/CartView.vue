@@ -18,7 +18,7 @@ const mealsRef = useMeals(ids.value);
 const totalValue = computed(() => meals.value.reduce((a, b) => a + b.price , 0));
 
 watchEffect(() => {
-    meals.value = ids.value.length > 0 ? mealsRef.value : [];   
+    meals.value = ids.value.length > 0 ? mealsRef.value : [];
 });
 </script>
 
@@ -27,8 +27,12 @@ watchEffect(() => {
         <header class="mb-4 pt-3">
             <h2 class="display-4 fw-bold">Kosár ({{ meals.length }} elem)</h2>
         </header>
-        <section class="d-flex flex-column gap-3">
+        <section class="d-flex flex-column gap-3" v-if="meals.length > 0">
             <CartItem v-for="meal in meals" :key="meal.id" :meal="meal" />
+        </section>
+        <section class="d-flex flex-column gap-1 w-full justify-content-center align-items-center" v-else>
+            <p class="fs-4 fw-bold">A kosarad üres. Miért nem adsz hozzá valamit?</p>
+            <RouterLink :to="{ name: 'home' }" class="btn btn-dark d-block rounded-pill fw-bold px-4 py-2">Mutasd a kínálatot</RouterLink>
         </section>
         <Suspense>
             <CartSummary :item-count="meals.length" :total-cost="totalValue" :locations="['Helyben fogyasztom', 'Kiszállítást kérek']" />
