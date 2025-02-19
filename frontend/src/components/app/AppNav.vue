@@ -15,7 +15,7 @@ const signOut = () => {
 </script>
 
 <template>
-    <nav class="navbar navbar-expand-lg bg-black sticky-top">
+    <nav class="navbar navbar-expand-lg bg-black sticky-top" style="z-index: 1020;">
         <div class="container-lg">
             <RouterLink :to="{ name: 'home' }" class="navbar-brand" href="#">
                 <img src="/logo.png" width="40" height="40" class="img-fluid" />

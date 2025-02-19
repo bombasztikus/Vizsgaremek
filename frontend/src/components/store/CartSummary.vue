@@ -77,24 +77,21 @@ watch(chosenDeliveryMethod, () => {
 
 <template>
     <form class="row my-5">
-        <h1 class="display-4 fw-bold lh-1 mb-md-3 mb-2  m-0 text-glow">Összesítés</h1>
-        <p class="m-0">Már csak pár lépés és nemsokára az asztalodon landol a rendelésed. Kérjük, hogy valós adatokat adj meg.</p>
-        <hr class="my-4 my-md-5">
         <div class="col-sm-auto col-md-9">
-            <div class="mb-4">
-                <label for="inputDeliveryType" class="form-label text-uppercase fw-bold mb-2">Átvétel formája</label>
-                <select id="inputDeliveryType" class="form-select border-dark rounded-3" aria-describedby="deliveryTypeHelp" v-model="chosenDeliveryMethod">
-                    <option v-for="method in deliveryMethods" :key="method.id" :value="method">{{ method.label }}</option>
-                </select>
-            </div>
-            <div class="mb-3" v-if="chosenDeliveryMethod.requiresCustomInput">
-                <label for="inputAddress" class="form-label text-uppercase fw-bold mb-2">{{ chosenDeliveryMethod.customInputLabel }}</label>
-                <input :type="chosenDeliveryMethod.customInputType" class="form-control border-dark rounded-3" id="inputAddress" aria-describedby="addressHelp" v-model="customInputValue" :placeholder="chosenDeliveryMethod.customInputPlaceholder">
-                <div id="addressHelp" class="form-text">{{ chosenDeliveryMethod.customInputDescription }}</div>
-            </div>
+            <h1 class="display-4 fw-bold lh-1 mb-md-3 mb-2  m-0 text-glow">Összesítés</h1>
+            <p class="mb-3">Már csak pár lépés és nemsokára az asztalodon landol a rendelésed. Kérjük, hogy valós adatokat adj meg.</p>
+            <hr class="my-1 my-md-4">
+            <slot>
+                <div class="card">
+                    <div class="card-body d-flex flex-column gap-1 justify-content-center align-items-center text-center">
+                        <p class="fs-4 fw-bold">A kosarad üres. Miért nem adsz hozzá valamit?</p>
+                        <RouterLink :to="{ name: 'home' }" class="btn btn-dark d-block rounded-pill fw-bold px-4 py-2">Mutasd a kínálatot</RouterLink>
+                    </div>
+                </div>
+            </slot>
         </div>
-        <div class="col-sm-auto col-md-3">
-            <div class="mb-3 card rounded-4">
+        <div class="col-sm-auto col-md-3 h-100 mt-4 mt-md-0">
+            <div class="mb-3 card rounded-4 sticky-top">
                 <div class="card-body">
                     <p class="text-uppercase fw-bold mb-1">Fizetendő</p>
                     <div class="display-5 fw-bold m-0">{{ totalCost }} Ft</div>
@@ -103,7 +100,19 @@ watch(chosenDeliveryMethod, () => {
                         <b v-else-if="chosenDeliveryMethod.id === 'table'">pincérnél</b>
                         <b v-else-if="chosenDeliveryMethod.id === 'delivery'">futárnál</b>
                         tudsz majd.</p>
-                        <hr>
+                    <div class="mb-4">
+                        <label for="inputDeliveryType" class="form-label text-uppercase fw-bold mb-2">Átvétel formája</label>
+                        <select id="inputDeliveryType" class="form-select border-dark rounded-3" v-model="chosenDeliveryMethod" aria-describedby="deliveryMethodHelp">
+                            <option v-for="method in deliveryMethods" :key="method.id" :value="method">{{ method.label }}</option>
+                        </select>
+                        <div id="deliveryMethodHelp" class="form-text mt-2">Válaszd ki, hogyan szeretnéd átvenni a rendelésed.</div>
+                    </div>
+                    <div class="mb-3" v-if="chosenDeliveryMethod.requiresCustomInput">
+                        <label for="inputAddress" class="form-label text-uppercase fw-bold mb-2">{{ chosenDeliveryMethod.customInputLabel }}</label>
+                        <input :type="chosenDeliveryMethod.customInputType" class="form-control border-dark rounded-3" id="inputAddress" aria-describedby="addressHelp" v-model="customInputValue" :placeholder="chosenDeliveryMethod.customInputPlaceholder">
+                        <div id="addressHelp" class="form-text mt-2">{{ chosenDeliveryMethod.customInputDescription }}</div>
+                    </div>
+                    <hr>
                         <RouterLink :to="{ name: 'register' }" class="btn btn-dark d-block rounded-pill mt-4 fw-bold px-4 py-2">MEGRENDELEM</RouterLink>
                     <div class="row gap-2 justify-content-center mt-4">
                         <img :src="processor" alt="" width="40" height="26" class="col-auto" v-for="processor in paymentProcessors" :key="processor">
