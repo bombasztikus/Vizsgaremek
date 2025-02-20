@@ -15,7 +15,7 @@ defineProps<{
 }>();
 
 const user = await useUser();
-const promptForLogin = computed(() => !!user);
+const promptForLogin = computed(() => !user);
 
 interface BaseDeliveryMethod {
   label: string;
@@ -92,7 +92,15 @@ watch(chosenDeliveryMethod, () => {
         </div>
         <div class="col-md-3 col mt-4 mt-md-4 sticky-top h-100">
             <div class="card rounded-4 bg-md-background" :class="[$style.sidebar]">
-                <div class="card-body">
+                <div class="card-body" v-if="promptForLogin">
+                    <p class="text-uppercase fw-bold mb-3 text-center">REGISZTRÁLJ<br>VAGY JELENTKEZZ BE</p>
+                    <p class="form-text text-center mt-3 mb-3">A rendelés beazonosításához szükségünk lesz néhány adatodra.</p>
+                    <div class="d-flex flex-column gap-2">
+                        <RouterLink class="btn btn-dark fw-bold w-100 rounded-pill text-uppercase" :to="{ name: 'register' }">Regisztrálok</RouterLink>
+                        <RouterLink type="submit" class="btn btn-outline-dark fw-bold w-100 rounded-pill text-uppercase" :to="{ name: 'login' }">Bejelentkezek</RouterLink>
+                    </div>
+                </div>
+                <div class="card-body" v-else>
                     <p class="text-uppercase fw-bold mb-1">Fizetendő</p>
                     <div class="display-5 fw-bold m-0">{{ totalCost }} Ft</div>
                     <p class="form-text mt-2">A kalkuláció <b>nem tartalmazza</b> az adókat és szállítási díjat. Fizetni a
