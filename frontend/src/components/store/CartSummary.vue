@@ -76,11 +76,11 @@ watch(chosenDeliveryMethod, () => {
 </script>
 
 <template>
-    <form class="row my-5">
-        <div class="col-sm-auto col-md-9">
+    <form class="row my-4">
+        <div class="col-md-9 col-auto">
             <h1 class="display-4 fw-bold lh-1 mb-md-3 mb-2  m-0 text-glow">Összesítés</h1>
             <p class="mb-3">Már csak pár lépés és nemsokára az asztalodon landol a rendelésed. Kérjük, hogy valós adatokat adj meg.</p>
-            <hr class="my-1 my-md-4">
+            <hr class="my-4">
             <slot>
                 <div class="card">
                     <div class="card-body d-flex flex-column gap-1 justify-content-center align-items-center text-center">
@@ -90,8 +90,8 @@ watch(chosenDeliveryMethod, () => {
                 </div>
             </slot>
         </div>
-        <div class="col-sm-auto col-md-3 h-100 mt-4 mt-md-0">
-            <div class="mb-3 card rounded-4 sticky-top">
+        <div class="col-md-3 col mt-4 mt-md-4 sticky-top h-100">
+            <div class="card rounded-4 bg-md-background" :class="[$style.sidebar]">
                 <div class="card-body">
                     <p class="text-uppercase fw-bold mb-1">Fizetendő</p>
                     <div class="display-5 fw-bold m-0">{{ totalCost }} Ft</div>
@@ -124,3 +124,11 @@ watch(chosenDeliveryMethod, () => {
         <!-- <img :src="DeliveryAdImage" class="object-fit-cover col-10 col-sm-8 col-lg-6 d-none d-lg-block p-0 m-0 img-fluid" alt=""> -->
     </form>
 </template>
+
+<style module>
+@media (min-width: 768px) {
+    .sidebar {
+        top: calc(var(--bs-navbar-height, 3rem) + 2.5rem);
+    }
+}
+</style>
