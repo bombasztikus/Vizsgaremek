@@ -10,7 +10,7 @@ import { storeToRefs } from 'pinia';
 
 const paymentProcessors = [ImageKHSzepkartya, ImageOTPSzepkartya, ImageMBHSzepkartya, ImageCashAccepted];
 
-const { totalPrice } = storeToRefs(useCartStore());
+const { totalPrice, items, itemCount } = storeToRefs(useCartStore());
 const user = await useUser();
 const promptForLogin = computed(() => !user);
 
@@ -70,6 +70,8 @@ const chosenDeliveryMethod = ref<DeliveryMethod>(deliveryMethods[0]);
 watch(chosenDeliveryMethod, () => {
     customInputValue.value = "";
 });
+
+const clearCart = () => items.value = [];
 </script>
 
 <template>
@@ -86,6 +88,7 @@ watch(chosenDeliveryMethod, () => {
                     </div>
                 </div>
             </slot>
+            <button type="button" @click="clearCart" class="btn btn-outline-dark d-block rounded-pill fw-semibold px-4 mx-auto mt-4 fs-6" v-if="itemCount > 0">Kosár kiürítése</button>
         </div>
         <div class="col-md-3 col mt-4 mt-md-4 sticky-top h-100">
             <div class="card rounded-4 bg-md-background" :class="[$style.sidebar]">
@@ -107,7 +110,7 @@ watch(chosenDeliveryMethod, () => {
                         tudsz majd.</p>
                     <div class="mb-4">
                         <label for="inputDeliveryType" class="form-label text-uppercase fw-bold mb-2">Átvétel formája</label>
-                        <select id="inputDeliveryType" class="form-select border-dark rounded-3" v-model="chosenDeliveryMethod" aria-describedby="deliveryMethodHelp">
+                        <select id="inputDeliveryType" class="form-select border-dark rounded-3" v-model="chosenDeliveryMethod" aria-describedby="deliveryMethodHelp" :disabled="itemCount === 0">
                             <option v-for="method in deliveryMethods" :key="method.id" :value="method">{{ method.label }}</option>
                         </select>
                         <div id="deliveryMethodHelp" class="form-text mt-2">Válaszd ki, hogyan szeretnéd átvenni a rendelésed.</div>
@@ -118,7 +121,7 @@ watch(chosenDeliveryMethod, () => {
                         <div id="addressHelp" class="form-text mt-2">{{ chosenDeliveryMethod.customInputDescription }}</div>
                     </div>
                     <hr>
-                        <RouterLink :to="{ name: 'register' }" class="btn btn-dark d-block rounded-pill mt-4 fw-bold px-4 py-2">MEGRENDELEM</RouterLink>
+                        <RouterLink :to="{ name: 'register' }" class="btn btn-dark d-block rounded-pill mt-4 fw-bold px-4 py-2" :class="{ 'disabled': itemCount === 0 }">MEGRENDELEM</RouterLink>
                     <div class="row gap-2 justify-content-center mt-4">
                         <img :src="processor" alt="" width="40" height="26" class="col-auto" v-for="processor in paymentProcessors" :key="processor">
                     </div>
@@ -126,7 +129,6 @@ watch(chosenDeliveryMethod, () => {
                 </div>
             </div>
         </div>
-        <!-- <img :src="DeliveryAdImage" class="object-fit-cover col-10 col-sm-8 col-lg-6 d-none d-lg-block p-0 m-0 img-fluid" alt=""> -->
     </form>
 </template>
 

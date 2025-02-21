@@ -55,14 +55,18 @@ const totalPriceForThisItem = computed(() => cart.value.reduce((acc, item) => {
                                     <i class="bi bi-gift me-1"></i>INGYEN
                                 </template>
                                 <template v-else>
-                                    <i class="bi bi-cart me-2"></i>{{ totalPriceForThisItem.toLocaleString("hu") }} Ft
+                                    {{ totalPriceForThisItem.toLocaleString("hu") }} Ft
                                 </template>
                             </div>
-                            <div class="fs-6 text-body-tertiary my-auto fw-light">({{ meal.price.toLocaleString("hu") }} Ft/db)</div>
+                            <div class="fs-6 text-body-tertiary ms-md-2 my-md-auto fw-light" v-if="quantity > 1">({{ meal.price.toLocaleString("hu") }} Ft/db)</div>
                         </div>
                         <div class="col-6 me-0 d-flex gap-3 align-items-center justify-content-end">
-                            <button type="button" class="btn btn-outline-dark rounded-3" @click="decrementQuantity">
-                                <i class="bi bi-dash fs-5 h-100"></i>
+                            <button type="button" class="btn rounded-3" :class="{
+                                'btn-outline-danger': quantity === 1,
+                                'btn-outline-dark': quantity > 1
+                            }" @click="decrementQuantity">
+                                <i class="bi bi-dash fs-5 h-100" v-if="quantity > 1"></i>
+                                <i class="bi bi-trash fs-5 h-100" v-else></i>
                             </button>
                             <p class="fs-5 fw-bold my-auto h-100 pb-1 align-middle d-flex align-items-center">{{ quantity }}</p>
                             <button type="button" class="btn btn-outline-dark rounded-3" @click="incrementQuantity">
