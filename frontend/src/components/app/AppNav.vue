@@ -6,7 +6,7 @@ import { useRouter } from 'vue-router';
 
 const { clearSession, isAuthenticated } = useSession();
 const router = useRouter();
-const { itemCount } = storeToRefs(useCartStore());
+const { totalPrice } = storeToRefs(useCartStore());
 
 const signOut = () => {
     clearSession();
@@ -28,7 +28,7 @@ const signOut = () => {
                     <RouterLink :to="{ name: 'home' }" class="nav-link text-white">FŐOLDAL</RouterLink>
                     <button @click="signOut" class="nav-link text-white" v-if="isAuthenticated">KIJELENTKEZÉS</button>
                     <RouterLink :to="{ name: 'register' }" class="nav-link text-white" v-else>REGISZTRÁCIÓ</RouterLink>
-                    <RouterLink :to="{ name: 'cart' }" class="btn btn-light rounded-pill fw-bold text-uppercase"><i class="bi bi-cart2 me-2"></i>{{ itemCount }}</RouterLink>
+                    <RouterLink :to="{ name: 'cart' }" class="btn btn-light rounded-pill fw-bold"><i class="bi bi-cart2 me-2"></i>{{ totalPrice.toLocaleString("hu") }} Ft</RouterLink>
                 </div>
             </div>
         </div>

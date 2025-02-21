@@ -5,15 +5,12 @@ import ImageKHSzepkartya from '@/assets/payment/kh.png';
 import ImageOTPSzepkartya from '@/assets/payment/otp.png';
 import ImageMBHSzepkartya from '@/assets/payment/mbh.png';
 import ImageCashAccepted from '@/assets/payment/cash.png';
+import { useCartStore } from '@/stores/cart';
+import { storeToRefs } from 'pinia';
 
 const paymentProcessors = [ImageKHSzepkartya, ImageOTPSzepkartya, ImageMBHSzepkartya, ImageCashAccepted];
 
-defineProps<{
-    totalCost: number;
-    itemCount: number;
-    locations: string[];
-}>();
-
+const { totalPrice } = storeToRefs(useCartStore());
 const user = await useUser();
 const promptForLogin = computed(() => !user);
 
@@ -102,7 +99,7 @@ watch(chosenDeliveryMethod, () => {
                 </div>
                 <div class="card-body" v-else>
                     <p class="text-uppercase fw-bold mb-1">Fizetendő</p>
-                    <div class="display-5 fw-bold m-0">{{ totalCost }} Ft</div>
+                    <div class="display-5 fw-bold m-0">{{ totalPrice.toLocaleString("hu") }} Ft</div>
                     <p class="form-text mt-2">A kalkuláció <b>nem tartalmazza</b> az adókat és szállítási díjat. Fizetni a
                         <b v-if="chosenDeliveryMethod.id === 'checkout'">kasszánál</b>
                         <b v-else-if="chosenDeliveryMethod.id === 'table'">pincérnél</b>

@@ -14,7 +14,8 @@ const addToCart = () => {
     if (idx === -1) {
         cart.push({
             productId: props.meal.id,
-            quantity: 1
+            quantity: 1,
+            price: props.meal.price,
         });
     } else {
         cart[idx].quantity++;

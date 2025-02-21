@@ -65,3 +65,9 @@ export type MealsResponse = {
     type: MealType | null;
     is_error: boolean;
 };
+
+export type CartItem = {
+    productId: number;
+    quantity: number;
+    price: number;
+}
