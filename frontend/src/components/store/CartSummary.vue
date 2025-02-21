@@ -7,6 +7,7 @@ import ImageMBHSzepkartya from '@/assets/payment/mbh.png';
 import ImageCashAccepted from '@/assets/payment/cash.png';
 import { useCartStore } from '@/stores/cart';
 import { storeToRefs } from 'pinia';
+import { useCreateOrder } from '@/composables/useCreateOrder';
 
 const paymentProcessors = [ImageKHSzepkartya, ImageOTPSzepkartya, ImageMBHSzepkartya, ImageCashAccepted];
 
@@ -72,10 +73,33 @@ watch(chosenDeliveryMethod, () => {
 });
 
 const clearCart = () => items.value = [];
+
+const submit = async () => {
+    if (itemCount.value === 0) {
+        return;
+    }
+
+    if (!customInputValue.value) {
+        if (chosenDeliveryMethod.value.requiresCustomInput) {
+            return;
+        }
+
+        customInputValue.value = chosenDeliveryMethod.value.label;
+    }
+
+    if (!user?.value) {
+        return;
+    }
+
+    const order = await useCreateOrder(customInputValue.value, items.value);
+    console.log(order);
+
+    clearCart();
+};
 </script>
 
 <template>
-    <form class="row my-4">
+    <form class="row my-4" @submit.prevent="submit">
         <div class="col-md-9 col-auto">
             <h1 class="display-4 fw-bold lh-1 mb-md-3 mb-2  m-0 text-glow">Összesítés</h1>
             <p class="mb-3">Már csak pár lépés és nemsokára az asztalodon landol a rendelésed. Kérjük, hogy valós adatokat adj meg.</p>
@@ -117,11 +141,11 @@ const clearCart = () => items.value = [];
                     </div>
                     <div class="mb-3" v-if="chosenDeliveryMethod.requiresCustomInput">
                         <label for="inputAddress" class="form-label text-uppercase fw-bold mb-2">{{ chosenDeliveryMethod.customInputLabel }}</label>
-                        <input :type="chosenDeliveryMethod.customInputType" class="form-control border-dark rounded-3" id="inputAddress" aria-describedby="addressHelp" v-model="customInputValue" :placeholder="chosenDeliveryMethod.customInputPlaceholder">
+                        <input :type="chosenDeliveryMethod.customInputType" class="form-control border-dark rounded-3" id="inputAddress" aria-describedby="addressHelp" required v-model="customInputValue" :placeholder="chosenDeliveryMethod.customInputPlaceholder">
                         <div id="addressHelp" class="form-text mt-2">{{ chosenDeliveryMethod.customInputDescription }}</div>
                     </div>
                     <hr>
-                        <RouterLink :to="{ name: 'register' }" class="btn btn-dark d-block rounded-pill mt-4 fw-bold px-4 py-2" :class="{ 'disabled': itemCount === 0 }">MEGRENDELEM</RouterLink>
+                        <button type="submit" class="btn btn-dark d-block rounded-pill mt-4 fw-bold px-4 py-2 w-100" :class="{ 'disabled': itemCount === 0 }">MEGRENDELEM</button>
                     <div class="row gap-2 justify-content-center mt-4">
                         <img :src="processor" alt="" width="40" height="26" class="col-auto" v-for="processor in paymentProcessors" :key="processor">
                     </div>

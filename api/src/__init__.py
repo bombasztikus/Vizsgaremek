@@ -11,7 +11,7 @@ load_dotenv()
 db = SQLAlchemy()
 jwt = JWTManager()
 cors = CORS(
-    origins="*"
+    origins="*",
 )
 
 def create_app():

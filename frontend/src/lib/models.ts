@@ -71,3 +71,23 @@ export type CartItem = {
     quantity: number;
     price: number;
 }
+
+export type OrderCreationItem = {
+    id: number;
+    quantity: number;
+}
+
+export type OrderItem = {
+    order_id: number;
+    meal_id: number;
+    quantity: number;
+    is_error: boolean;
+}
+
+export type Order = APIModel & {
+    user_id: number;
+    date_created: string;
+    address: string;
+    is_completed: boolean;
+    items: CartItem[];
+};

@@ -5,7 +5,7 @@ import { computed, toValue } from "vue";
 import { useSession } from "./useSession";
 
 export async function useUser() {
-    const { session, isAuthenticated } = useSession();
+    const { session, isAuthenticated, clearSession } = useSession();
 
     if (!isAuthenticated.value) {
         return null;
@@ -21,6 +21,9 @@ export async function useUser() {
             if (ctx.response) {
                 return ctx.response.json().then((errorData: APIError) => {
                     data.value = errorData;
+                    if (errorData.error_code === 'unauthorized') {
+                        clearSession();
+                    }
                     return ctx;
                 });
             }

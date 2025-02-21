@@ -9,3 +9,4 @@ export const POST_LOGIN = '/auth/login';
 export const POST_REGISTER = '/auth/register';
 export const POST_MEALS = (type: MealType) => `/meals/${type}`;
 export const GET_ME = "/users/me";
+export const POST_ORDER = "/orders/";
