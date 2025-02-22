@@ -254,8 +254,10 @@ class Order(db.Model):
     def get_by_id_or_exception(id: int) -> Self:
         try:
             result = db.session.query(Order).filter_by(id=id).first()
-            if not result:
+            if result is None:
                 raise OrderNotFoundException()
+            
+            return result
         except:
             print(traceback.format_exc())
             raise OrderNotFoundException()
