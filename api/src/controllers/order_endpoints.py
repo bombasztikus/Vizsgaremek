@@ -27,8 +27,9 @@ def get_order(order_id: int):
         order = Order.get_by_id_or_exception(int(order_id))
         
         if current_user:
-            if (order.user_id != current_user.id) or not current_user.is_employee:
-                raise UnauthorizedException()
+            if (order.user_id != current_user.id):
+                if not current_user.is_employee:
+                    raise UnauthorizedException()
             
             order_items = order.get_items()
             return jsonify(order_to_dto_with_items(
