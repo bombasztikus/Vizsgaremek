@@ -19,12 +19,13 @@ def __map_http_exception_to_flashed_exception(e: HTTPException) -> FlashedExcept
     )
 
 def generic_exception_handler(e: Exception) -> Union[Response, int]:
-    print(f"Caught exception: {traceback.format_exc()}")
     raisable: FlashedException = FlashedException()
 
     if isinstance(e, FlashedException):
         raisable = e
     elif isinstance(e, HTTPException):
         raisable = __map_http_exception_to_flashed_exception(e)
+    else:
+        print(f"Caught exception: {traceback.format_exc()}")
 
     return flashed_exception_handler(raisable)
