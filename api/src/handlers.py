@@ -2,6 +2,7 @@ from flask import jsonify, Response
 from .exceptions import *
 from typing import Union
 from werkzeug.exceptions import *
+import traceback
 
 def flashed_exception_handler(e: FlashedException) -> Union[Response, int]:
     return jsonify(e.to_dto()), int(e.http_code)
@@ -18,6 +19,7 @@ def __map_http_exception_to_flashed_exception(e: HTTPException) -> FlashedExcept
     )
 
 def generic_exception_handler(e: Exception) -> Union[Response, int]:
+    print(f"Caught exception: {traceback.format_exc()}")
     raisable: FlashedException = FlashedException()
 
     if isinstance(e, FlashedException):
