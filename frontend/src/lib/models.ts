@@ -89,5 +89,5 @@ export type Order = APIModel & {
     date_created: string;
     address: string;
     is_completed: boolean;
-    items: CartItem[];
+    items: OrderItem[];
 };

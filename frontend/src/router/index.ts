@@ -39,6 +39,15 @@ const router = createRouter({
                 requiresAuth: false,
                 preventAuthedEnter: false,
             }
+        },
+        {
+            path: '/orders/:id',
+            name: 'order',
+            component: () => import('../views/OrderView.vue'),
+            meta: {
+                requiresAuth: true,
+                preventAuthedEnter: false,
+            }
         }
     ],
 });

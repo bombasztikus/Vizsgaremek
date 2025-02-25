@@ -1,4 +1,4 @@
-import type { MealType, User } from './models';
+import type { MealType, Order, User } from './models';
 
 export const API_BASE = import.meta.env.VITE_API_BASE_URL;
 
@@ -10,3 +10,4 @@ export const POST_REGISTER = '/auth/register';
 export const POST_MEALS = (type: MealType) => `/meals/${type}`;
 export const GET_ME = "/users/me";
 export const POST_ORDER = "/orders/";
+export const GET_ORDER = (id: Order['id']) => `/orders/${id}`;

@@ -8,12 +8,15 @@ import ImageCashAccepted from '@/assets/payment/cash.png';
 import { useCartStore } from '@/stores/cart';
 import { storeToRefs } from 'pinia';
 import { useCreateOrder } from '@/composables/useCreateOrder';
+import { useRouter } from 'vue-router';
+import type { APIError, Order } from '@/lib/models';
 
 const paymentProcessors = [ImageKHSzepkartya, ImageOTPSzepkartya, ImageMBHSzepkartya, ImageCashAccepted];
 
 const { totalPrice, items, itemCount } = storeToRefs(useCartStore());
 const user = await useUser();
 const promptForLogin = computed(() => !user);
+const router = useRouter();
 
 interface BaseDeliveryMethod {
   label: string;
@@ -92,8 +95,15 @@ const submit = async () => {
     }
 
     const order = await useCreateOrder(customInputValue.value, items.value);
-    console.log(order);
 
+    if (!order) {
+        return;
+    } else if (order.is_error === true) {
+        console.error((order as APIError).error)
+        return;
+    }
+
+    router.push({ name: 'order', params: { id: (order as Order).id } });
     clearCart();
 };
 </script>

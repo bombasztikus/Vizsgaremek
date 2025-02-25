@@ -3,7 +3,7 @@ import type { APIError, CartItem, Order, OrderCreationItem } from "@/lib/models"
 import { toValue, useFetch } from "@vueuse/core";
 import { useSession } from "./useSession";
 
-export async function useCreateOrder(address: string, items: CartItem[]) {
+export async function useCreateOrder(address: string, items: CartItem[]): Promise<Order | APIError | null> {
     const { session, isAuthenticated } = useSession();
 
     if (!isAuthenticated.value) {
