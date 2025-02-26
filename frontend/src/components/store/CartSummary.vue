@@ -115,7 +115,7 @@ const submit = async () => {
             <p class="mb-3">Már csak pár lépés és nemsokára az asztalodon landol a rendelésed. Kérjük, hogy valós adatokat adj meg.</p>
             <hr class="my-4">
             <slot>
-                <div class="card">
+                <div class="card rounded-4">
                     <div class="card-body d-flex flex-column gap-1 justify-content-center align-items-center text-center">
                         <p class="fs-4 fw-bold">A kosarad üres. Miért nem adsz hozzá valamit?</p>
                         <RouterLink :to="{ name: 'home' }" class="btn btn-dark d-block rounded-pill fw-bold px-4 py-2">Mutasd a kínálatot</RouterLink>
