@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional, Self
 import enum
 from src.exceptions import *
@@ -229,7 +229,7 @@ class Order(db.Model):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     user_id = Column(Integer, db.ForeignKey(User.id), unique=False, nullable=False)
-    date_created = Column(DateTime, unique=False, nullable=False, default=datetime.now(datetime.timezone.utc))
+    date_created = Column(DateTime, unique=False, nullable=False, default=datetime.now(timezone.utc))
     address = Column(String(255), unique=False, nullable=False)
     is_completed = Column(Boolean, unique=False, nullable=False, default=False)
 
