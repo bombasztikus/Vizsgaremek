@@ -48,6 +48,15 @@ const router = createRouter({
                 requiresAuth: true,
                 preventAuthedEnter: false,
             }
+        },
+        {
+            path: '/orders',
+            name: 'orders',
+            component: () => import('../views/MyOrdersView.vue'),
+            meta: {
+                requiresAuth: true,
+                preventAuthedEnter: false,
+            }
         }
     ],
 });

@@ -11,3 +11,4 @@ export const POST_MEALS = (type: MealType) => `/meals/${type}`;
 export const GET_ME = "/users/me";
 export const POST_ORDER = "/orders/";
 export const GET_ORDER = (id: Order['id']) => `/orders/${id}`;
+export const GET_ALL_ORDERS = "/orders/";

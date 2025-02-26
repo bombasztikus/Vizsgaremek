@@ -91,3 +91,17 @@ export type Order = APIModel & {
     is_completed: boolean;
     items: OrderItem[];
 };
+
+export type MinifiedOrder = {
+    address: string;
+    date_created: string;
+    id: number;
+    is_completed: boolean;
+    is_error: boolean;
+    user_id: number;
+};
+
+export type OrdersResponse = {
+    is_error: boolean;
+    items: MinifiedOrder[];
+}
