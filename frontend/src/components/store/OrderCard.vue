@@ -24,14 +24,12 @@ const dateCreated = computed(() => {
     <RouterLink :to="{ name: 'order', params: { id: order.id } }" class="d-block text-decoration-none">
         <article class="card rounded-4 overflow-hidden">
             <div class="card-body justify-content-center">
-                <p class="card-title fs-4 fw-semibold mb-1">
+                <p class="card-title fs-4 fw-semibold mb-2 lh-1">
                     {{ dateCreated }}
                 </p>
-                <div class="row">
-                    <div class="card-text text-muted">
-                        <template v-if="order?.is_completed"><i class="bi bi-check2-circle me-1 text-success"></i>Teljesítve</template>
-                        <template v-else><i class="bi bi-clock me-1 text-warning"></i>Teljesítés folyamatban</template>
-                    </div>
+                <div class="card-text text-muted">
+                    <template v-if="order?.is_completed"><i class="bi bi-check2-circle me-2 text-success"></i>Teljesítve</template>
+                    <template v-else><i class="bi bi-clock me-2 text-warning"></i>Teljesítés folyamatban</template>
                 </div>
             </div>
         </article>
