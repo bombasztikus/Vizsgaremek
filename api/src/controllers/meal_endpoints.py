@@ -4,14 +4,11 @@ from ..models import MealType, Meal
 from src.exceptions import *
 from flask_jwt_extended import jwt_required, current_user
 
-import time
-
 api = Blueprint("meals", __name__, url_prefix="/meals")
 
 @api.get("/")
 @jwt_required(optional=True)
 def get_all_meals():
-    time.sleep(3)
     filter_ids = request.args.get("ids", "").split(",")
     safe_ids = [int(_id) for _id in filter_ids if _id.isdigit()]
     items = Meal.get_all() if len(safe_ids) == 0 else Meal.get_all_by_ids(safe_ids)
