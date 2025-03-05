@@ -9,9 +9,9 @@ import { MealType, type Meal } from '@/lib/models';
 
 useTitle("Főoldal")
 
+
 const items = useMeals();
 const meals = computed(() => {
-
     return {
         [MealType.FOOD]: items.value.filter((item: Meal) => item.type === MealType.FOOD),
         [MealType.BEVERAGE]: items.value.filter((item: Meal) => item.type === MealType.BEVERAGE),
@@ -26,8 +26,8 @@ const meals = computed(() => {
         <Suspense>
             <WelcomeSection />
         </Suspense>
-        <StoreSection :meals="meals.MENU" title="Menük" v-if="meals.MENU.length > 0" />
-        <StoreSection :meals="meals.FOOD" title="Ételek" v-if="meals.FOOD.length > 0" />
+        <StoreSection :meals="meals.MENU" title="Menük" :is-loading="meals.MENU.length === 0" />
+        <StoreSection :meals="meals.FOOD" title="Ételek" :is-loading="meals.FOOD.length === 0" />
         <section class="row flex-lg-row-reverse align-items-center justify-content-center g-5 bg-black bg-gradient text-white mt-lg-4 my-2 overflow-hidden ad">
             <div class="col-lg-6 text-lg-start text-center my-auto py-5 px-5">
                 <h1 class="display-4 fw-bold lh-1 mb-3 text-glow">Gyors & precíz kiszállítás</h1>
@@ -37,8 +37,8 @@ const meals = computed(() => {
             </div>
             <img :src="DeliveryAdImage" class="object-fit-cover col-10 col-sm-8 col-lg-6 d-none d-lg-block p-0 m-0 img-fluid" alt="">
         </section>
-        <StoreSection :meals="meals.BEVERAGE" title="Italok" v-if="meals.BEVERAGE.length > 0" />
-        <StoreSection :meals="meals.DESSERT" title="Desszertek" v-if="meals.DESSERT.length > 0" />
+        <StoreSection :meals="meals.BEVERAGE" title="Italok" :is-loading="meals.BEVERAGE.length === 0" />
+        <StoreSection :meals="meals.DESSERT" title="Desszertek" :is-loading="meals.DESSERT.length === 0" />
     </main>
 </template>
 

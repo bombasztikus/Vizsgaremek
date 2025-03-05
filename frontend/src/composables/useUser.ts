@@ -34,7 +34,7 @@ export async function useUser() {
 
     await execute();
 
-    return computed(() => {
+    return computed<User>(() => {
         if (isAuthenticated.value) {
             return toValue(data);
         }
