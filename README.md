@@ -19,3 +19,15 @@ https://1drv.ms/w/s!AtApH5_A2yFwfj4DsSru2pBM1gk?e=sQ85K7
 # Utasítások a futtatáshoz
 
 Lásd a dokumentáció Futtatás c. fejezetét.
+
+# Demó adatok
+
+Alkalmazotti fiók:
+- Email: `admin@localhost`
+- Jelszó: `admin123`
+  
+Sima felhasználó:
+- Email: `demo@localhost`
+- Jelszó: `demo123`
+
+A demó adatok betöltéséhez futtasd le a generate_db.py scriptet. Ne felejtsd el beállítani a környezeti változókat.

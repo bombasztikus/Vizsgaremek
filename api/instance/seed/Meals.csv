@@ -1,0 +1,22 @@
+id,name,price,calories,image_url,description,stars,type
+1,Pisztáciás Fagylalt,300,240,/static/demo/fagylalt1.jpg,"Nagyon finom pisztácia ízű fagylalt. Mindenkinek ajánljuk, nyami!",3,DESSERT
+2,Epres-Mogyorós Fagylalt,350,300,/static/demo/fagylalt2.jpg,Próbáld ki az eperízű fagylalt ajánlatukat!,5,DESSERT
+3,Csokoládés Fagylalt,300,310,/static/demo/fagylalt3.jpg,,5,DESSERT
+4,Ezerjó Hamburger,1299,740,/static/demo/hamburger1.jpg,,5,FOOD
+5,Mindenes Hamburger,3990,2000,/static/demo/hamburger2.jpg,"Minden van benne. De tényleg. Nem tudsz olyat kitalálni, amire nem gondoltunk volna. Meg se próbáld, oké?",2,FOOD
+6,Kóla Ízű Üdítő,660,23,/static/demo/ital1.jpg,"Nem Coca-Cola, de már majdnem az.",4,BEVERAGE
+7,Kóla Ízű Üdítőital EXTRA,760,50,/static/demo/ital2.jpg,"Ez még mindig nem Coca-Cola, de extrább mint a Kóla Ízű Üdítő. A vendégeink imádják!",5,BEVERAGE
+8,Narancslé,660,23,,,5,BEVERAGE
+9,Murok Falatkák,300,80,,"Murok darabkák, de hívhatod répának is.",4,FOOD
+10,Csirke Nugátok,400,67,/static/demo/nugget1.jpg,Nugátok. Nugátok. Nugátok. Nugátok. Nugátok. Nugátok. Nugátok. Nugátok. Nugátok. Nugátok. Nugátok.,5,FOOD
+11,Csirke Nugátok EXTRA,400,70,/static/demo/nugget2.jpg,Nugátok. Extrán.,4,FOOD
+12,Disznó Falatkák,400,70,/static/demo/nugget3.jpg,,5,FOOD
+13,Almás Pite,1299,450,/static/demo/pite1.jpg,Almás pite.,4,DESSERT
+14,Epres Pite,1299,450,/static/demo/pite2.jpg,Epres ízű pite.,4,DESSERT
+15,Pityóka,890,133,/static/demo/pityoka1.jpg,,3,FOOD
+16,Pityóka XXL,999,540,/static/demo/pityoka2.jpg,XXL méretű pityóka adag.,4,FOOD
+17,Saláta,780,40,/static/demo/salata1.jpg,Gyümölcsöket és zöldségeket tartalmaz.,3,FOOD
+18,Csudajó Shake,470,300,/static/demo/shake1.jpg,,4,DESSERT
+19,Finom Menü,2990,1200,/static/demo/menu1.jpg,"Nugátok, kóla és egy csudajó hamburger.",5,MENU
+20,Jóllakós Menü,1789,1200,,Garantáltan jól fogsz lakni!,5,MENU
+21,Gigászi Menü,5190,1200,,Egyszerűen óriási!,5,MENU
