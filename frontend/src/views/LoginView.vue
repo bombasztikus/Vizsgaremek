@@ -79,7 +79,7 @@ watch([session], onSessionPreset);
                         }" v-if="password.trim().length === 0">A mező kitöltése kötelező</div>
                     </div>
                     <div class="mb-3">
-                        <button type="submit" class="btn btn-dark fw-bold w-100 rounded-pill text-uppercase">Bejelentkezek</button>
+                        <button type="submit" class="btn btn-dark fw-bold w-100 rounded-pill text-uppercase" :disabled="email.length === 0 || password.length === 0">Bejelentkezek</button>
                     </div>
                     <RouterLink class="btn btn-outline-dark fw-bold w-100 rounded-pill text-uppercase" :to="{ name: 'register' }">Regisztrálok</RouterLink>
                 </form>
