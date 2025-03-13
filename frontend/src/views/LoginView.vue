@@ -58,11 +58,25 @@ watch([session], onSessionPreset);
                     <AppAlert :text="error.error" :type="error?.css_class" v-if="error" />
                     <div class="mb-3">
                         <label for="inputEmail" class="form-label text-uppercase fw-bold">Email cím</label>
-                        <input type="email" class="form-control border-dark rounded-3" id="inputEmail" v-model="email" placeholder="valaki@pelda.hu">
+                        <input type="email" class="form-control rounded-3" id="inputEmail" v-model="email" placeholder="valaki@pelda.hu" :class="{
+                            'border-dark': email.trim().length > 0,
+                            'is-invalid': email.trim().length === 0,
+                        }">
+                        <div :class="{
+                            'valid-feedback': email.trim().length > 0,
+                            'invalid-feedback': email.trim().length === 0,
+                        }" v-if="email.trim().length === 0">A mező kitöltése kötelező</div>
                     </div>
                     <div class="mb-3">
                         <label for="inputPassword" class="form-label text-uppercase fw-bold">Jelszó</label>
-                        <input type="password" class="form-control border-dark rounded-3" id="inputPassword" v-model="password" placeholder="Jelszó">
+                        <input type="password" class="form-control rounded-3" id="inputPassword" v-model="password" placeholder="Jelszó" :class="{
+                            'border-dark': password.trim().length > 0,
+                            'is-invalid': password.trim().length === 0,
+                        }">
+                        <div :class="{
+                            'valid-feedback': password.trim().length > 0,
+                            'invalid-feedback': password.trim().length === 0,
+                        }" v-if="password.trim().length === 0">A mező kitöltése kötelező</div>
                     </div>
                     <div class="mb-3">
                         <button type="submit" class="btn btn-dark fw-bold w-100 rounded-pill text-uppercase">Bejelentkezek</button>
