@@ -10,8 +10,19 @@ api = Blueprint("meals", __name__, url_prefix="/meals")
 @jwt_required(optional=True)
 def get_all_meals():
     filter_ids = request.args.get("ids", "").split(",")
+    limit_per_type = request.args.get("per_category", "")
+    
     safe_ids = [int(_id) for _id in filter_ids if _id.isdigit()]
-    items = Meal.get_all() if len(safe_ids) == 0 else Meal.get_all_by_ids(safe_ids)
+    items = []
+
+    if len(safe_ids) == 0:
+        print(limit_per_type if limit_per_type.isdigit() else 0)
+        items = Meal.get_all(
+            limit_per_type=limit_per_type if limit_per_type.isdigit() else 0
+        )
+    else:
+        items = Meal.get_all_by_ids(safe_ids)
+        
     return jsonify(meals_to_dto(items)), 200
 
 @api.get("/<string:meal_type>")

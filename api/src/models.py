@@ -3,6 +3,8 @@ from typing import Optional, Self
 import enum
 from src.exceptions import *
 from sqlalchemy import exc
+from sqlalchemy.orm import aliased
+from sqlalchemy.sql import func, over
 from flask import request
 from src.utils import is_valid_enum_value
 from src.validation import *
@@ -131,10 +133,23 @@ class Meal(db.Model):
         return f"<Meal {self.id} ({self.name})>"
 
     @staticmethod
-    def get_all() -> list[Self]:
-        meals = db.session.query(Meal).all()
-        return meals
-    
+    def get_all(limit_per_type: Optional[int] = 0) -> list[Self]:
+        if limit_per_type and int(limit_per_type) > 0:
+            subquery = db.session.query(
+                Meal,
+                func.row_number().over(partition_by=Meal.type, order_by=Meal.id).label('row_num')
+            ).subquery()
+
+            # Main query to select meals, applying the limit
+            query = db.session.query(subquery).filter(subquery.c.row_num <= limit_per_type).order_by(subquery.c.type, subquery.c.row_num)
+        else:
+            query = db.session.query(Meal)
+
+        # Return the results as a list
+        x = query.all()
+        print(x)
+        return x
+        
     @staticmethod
     def get_all_by_ids(ids: list[int]) -> list[Self]:
         return db.session.query(Meal).filter(Meal.id.in_(ids)).all()
