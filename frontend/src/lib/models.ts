@@ -54,7 +54,7 @@ export type Meal = APIModel & {
     fallback_image_url: string;
     description: string | null;
     stars: number;
-    type: string;
+    type: MealType;
     is_free: boolean;
     display_price: string;
 };
