@@ -4,6 +4,9 @@ import { useOrders } from '@/composables/useOrders';
 import OrderCard from '@/components/store/OrderCard.vue';
 import { onBeforeMount, ref } from 'vue';
 import OrderCardSkeletonized from '@/components/store/OrderCardSkeletonized.vue';
+import { useTitle } from '@vueuse/core';
+
+useTitle("Rendeléseim");
 
 const orders = ref<MinifiedOrder[]>([]);
 const isLoading = ref(true);

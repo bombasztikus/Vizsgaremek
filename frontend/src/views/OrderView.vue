@@ -6,6 +6,9 @@ import { computed, onBeforeMount, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { useMeals } from '@/composables/useMeals';
 import OrderItemElem from '@/components/store/OrderItem.vue';
+import { useTitle } from '@vueuse/core';
+
+useTitle("Rendelés részletei");
 
 const orderId = useRouteParams('id', undefined, { transform: Number });
 const router = useRouter();
