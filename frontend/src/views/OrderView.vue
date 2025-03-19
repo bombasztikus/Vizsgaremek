@@ -4,7 +4,6 @@ import type { Meal, Order, OrderItem } from '@/lib/models';
 import { useRouteParams } from '@vueuse/router';
 import { computed, onBeforeMount, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
-import CartSummary from '@/components/store/CartSummary.vue';
 import { useMeals } from '@/composables/useMeals';
 import OrderItemElem from '@/components/store/OrderItem.vue';
 
