@@ -4,11 +4,11 @@ import StoreSection from '@/components/store/StoreSection.vue';
 import { useMeals } from '@/composables/useMeals';
 import WelcomeSection from '@/components/store/WelcomeSection.vue';
 import { useTitle } from '@vueuse/core';
-import { computed } from 'vue';
-import { MealType, type Meal } from '@/lib/models';
+import { computed, onBeforeMount, ref } from 'vue';
+import { MealType, type APIError, type Meal, type User } from '@/lib/models';
+import { useUser } from '@/composables/useUser';
 
 useTitle("Főoldal")
-
 
 const items = useMeals();
 const meals = computed(() => {
@@ -19,6 +19,22 @@ const meals = computed(() => {
         [MealType.DESSERT]: items.value.filter((item: Meal) => item.type === MealType.DESSERT),
     }
 });
+
+const user = ref<User>();
+
+onBeforeMount(async () => {
+    const o = await useUser();
+
+    if (!o) {
+        console.error('Failed to fetch logged in user (user is likely not logged in)');
+        return;
+    } else if ((o as unknown as APIError).is_error === true) {
+        console.error('Failed to fetch user:', (o as unknown as APIError).error);
+        return;
+    }
+
+    user.value = o.value;
+});
 </script>
 
 <template>
@@ -28,7 +44,7 @@ const meals = computed(() => {
         </Suspense>
         <StoreSection :meals="meals.MENU" title="Menük" :is-loading="meals.MENU.length === 0" />
         <StoreSection :meals="meals.FOOD" title="Ételek" :is-loading="meals.FOOD.length === 0" />
-        <section class="row flex-lg-row-reverse align-items-center justify-content-center g-5 bg-black bg-gradient text-white mt-lg-4 my-2 overflow-hidden ad">
+        <section class="row flex-lg-row-reverse align-items-center justify-content-center g-5 bg-black bg-gradient text-white mt-lg-4 my-2 overflow-hidden ad" v-if="!user">
             <div class="col-lg-6 text-lg-start text-center my-auto py-5 px-5">
                 <h1 class="display-4 fw-bold lh-1 mb-3 text-glow">Gyors & precíz kiszállítás</h1>
                 <p class="lead mb-0 mb-lg-3">Budapesten belül 45, Pest megyén belül pedig 90 perc alatt az asztalodon lehet a rendelésed.</p>
