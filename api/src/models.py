@@ -2,7 +2,7 @@ from datetime import datetime, timezone
 from typing import Optional, Self
 import enum
 from src.exceptions import *
-from sqlalchemy import exc
+from sqlalchemy import exc, select, text
 from sqlalchemy.orm import aliased
 from sqlalchemy.sql import func, over
 from flask import request
@@ -135,20 +135,25 @@ class Meal(db.Model):
     @staticmethod
     def get_all(limit_per_type: Optional[int] = 0) -> list[Self]:
         if limit_per_type and int(limit_per_type) > 0:
-            subquery = db.session.query(
-                Meal,
-                func.row_number().over(partition_by=Meal.type, order_by=Meal.id).label('row_num')
-            ).subquery()
+            MealAlias = aliased(Meal)
+            
+            subquery = (
+                select(MealAlias.id)
+                .where(MealAlias.type == Meal.type)
+                .order_by(MealAlias.type, MealAlias.id)
+                .limit(limit_per_type)
+                .correlate(Meal)
+            )
 
-            # Main query to select meals, applying the limit
-            query = db.session.query(subquery).filter(subquery.c.row_num <= limit_per_type).order_by(subquery.c.type, subquery.c.row_num)
-        else:
-            query = db.session.query(Meal)
+            query = (
+                select(Meal)
+                .where(Meal.id.in_(subquery))
+                .order_by(Meal.type, Meal.id)
+            )
 
-        # Return the results as a list
-        x = query.all()
-        print(x)
-        return x
+            return db.session.execute(query).scalars().all()
+
+        return db.session.query(Meal).all()
         
     @staticmethod
     def get_all_by_ids(ids: list[int]) -> list[Self]:

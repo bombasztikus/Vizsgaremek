@@ -8,9 +8,9 @@ import { computed, onBeforeMount, ref } from 'vue';
 import { MealType, type APIError, type Meal, type User } from '@/lib/models';
 import { useUser } from '@/composables/useUser';
 
-useTitle("Főoldal")
+useTitle("Főoldal");
 
-const items = useMeals();
+const items = useMeals([], 3);
 const meals = computed(() => {
     return {
         [MealType.FOOD]: items.value.filter((item: Meal) => item.type === MealType.FOOD),
