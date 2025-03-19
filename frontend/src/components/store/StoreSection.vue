@@ -3,16 +3,18 @@ import type { Meal } from '@/lib/models';
 import MealCard from './MealCard.vue';
 import MealCardSkeletonized from './MealCardSkeletonized.vue';
 
-defineProps<{
-    title: string;
+withDefaults(defineProps<{
+    title?: string;
     meals?: Meal[];
     isLoading: boolean;
-}>();
+}>(), {
+    title: undefined,
+});
 </script>
 
 <template>
-    <section class="mb-5">
-        <header class="mb-4 pt-3">
+    <section class="mb-5 pt-3">
+        <header class="mb-4" v-if="title">
             <h2 class="display-4 fw-bold">{{ title }}</h2>
         </header>
         <div class="row g-3 row-cols-sm-2 row-cols-md-3 row-cols-lg-4">

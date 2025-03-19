@@ -57,6 +57,15 @@ const router = createRouter({
                 requiresAuth: true,
                 preventAuthedEnter: false,
             }
+        },
+        {
+            path: '/browse',
+            name: 'browse',
+            component: () => import("../views/ProductsView.vue"),
+            meta: {
+                requiresAuth: false,
+                preventAuthedEnter: false,
+            }
         }
     ],
 });

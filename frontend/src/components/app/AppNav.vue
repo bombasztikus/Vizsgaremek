@@ -26,6 +26,7 @@ const signOut = () => {
             <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
                 <div class="navbar-nav gap-3 ms-auto fw-semibold">
                     <RouterLink :to="{ name: 'home' }" class="nav-link text-white">FŐOLDAL</RouterLink>
+                    <RouterLink :to="{ name: 'browse' }" class="nav-link text-white">TERMÉKEK</RouterLink>
                     <RouterLink :to="{ name: 'orders' }" class="nav-link text-white" v-if="isAuthenticated">RENDELÉSEIM</RouterLink>
                     <button @click="signOut" class="nav-link text-white" v-if="isAuthenticated">KIJELENTKEZÉS</button>
                     <RouterLink :to="{ name: 'register' }" class="nav-link text-white" v-else>REGISZTRÁCIÓ</RouterLink>
