@@ -31,7 +31,7 @@ const meals = computed(() => {
 <template>
     <main class="container-lg">
         <div class="card mt-3 sticky-top shadow-lg mx-auto rounded-pill" style="top: 5rem; width: min-content;">
-            <ul class="navbar-nav d-flex flex-row gap-5 justify-content-center fs-5 fw-semibold text-uppercase leading-1 card-body px-3 py-2">
+            <ul class="navbar-nav d-flex flex-row gap-4 justify-content-center fs-5 fw-semibold text-uppercase leading-1 card-body px-4 py-2">
                 <li class="nav-item">
                     <RouterLink :to="{ name: 'browse', query: { 'type': MealType.MENU } }" class="nav-link p-0">Menük</RouterLink>
                 </li>
