@@ -25,14 +25,14 @@ const entries = ref<Entry[]>([]);
 
 onBeforeMount(async () => {
     if ((orderId.value === undefined || isNaN(orderId.value) || orderId.value < 1)) {
-        await router.push({ name: 'home' });
+        await router.push({ name: 'notFound' });
         return;
     }
 
     order.value = await useOrder(orderId.value);
 
-    if (!order.value) {
-        await router.push({ name: 'home' });
+    if (!order.value || order.value.is_error === true) {
+        await router.push({ name: 'notFound' });
     }
 });
 
