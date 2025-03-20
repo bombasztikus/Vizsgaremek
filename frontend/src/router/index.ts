@@ -66,7 +66,22 @@ const router = createRouter({
                 requiresAuth: false,
                 preventAuthedEnter: false,
             }
-        }
+        },
+        {
+            path: '/404',
+            name: 'notFound',
+            component: () => import("../views/404View.vue"),
+            meta: {
+                requiresAuth: false,
+                preventAuthedEnter: false,
+            }
+        },
+        {
+            path: '/:catchAll(.*)',
+            redirect: {
+                name: 'notFound'
+            }
+        },
     ],
 });
 
