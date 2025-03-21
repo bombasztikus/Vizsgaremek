@@ -59,9 +59,18 @@ const router = createRouter({
             }
         },
         {
-            path: '/browse',
+            path: '/products',
             name: 'browse',
             component: () => import("../views/ProductsView.vue"),
+            meta: {
+                requiresAuth: false,
+                preventAuthedEnter: false,
+            }
+        },
+        {
+            path: '/products/:id',
+            name: 'product',
+            component: () => import("../views/ProductView.vue"),
             meta: {
                 requiresAuth: false,
                 preventAuthedEnter: false,
