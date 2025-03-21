@@ -10,7 +10,7 @@ useTitle("Az oldal nem található (404)")
             <p class="display-6 mb-5 text-secondary">404</p>
             <h1 class="display-2 fw-bold mb-1 p-0">Az oldal nem található...</h1>
             <p class="fs-5 text-secondary mb-5">Ellenőrizd az oldal címét.</p>
-            <RouterLink :to="{ name: 'home' }" class="btn btn-dark rounded-pill fw-bold px-4 py-2">Főoldal</RouterLink>
+            <RouterLink :to="{ name: 'browse' }" class="btn btn-dark rounded-pill fw-bold px-4 py-2">Nem vagy éhes?</RouterLink>
         </div>
     </main>
 </template>
