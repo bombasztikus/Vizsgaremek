@@ -36,18 +36,26 @@ const meals = computed(() => {
                 <div class="card-body fs-5 fw-semibold leading-1 p-2 d-flex justify-content-between align-items-center">
                     <h2 class="fw-bold p-0 m-0 lh-sm ps-3">Termékek</h2>
                     <div class="ms-auto text-uppercase">
-                        <ul class="navbar-nav d-flex flex-row justify-content-center">
+                        <ul class="navbar-nav d-flex flex-row justify-content-center gap-2">
                             <li class="nav-item p-0 m-0">
-                                <RouterLink :to="{ name: 'browse', query: { 'type': MealType.MENU } }" class="nav-link px-3 py-2 rounded-pill" :class="{ 'active': category === MealType.MENU }">Menük</RouterLink>
+                                <RouterLink :to="{ name: 'browse', query: { 'type': MealType.MENU } }" class="nav-link px-3 py-2 rounded-pill" :class="{ 'active': category === MealType.MENU }">
+                                    <font-awesome-icon :icon="['fas', 'utensils']" class="me-2 fs-6 align-baseline" />Menük
+                                </RouterLink>
                             </li>
                             <li class="nav-item">
-                                <RouterLink :to="{ name: 'browse', query: { 'type': MealType.FOOD } }" class="nav-link px-3 py-2 rounded-pill" :class="{ 'active': category === MealType.FOOD }">Ételek</RouterLink>
+                                <RouterLink :to="{ name: 'browse', query: { 'type': MealType.FOOD } }" class="nav-link px-3 py-2 rounded-pill" :class="{ 'active': category === MealType.FOOD }">
+                                    <font-awesome-icon :icon="['fas', 'pizza-slice']" class="me-2 fs-6 align-baseline" />Ételek
+                                </RouterLink>
                             </li>
                             <li class="nav-item">
-                                <RouterLink :to="{ name: 'browse', query: { 'type': MealType.BEVERAGE } }" class="nav-link px-3 py-2 rounded-pill" :class="{ 'active': category === MealType.BEVERAGE }">Italok</RouterLink>
+                                <RouterLink :to="{ name: 'browse', query: { 'type': MealType.BEVERAGE } }" class="nav-link px-3 py-2 rounded-pill" :class="{ 'active': category === MealType.BEVERAGE }">
+                                    <font-awesome-icon :icon="['fas', 'martini-glass-citrus']" class="me-2 fs-6 align-baseline" />Italok
+                                </RouterLink>
                             </li>
                             <li class="nav-item">
-                                <RouterLink :to="{ name: 'browse', query: { 'type': MealType.DESSERT } }" class="nav-link px-3 py-2 rounded-pill" :class="{ 'active': category === MealType.DESSERT }">Desszertek</RouterLink>
+                                <RouterLink :to="{ name: 'browse', query: { 'type': MealType.DESSERT } }" class="nav-link px-3 py-2 rounded-pill" :class="{ 'active': category === MealType.DESSERT }">
+                                    <font-awesome-icon :icon="['fas', 'ice-cream']"  class="me-2 fs-6 align-baseline" />Desszertek
+                                </RouterLink>
                             </li>
                         </ul>
                     </div>
