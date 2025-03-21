@@ -17,8 +17,17 @@ export async function useCreateOrder(address: string, items: CartItem[]): Promis
 
     const { data, execute } = useFetch<Order | APIError>(API_BASE + POST_ORDER, {
         immediate: false,
-        beforeFetch({ options }) {
-            options.headers!.Authorization = `Bearer ${session.value}`;
+        beforeFetch({ options, cancel }) {
+            if (!session.value) {
+                cancel();
+                return;
+            }
+
+            options.headers = {
+                ...options.headers,
+                Authorization: `Bearer ${session.value}`,
+              }
+
             return { options };
         },
         afterFetch(ctx) {

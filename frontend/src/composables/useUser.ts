@@ -13,8 +13,17 @@ export async function useUser() {
 
     const { data, execute } = useFetch<User | APIError>(API_BASE + GET_ME, {
         immediate: false,
-        beforeFetch({ options }) {
-            options.headers!.Authorization = `Bearer ${session.value}`;
+        beforeFetch({ options, cancel }) {
+            if (!session.value) {
+                cancel();
+                return;
+            }
+
+            options.headers = {
+                ...options.headers,
+                Authorization: `Bearer ${session.value}`,
+              }
+
             return { options };
         },
         onFetchError(ctx) {

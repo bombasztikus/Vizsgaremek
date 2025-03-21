@@ -12,8 +12,17 @@ export async function useOrders(): Promise<OrdersResponse | APIError | null> {
 
     const { data, execute } = useFetch<OrdersResponse | APIError>(API_BASE + GET_ALL_ORDERS, {
         immediate: false,
-        beforeFetch({ options }) {
-            options.headers!.Authorization = `Bearer ${session.value}`;
+        beforeFetch({ options, cancel }) {
+            if (!session.value) {
+                cancel();
+                return;
+            }
+
+            options.headers = {
+                ...options.headers,
+                Authorization: `Bearer ${session.value}`,
+              }
+
             return { options };
         },
         afterFetch(ctx) {
