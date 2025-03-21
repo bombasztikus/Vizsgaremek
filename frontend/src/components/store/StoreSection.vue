@@ -22,7 +22,7 @@ withDefaults(defineProps<{
         </header>
         <div class="row g-3 row-cols-2 row-cols-md-3 row-cols-lg-4">
             <template v-if="isLoading">
-                <div class="col" v-for="i in 8" :key="i">
+                <div class="col" v-for="i in 4" :key="i">
                     <MealCardSkeletonized />
                 </div>
             </template>
