@@ -20,7 +20,7 @@ withDefaults(defineProps<{
         <header class="mb-4" v-if="title">
             <h2 class="display-4 fw-bold">{{ title }}</h2>
         </header>
-        <div class="row g-3 row-cols-2 row-cols-md-3 row-cols-lg-4">
+        <div class="row g-3 row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4">
             <template v-if="isLoading">
                 <div class="col" v-for="i in 4" :key="i">
                     <MealCardSkeletonized />
@@ -30,7 +30,7 @@ withDefaults(defineProps<{
                 <div class="col" v-for="meal in meals" :key="meal.id">
                     <MealCard :meal="meal" />
                 </div>
-                <div class="col" v-if="showContinueCard">
+                <div class="col d-none d-sm-block" v-if="showContinueCard">
                     <ContinueCard :to="{ name: 'browse', query: { type: meals ? meals[0].type : '' } }" />
                 </div>
             </template>
