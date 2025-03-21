@@ -30,19 +30,19 @@ const meals = computed(() => {
 
 <template>
     <main class="container-lg">
-        <div class="card mt-3 sticky-top shadow-lg mx-auto rounded-pill" style="top: 5rem; width: min-content;">
-            <ul class="navbar-nav d-flex flex-row gap-4 justify-content-center fs-5 fw-semibold text-uppercase leading-1 card-body px-4 py-2">
-                <li class="nav-item">
-                    <RouterLink :to="{ name: 'browse', query: { 'type': MealType.MENU } }" class="nav-link p-0">Menük</RouterLink>
+        <div class="card mt-3 sticky-top mx-auto rounded-pill border-dark" style="top: 5rem; width: min-content;">
+            <ul class="navbar-nav d-flex flex-row justify-content-center fs-5 fw-semibold text-uppercase leading-1 card-body p-2">
+                <li class="nav-item p-0 m-0">
+                    <RouterLink :to="{ name: 'browse', query: { 'type': MealType.MENU } }" class="nav-link px-3 py-2 rounded-pill" :class="{ 'active': category === MealType.MENU }">Menük</RouterLink>
                 </li>
                 <li class="nav-item">
-                    <RouterLink :to="{ name: 'browse', query: { 'type': MealType.FOOD } }" class="nav-link p-0">Ételek</RouterLink>
+                    <RouterLink :to="{ name: 'browse', query: { 'type': MealType.FOOD } }" class="nav-link px-3 py-2 rounded-pill" :class="{ 'active': category === MealType.FOOD }">Ételek</RouterLink>
                 </li>
                 <li class="nav-item">
-                    <RouterLink :to="{ name: 'browse', query: { 'type': MealType.BEVERAGE } }" class="nav-link p-0">Italok</RouterLink>
+                    <RouterLink :to="{ name: 'browse', query: { 'type': MealType.BEVERAGE } }" class="nav-link px-3 py-2 rounded-pill" :class="{ 'active': category === MealType.BEVERAGE }">Italok</RouterLink>
                 </li>
                 <li class="nav-item">
-                    <RouterLink :to="{ name: 'browse', query: { 'type': MealType.DESSERT } }" class="nav-link p-0">Desszertek</RouterLink>
+                    <RouterLink :to="{ name: 'browse', query: { 'type': MealType.DESSERT } }" class="nav-link px-3 py-2 rounded-pill" :class="{ 'active': category === MealType.DESSERT }">Desszertek</RouterLink>
                 </li>
             </ul>
         </div>
@@ -52,3 +52,12 @@ const meals = computed(() => {
     </main>
 </template>
 
+<style scoped>
+.active {
+    /* backdrop-filter: brightness(.95); */
+    background-color: black;
+    color: white !important;
+    font-weight: bold;
+    transition: .15s all ease-in-out;
+}
+</style>
