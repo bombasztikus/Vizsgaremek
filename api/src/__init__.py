@@ -10,9 +10,7 @@ from flask_cors import CORS
 load_dotenv()
 db = SQLAlchemy()
 jwt = JWTManager()
-cors = CORS(
-    origins="*",
-)
+cors = CORS(resources={r"/*": {"origins": "*"}})
 
 def create_app():
     app = Flask(__name__)
