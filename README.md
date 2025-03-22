@@ -18,7 +18,11 @@ https://1drv.ms/w/s!AtApH5_A2yFwfj4DsSru2pBM1gk?e=sQ85K7
 
 # Utasítások a futtatáshoz
 
-Lásd a dokumentáció Futtatás c. fejezetét.
+```sh
+docker-compose up -d --build
+```
+
+Amennyiben nem tudod, vagy nem akarod Docker-rel futtatni, lásd a dokumentáció Futtatás c. fejezetét.
 
 # Demó adatok
 
@@ -30,4 +34,4 @@ Sima felhasználó:
 - Email: `demo@localhost`
 - Jelszó: `demo123`
 
-A demó adatok betöltéséhez futtasd le a generate_db.py scriptet. Ne felejtsd el beállítani a környezeti változókat.
+A demó adatok betöltéséhez futtasd le a `api/generate_db.py` scriptet. Ne felejtsd el beállítani a környezeti változókat.
