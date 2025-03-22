@@ -16,7 +16,6 @@ def get_all_meals():
     items = []
 
     if len(safe_ids) == 0:
-        print(limit_per_type if limit_per_type.isdigit() else 0)
         items = Meal.get_all(
             limit_per_type=limit_per_type if limit_per_type.isdigit() else 0
         )
