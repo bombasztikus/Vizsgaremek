@@ -48,7 +48,7 @@ const addToCart = () => {
 <template>
     <main class="container-lg my-5 py-5">
         <div class="row row-cols-1 row-cols-md-2">
-            <div class="col" :class="{ 'placeholder-glow': !meal }">
+            <div class="col mb-5 mb-md-0" :class="{ 'placeholder-glow': !meal }">
                 <img :src="PlaceholderImage" class="placeholder img-fluid" alt="" v-if="!meal" />
                 <img :src="image" :alt="meal?.name" class="img-fluid" v-else />
             </div>
