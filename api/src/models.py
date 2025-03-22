@@ -321,14 +321,8 @@ class Order(db.Model):
             "is_error": False,
         }
     
-    def mark_as_completed(self) -> Self:
-        self.is_completed = True
-        db.session.commit()
-        db.session.refresh(self)
-        return self
-    
-    def mark_as_uncompleted(self) -> Self:
-        self.is_completed = False
+    def set_is_completed(self, is_completed: bool) -> Self:
+        self.is_completed = is_completed
         db.session.commit()
         db.session.refresh(self)
         return self

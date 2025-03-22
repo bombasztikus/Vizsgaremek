@@ -100,11 +100,15 @@ def put_order(order_id: int):
         raise UnauthorizedException("Nem rendelkezel a megfelelő jogosultságokkal a rendelés utólagos módosításához")
     
     try:
-        order = Order.get_by_id_or_exception(int(order_id))
+        order: Order = Order.get_by_id_or_exception(int(order_id))
 
         address = request.json.get("address", None)
         if address:
             order = order.set_address(address)
+
+        is_completed = request.json.get("is_completed", None)
+        if isinstance(is_completed, bool):
+            order = order.set_is_completed(is_completed)
     except ValueError:
         raise InvalidOrderIDException()
     
