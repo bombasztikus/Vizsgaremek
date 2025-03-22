@@ -6,7 +6,7 @@ from flask_jwt_extended import jwt_required, current_user
 
 api = Blueprint("meals", __name__, url_prefix="/meals")
 
-@api.get("/")
+@api.get("")
 @jwt_required(optional=True)
 def get_all_meals():
     filter_ids = request.args.get("ids", "").split(",")

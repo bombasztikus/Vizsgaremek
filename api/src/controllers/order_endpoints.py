@@ -8,7 +8,7 @@ from src.validation import validate_dto_or_exception
 
 api = Blueprint("orders", __name__, url_prefix="/orders")
 
-@api.get("/")
+@api.get("")
 @jwt_required()
 def get_orders():
     if not current_user:
@@ -41,7 +41,7 @@ def get_order(order_id: int):
     except ValueError:
         raise InvalidOrderIDException()
 
-@api.post("/")
+@api.post("")
 @jwt_required()
 def post_order():
     if not current_user:
