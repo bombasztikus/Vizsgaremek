@@ -41,13 +41,15 @@ const totalPriceForThisItem = computed(() => cart.value.reduce((acc, item) => {
 <template>
     <article class="card rounded-4 overflow-hidden">
         <div class="row">
-            <div class="d-none d-md-flex col-md-2 align-items-center p-0">
+            <RouterLink :to="{ name: 'product', params: { id: meal.id } }" class="d-none d-md-flex col-md-2 align-items-center p-0">
                 <img :src="meal.has_image_url ? meal.image_url : meal.fallback_image_url" class="img-fluid d-block ps-5" :alt="`${meal.name} illusztrációja`">
-            </div>
+            </RouterLink>
             <div class="col col-md-10">
                 <div class="card-body justify-content-center">
-                    <p class="card-title fs-4 fw-semibold mb-1">{{ meal.name }}</p>
-                    <p class="card-text text-muted">{{ meal.description ?? "Ennek az ételnek vagy italnak nincs leírása, de biztosan nagyon finom." }}</p>
+                    <RouterLink :to="{ name: 'product', params: { id: meal.id } }" class="text-decoration-none text-dark">
+                        <p class="card-title fs-4 fw-semibold mb-1">{{ meal.name }}</p>
+                        <p class="card-text text-muted">{{ meal.description ?? "Ennek az ételnek vagy italnak nincs leírása, de biztosan nagyon finom." }}</p>
+                    </RouterLink>
                     <div class="row">
                         <div class="col-6 d-flex flex-column flex-md-row">
                             <div class="fw-bold ms-0 fs-5 d-flex align-items-center">

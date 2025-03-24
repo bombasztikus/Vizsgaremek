@@ -58,7 +58,7 @@ watch([session], onSessionPreset);
                     <AppAlert :text="error.error" :type="error?.css_class" v-if="error" />
                     <div class="mb-3">
                         <label for="inputEmail" class="form-label text-uppercase fw-bold">Email cím</label>
-                        <input type="email" class="form-control rounded-3" id="inputEmail" v-model="email" placeholder="valaki@pelda.hu" :class="{
+                        <input type="email" class="form-control rounded-3" id="inputEmail" v-model.trim="email" placeholder="valaki@pelda.hu" :class="{
                             'border-dark': email.trim().length > 0,
                             'is-invalid': email.trim().length === 0,
                         }">
@@ -69,7 +69,7 @@ watch([session], onSessionPreset);
                     </div>
                     <div class="mb-3">
                         <label for="inputPassword" class="form-label text-uppercase fw-bold">Jelszó</label>
-                        <input type="password" class="form-control rounded-3" id="inputPassword" v-model="password" placeholder="Jelszó" :class="{
+                        <input type="password" class="form-control rounded-3" id="inputPassword" v-model.trim="password" placeholder="Jelszó" :class="{
                             'border-dark': password.trim().length > 0,
                             'is-invalid': password.trim().length === 0,
                         }">

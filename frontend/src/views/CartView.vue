@@ -3,9 +3,8 @@ import CartItem from '@/components/store/CartItem.vue';
 import { useMeals } from '@/composables/useMeals';
 import { useCartStore } from '@/stores/cart';
 import { useTitle } from '@vueuse/core';
-import { computed, ref, watch } from 'vue';
+import { computed } from 'vue';
 import { storeToRefs } from 'pinia';
-import type { Meal } from '@/lib/models';
 import CartSummary from '@/components/store/CartSummary.vue';
 
 useTitle("Kosár");

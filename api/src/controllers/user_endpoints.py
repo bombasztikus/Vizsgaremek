@@ -27,7 +27,7 @@ def get_user(user_id: int):
     except ValueError:
         raise InvalidUserIDException()
     
-@api.get("/")
+@api.get("")
 @jwt_required(optional=False)
 def get_users():
     if not current_user or not current_user.is_employee:

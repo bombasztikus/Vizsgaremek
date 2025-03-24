@@ -10,10 +10,19 @@ export async function useOrder(id: number) {
         return null;
     }
 
-    const { data, execute } = useFetch<Order | APIError>(API_BASE + GET_ORDER(id), {
+    const { data, execute, } = useFetch<Order | APIError>(API_BASE + GET_ORDER(id), {
         immediate: false,
-        beforeFetch({ options }) {
-            options.headers!.Authorization = `Bearer ${session.value}`;
+        beforeFetch({ options, cancel }) {
+            if (!session.value) {
+                cancel();
+                return;
+            }
+
+            options.headers = {
+                ...options.headers,
+                Authorization: `Bearer ${session.value}`,
+              }
+
             return { options };
         },
         afterFetch(ctx) {

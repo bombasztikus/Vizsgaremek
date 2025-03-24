@@ -3,6 +3,7 @@ import { useSession } from '@/composables/useSession';
 import { useCartStore } from '@/stores/cart';
 import { storeToRefs } from 'pinia';
 import { useRouter } from 'vue-router';
+import { MealType } from '@/lib/models';
 
 const { clearSession, isAuthenticated } = useSession();
 const router = useRouter();
@@ -24,8 +25,9 @@ const signOut = () => {
                 <i class="bi bi-list text-white p-2 fs-3"></i>
             </button>
             <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-                <div class="navbar-nav gap-3 ms-auto fw-semibold">
+                <div class="navbar-nav gap-3 ms-auto fw-semibold text-center">
                     <RouterLink :to="{ name: 'home' }" class="nav-link text-white">FŐOLDAL</RouterLink>
+                    <RouterLink :to="{ name: 'browse', query: { 'type': MealType.FOOD } }" class="nav-link text-white">TERMÉKEK</RouterLink>
                     <RouterLink :to="{ name: 'orders' }" class="nav-link text-white" v-if="isAuthenticated">RENDELÉSEIM</RouterLink>
                     <button @click="signOut" class="nav-link text-white" v-if="isAuthenticated">KIJELENTKEZÉS</button>
                     <RouterLink :to="{ name: 'register' }" class="nav-link text-white" v-else>REGISZTRÁCIÓ</RouterLink>

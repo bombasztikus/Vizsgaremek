@@ -2,7 +2,9 @@ from datetime import datetime, timezone
 from typing import Optional, Self
 import enum
 from src.exceptions import *
-from sqlalchemy import exc
+from sqlalchemy import exc, select, text
+from sqlalchemy.orm import aliased
+from sqlalchemy.sql import func, over
 from flask import request
 from src.utils import is_valid_enum_value
 from src.validation import *
@@ -131,10 +133,28 @@ class Meal(db.Model):
         return f"<Meal {self.id} ({self.name})>"
 
     @staticmethod
-    def get_all() -> list[Self]:
-        meals = db.session.query(Meal).all()
-        return meals
-    
+    def get_all(limit_per_type: Optional[int] = 0) -> list[Self]:
+        if limit_per_type and int(limit_per_type) > 0:
+            MealAlias = aliased(Meal)
+            
+            subquery = (
+                select(MealAlias.id)
+                .where(MealAlias.type == Meal.type)
+                .order_by(MealAlias.type, MealAlias.id)
+                .limit(limit_per_type)
+                .correlate(Meal)
+            )
+
+            query = (
+                select(Meal)
+                .where(Meal.id.in_(subquery))
+                .order_by(Meal.type, Meal.id)
+            )
+
+            return db.session.execute(query).scalars().all()
+
+        return db.session.query(Meal).all()
+        
     @staticmethod
     def get_all_by_ids(ids: list[int]) -> list[Self]:
         return db.session.query(Meal).filter(Meal.id.in_(ids)).all()
@@ -301,14 +321,8 @@ class Order(db.Model):
             "is_error": False,
         }
     
-    def mark_as_completed(self) -> Self:
-        self.is_completed = True
-        db.session.commit()
-        db.session.refresh(self)
-        return self
-    
-    def mark_as_uncompleted(self) -> Self:
-        self.is_completed = False
+    def set_is_completed(self, is_completed: bool) -> Self:
+        self.is_completed = is_completed
         db.session.commit()
         db.session.refresh(self)
         return self

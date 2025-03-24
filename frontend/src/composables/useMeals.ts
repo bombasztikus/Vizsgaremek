@@ -3,7 +3,7 @@ import { useFetch } from '@vueuse/core';
 import { API_BASE, GET_ALL_MEALS } from '@/lib/endpoints';
 import { type APIError, type Meal, type MealsResponse } from '@/lib/models';
 
-export function useMeals(filter_ids?: number[]) {
+export function useMeals(filter_ids?: number[], per_category: number = -1) {
     const meals = shallowRef<Meal[]>([]);
 
 
@@ -12,6 +12,9 @@ export function useMeals(filter_ids?: number[]) {
         const url = new URL(API_BASE + GET_ALL_MEALS);
         if (Array.isArray(filter_ids) && filter_ids.length > 0) {
             url.searchParams.set("ids", filter_ids.join(","));
+        }
+        if (per_category && per_category > 0) {
+            url.searchParams.set("per_category", per_category.toString());
         }
         return url.toString();
     });

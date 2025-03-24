@@ -49,12 +49,12 @@ export type Meal = APIModel & {
     name: string;
     price: number;
     calories: number;
-    image_url: string | null;
+    image_url?: string;
     has_image_url: boolean;
     fallback_image_url: string;
     description: string | null;
     stars: number;
-    type: string;
+    type: MealType;
     is_free: boolean;
     display_price: string;
 };

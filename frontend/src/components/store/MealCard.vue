@@ -27,17 +27,21 @@ const addToCart = () => {
 
 <template>
     <article class="card h-100 rounded-4 overflow-hidden" style="min-height: 400;">
-        <img :src="meal.has_image_url ? meal.image_url : meal.fallback_image_url" class="card-img-top h-10 p-2" :alt="`${meal.name} illusztrációja`" :class="[$style.grow]">
-        <div class="card-body d-flex flex-column">
-            <h5 class="card-title fw-bolder fs-4 text-truncate lh-base">{{ meal.name }}</h5>
-            <p class="card-subtitle">
-                <i class="bi bi-star-fill text-warning me-1" v-for="star in meal.stars" :key="star"></i>
-                <i class="bi bi-star text-warning me-1" v-for="star in (5 - meal.stars)" :key="star"></i>
-                <span class="text-body-secondary">({{ meal.stars }})</span>
-            </p>
-            <p class="card-text text-body-secondary mt-2 meal-description">
-                {{ meal.description ?? "Ennek az ételnek vagy italnak nincs leírása, de biztosan nagyon finom." }}
-            </p>
+        <RouterLink :to="{ name: 'product', params: { id: meal.id } }" class="text-decoration-none text-dark h-100">
+            <img :src="meal.has_image_url ? meal.image_url : meal.fallback_image_url" class="card-img-top h-10 p-2" :alt="`${meal.name} illusztrációja`" :class="[$style.grow]">
+            <div class="card-body d-flex flex-column pb-0">
+                <h5 class="card-title fw-bolder fs-4 text-truncate lh-base">{{ meal.name }}</h5>
+                <p class="card-subtitle">
+                    <i class="bi bi-star-fill text-warning me-1" v-for="star in meal.stars" :key="star"></i>
+                    <i class="bi bi-star text-warning me-1" v-for="star in (5 - meal.stars)" :key="star"></i>
+                    <span class="text-body-secondary">({{ meal.stars }})</span>
+                </p>
+                <p class="card-text text-body-secondary mt-2 meal-description">
+                    {{ meal.description ?? "Ennek az ételnek vagy italnak nincs leírása, de biztosan nagyon finom." }}
+                </p>
+            </div>
+        </RouterLink>
+        <div class="card-body">
             <button @click="addToCart" class="btn btn-outline-dark fw-bold w-100 mt-auto rounded-pill text-uppercase">
                 <template v-if="inCartAlready"><i class="bi bi-cart-check me-1"></i>Kosárban (</template>
                 <template v-if="meal.is_free">

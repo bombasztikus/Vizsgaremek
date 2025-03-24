@@ -4,9 +4,11 @@ import type { Meal, Order, OrderItem } from '@/lib/models';
 import { useRouteParams } from '@vueuse/router';
 import { computed, onBeforeMount, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
-import CartSummary from '@/components/store/CartSummary.vue';
 import { useMeals } from '@/composables/useMeals';
 import OrderItemElem from '@/components/store/OrderItem.vue';
+import { useTitle } from '@vueuse/core';
+
+useTitle("Rendelés részletei");
 
 const orderId = useRouteParams('id', undefined, { transform: Number });
 const router = useRouter();
@@ -23,14 +25,14 @@ const entries = ref<Entry[]>([]);
 
 onBeforeMount(async () => {
     if ((orderId.value === undefined || isNaN(orderId.value) || orderId.value < 1)) {
-        await router.push({ name: 'home' });
+        await router.push({ name: 'notFound' });
         return;
     }
 
     order.value = await useOrder(orderId.value);
 
-    if (!order.value) {
-        await router.push({ name: 'home' });
+    if (!order.value || order.value.is_error === true) {
+        await router.push({ name: 'notFound' });
     }
 });
 

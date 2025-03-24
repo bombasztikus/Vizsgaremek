@@ -1,0 +1,29 @@
+services:
+  backend:
+    build: ./api
+    ports:
+      - "5080:5000"
+    environment:
+      - FLASK_ENV=production # Csak akkor nyúlj hozzá, ha tudod mit csinálsz
+      - DB_URI=sqlite:///db.sqlite3 # Fejlesztéshez vagy demózásra jó, de ne használd prod-ban
+      - SESSION_SECRET=valami_nagyon_titkos_es_veletlenszeru_nehezen_kitalalhato_1234 # Ezt cseréld le valami véletlenszerűre és hosszúra
+      - JWT_SECRET=valami_nagyon_titkos_es_veletlenszeru_csak_ne_ugyanaz_legyen_mint_a_SESSION_SECRET # Ezt cseréld le valami véletlenszerűre és hosszúra
+    networks:
+      - app-network
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        VITE_API_BASE_URL: http://localhost:5080 # Csak fejlesztéshez, prod-ban add meg a valós címet (pl. https://api.pelda.hu)
+        VITE_BASE_URL: / # Csak akkor nyúlj hozzá, ha tudod mit csinálsz
+    ports:
+      - "5090:80" # Ez maradjon így
+    depends_on:
+      - backend
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
