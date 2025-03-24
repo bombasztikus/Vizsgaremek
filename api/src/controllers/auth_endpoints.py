@@ -21,7 +21,13 @@ def post_obtain_token():
     user = User.verify(email, password)
 
     access_token_expiry = timedelta(days=30)
-    access_token = create_access_token(user, expires_delta=access_token_expiry)
+    access_token = create_access_token(
+        user,
+        additional_claims={
+            "role": "admin" if user.is_employee else "user",
+        },
+        expires_delta=access_token_expiry
+    )
 
     return jsonify({
         "access_token": str(access_token),
