@@ -244,6 +244,22 @@ class Meal(db.Model):
             print(traceback.format_exc())
             return None
         
+    @staticmethod
+    def get_by_id_or_exception(id: int) -> Self:
+        try:
+            result = db.session.query(Meal).filter_by(id=id).first()
+            if result is None:
+                raise MealNotFoundException()
+            
+            return result
+        except:
+            print(traceback.format_exc())
+            raise MealNotFoundException()
+        
+    def delete(self) -> None:
+        db.session.delete(self)
+        db.session.commit()
+        
 class Order(db.Model):
     __tablename__ = "Orders"
 

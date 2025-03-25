@@ -1,4 +1,4 @@
-from flask import jsonify, Blueprint, request
+from flask import Response, jsonify, Blueprint, request
 from src.utils import meal_type_to_display_name, meals_to_dto, str_to_enum_value
 from ..models import MealType, Meal
 from src.exceptions import *
@@ -64,3 +64,21 @@ def get_individual_meal(meal_id: str):
         raise MealNotFoundException()
     
     return jsonify(meal.to_dto()), 200
+
+@api.delete("/<int:meal_id>")
+@jwt_required()
+def delete_order(meal_id: int):
+    if not meal_id:
+        raise InvalidOrderIDException()
+    
+    if not current_user or not current_user.is_employee:
+        raise UnauthorizedException("Nem rendelkezel a megfelelő jogosultságokkal a termék törléséhez")
+    
+    try:
+        meal = Meal.get_by_id_or_exception(int(meal_id))
+        
+        meal.delete()
+    except ValueError:
+        raise InvalidOrderIDException()
+    
+    return Response(status=204)
