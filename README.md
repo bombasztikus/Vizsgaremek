@@ -10,7 +10,7 @@
     - Halász Wilhelm Bendegúz ([GitHub](https://github.com/bombasztikus))
 
 # Dokumentáció
-https://1drv.ms/w/s!AtApH5_A2yFwfj4DsSru2pBM1gk?e=sQ85K7
+[https://1drv.ms/w/s!AtApH5_A2yFwfj4DsSru2pBM1gk?e=sQ85K7](https://1drv.ms/w/c/7021dbc09f1f29d0/EdqMabXVNERCgB9AwJ2vLcEBTcImepnXHcpLOWkEhsrgAQ?e=Mqo4JN)
 
 # Repository struktúra
 - `api/` - Backend/REST API
