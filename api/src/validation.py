@@ -15,8 +15,8 @@ def validate_meal_price(price: Optional[int]) -> int:
     
     return price
 
-def validate_meal_calories(calories: Optional[str]) -> int:
-    if not calories:
+def validate_meal_calories(calories: Optional[int]) -> int:
+    if calories is None:
         raise InvalidCaloriesException()
 
     try:
