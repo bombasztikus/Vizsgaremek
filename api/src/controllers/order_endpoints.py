@@ -3,7 +3,7 @@ from flask import jsonify, Blueprint, request, Response
 from ..models import Order, OrderItem
 from src.exceptions import *
 from flask_jwt_extended import jwt_required, current_user
-from src.utils import orders_to_dto, order_to_dto_with_items
+from src.utils import orders_to_dto, order_to_dto_with_items, detailed_order_to_dto
 from src.validation import validate_dto_or_exception
 
 api = Blueprint("orders", __name__, url_prefix="/orders")
@@ -196,3 +196,21 @@ def delete_order_item(order_id: int, item_id: int):
     item.delete()
     
     return Response(status=204)
+
+@api.get("/<order_id>/items")
+@jwt_required()
+def get_order_items(order_id: int):
+    if not order_id:
+        raise InvalidOrderIDException()
+    
+    if not current_user or not current_user.is_employee:
+        raise UnauthorizedException("Nem rendelkezel a megfelelő jogosultságokkal a rendelés elemeinek frissítéséhez")
+    
+    try:
+        order: Order = Order.get_by_id_or_exception(int(order_id))
+
+        items = order.get_detailed_items()
+
+        return jsonify(detailed_order_to_dto(items)), 200
+    except ValueError:
+        raise InvalidOrderIDException()

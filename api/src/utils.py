@@ -106,3 +106,28 @@ def order_to_dto_with_items(order: "Order", items: list["OrderItem"]) -> dict:
     dto["items"] = item_dtos
 
     return dto
+
+def detailed_order_to_dto(rows: list[tuple["Order", "OrderItem", "Meal"]]) -> dict:
+    items: list[dict] = []
+    the_order = None
+    
+    for order, item, meal in rows:
+        if not the_order:
+            the_order = order
+
+        items.append({
+            "order_id": int(order.id),
+            "meal_id": int(meal.id),
+            "quantity": int(item.quantity),
+            "meal": meal.to_dto()
+        })
+
+    return {
+        "id": int(the_order.id),
+        "user_id": int(the_order.user_id),
+        "date_created": f'{the_order.date_created.isoformat()}Z',
+        "address": str(the_order.address),
+        "is_completed": bool(the_order.is_completed),
+        "items": items,
+        "is_error": False,
+    }

@@ -437,6 +437,15 @@ class Order(db.Model):
     def get_items(self) -> list["OrderItem"]:
         return OrderItem.get_by_order_id_or_none(self.id) or []
     
+    def get_detailed_items(self) -> list[tuple["Order", "OrderItem", "Meal"]]:
+        results = db.session.query(OrderItem, Meal).join(Meal, OrderItem.meal_id == Meal.id).where(OrderItem.order_id == self.id).all()
+        returned = []
+
+        for item, meal in results:
+            returned.append((self, item, meal))   
+
+        return returned
+    
     def get_all_by_user_id(user_id: int) -> list[Self]:
         orders = db.session.query(Order).filter_by(user_id=user_id).all()
         return orders
