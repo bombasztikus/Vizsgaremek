@@ -236,13 +236,13 @@ class Meal(db.Model):
             "has_description": bool(not self.description is None),
             "stars": int(self.stars),
             "type": self.type,
-            "is_free": bool(str(self.price) == "0"),
+            "is_free": bool(self.price == 0),
             "is_error": False,
             "display_price": f"{self.price} Ft"
         }
 
     @staticmethod
-    def create(name: str, price: str = "0", calories: int = 0, image_url: Optional[str] = None, description: Optional[str] = None, stars: int = 0, type: Optional[MealType] = MealType.FOOD) -> Self:
+    def create(name: str, price: str = 0, calories: int = 0, image_url: Optional[str] = None, description: Optional[str] = None, stars: int = 0, type: Optional[MealType] = MealType.FOOD) -> Self:
         new_meal = None
 
         try:

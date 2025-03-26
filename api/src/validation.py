@@ -1,8 +1,8 @@
 from typing import Optional
 from .exceptions import *
 
-def validate_meal_price(price: Optional[str]) -> int:
-    if price is None or price.strip() == "":
+def validate_meal_price(price: Optional[int]) -> int:
+    if price is None:
         raise InvalidPriceException()
     
     try:
