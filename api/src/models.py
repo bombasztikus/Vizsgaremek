@@ -6,7 +6,7 @@ from sqlalchemy import exc, select, text
 from sqlalchemy.orm import aliased
 from sqlalchemy.sql import func, over
 from flask import request
-from src.utils import is_valid_enum_value
+from src.utils import is_valid_enum_value, str_to_enum_value
 from src.validation import *
 from . import db
 from argon2 import PasswordHasher
@@ -259,6 +259,41 @@ class Meal(db.Model):
     def delete(self) -> None:
         db.session.delete(self)
         db.session.commit()
+
+    def update_from_dict(self, values: dict) -> Self:
+        commit_changes = False
+
+        if "name" in values:
+            self.name = values.get("name")
+            commit_changes = True
+        
+        if "price" in values:
+            self.price = validate_meal_price(values.get("price", None))
+            commit_changes = True
+
+        if "calories" in values:
+            self.calories = validate_meal_calories(values.get("calories", None))
+            commit_changes = True
+
+        if "image_url" in values:
+            self.image_url = validate_image_url(values.get("image_url", None))
+            commit_changes = True
+
+        if "description" in values:
+            self.description = validate_description(values.get("description", None))
+            commit_changes = True
+
+        if "type" in values:
+            self.type = str_to_enum_value(values.get("type", None), MealType) 
+            commit_changes = True
+
+        if commit_changes:
+            db.session.add(self)
+            db.session.commit()
+        
+        db.session.refresh(self)
+        
+        return self
         
 class Order(db.Model):
     __tablename__ = "Orders"

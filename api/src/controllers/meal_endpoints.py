@@ -67,9 +67,9 @@ def get_individual_meal(meal_id: str):
 
 @api.delete("/<int:meal_id>")
 @jwt_required()
-def delete_order(meal_id: int):
+def delete_meal(meal_id: int):
     if not meal_id:
-        raise InvalidOrderIDException()
+        raise InvalidMealIDException()
     
     if not current_user or not current_user.is_employee:
         raise UnauthorizedException("Nem rendelkezel a megfelelő jogosultságokkal a termék törléséhez")
@@ -79,6 +79,25 @@ def delete_order(meal_id: int):
         
         meal.delete()
     except ValueError:
-        raise InvalidOrderIDException()
+        raise InvalidMealIDException()
     
     return Response(status=204)
+
+@api.put("/<int:meal_id>")
+@jwt_required()
+def update_meal(meal_id: int):
+    if not meal_id:
+        raise InvalidMealIDException()
+    
+    if not current_user or not current_user.is_employee:
+        raise UnauthorizedException("Nem rendelkezel a megfelelő jogosultságokkal a termék törléséhez")
+    
+    try:
+        meal: Meal = Meal.get_by_id_or_exception(int(meal_id))
+
+        meal = meal.update_from_dict(request.json)
+        
+        return jsonify(meal.to_dto()), 200
+    except ValueError:
+        raise InvalidMealIDException()
+    
