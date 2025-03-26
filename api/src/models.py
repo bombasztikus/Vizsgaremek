@@ -110,6 +110,41 @@ class User(db.Model):
     def email_taken(email: str) -> bool:
         user = db.session.query(User.email).filter_by(email=email).first()
         return True if user else False
+    
+    @staticmethod
+    def get_by_id_or_exception(id: int) -> Self:
+        try:
+            result = db.session.query(User).filter_by(id=id).first()
+            if result is None:
+                raise UserNotFoundException()
+            
+            return result
+        except:
+            print(traceback.format_exc())
+            raise UserNotFoundException()
+        
+    def update_from_dict(self, values: dict) -> Self:
+        commit_changes = False
+
+        if "full_name" in values:
+            self.full_name = validate_full_name(values.get("full_name", None))
+            commit_changes = True
+        
+        if "email" in values:
+            self.email = validate_email(values.get("email", None))
+            commit_changes = True
+
+        if "is_employee" in values and isinstance(values.get("is_employee", None), bool) and values.get("is_employee") != self.is_employee:
+            self.is_employee = values.get("is_employee")
+            commit_changes = True
+
+        if commit_changes:
+            db.session.add(self)
+            db.session.commit()
+        
+        db.session.refresh(self)
+        
+        return self
 
 class MealType(str, enum.Enum):
     BEVERAGE = "BEVERAGE"

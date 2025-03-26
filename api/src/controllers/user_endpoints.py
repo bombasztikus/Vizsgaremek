@@ -1,4 +1,4 @@
-from flask import jsonify, Blueprint
+from flask import jsonify, Blueprint, request
 from ..models import User
 from src.exceptions import *
 from flask_jwt_extended import jwt_required, current_user
@@ -24,6 +24,24 @@ def get_user(user_id: int):
             raise UnauthorizedException()
         
         return jsonify(user.to_dto())
+    except ValueError:
+        raise InvalidUserIDException()
+    
+@api.put("/<int:user_id>")
+@jwt_required()
+def update_user(user_id: int):
+    if not user_id:
+        raise InvalidMealIDException()
+    
+    if not current_user or not current_user.is_employee:
+        raise UnauthorizedException("Nem rendelkezel a megfelelő jogosultságokkal a felhasználói adatok frissítéséhez")
+    
+    try:
+        user: User = User.get_by_id_or_exception(int(user_id))
+
+        user = user.update_from_dict(request.json)
+
+        return jsonify(user.to_dto()), 200
     except ValueError:
         raise InvalidUserIDException()
     
