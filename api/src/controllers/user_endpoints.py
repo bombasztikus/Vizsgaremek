@@ -78,12 +78,13 @@ def delete_user(user_id: int):
     if not current_user or not current_user.is_employee:
         raise UnauthorizedException("Nem rendelkezel a megfelelő jogosultságokkal a felhasználók törléséhez")
     
+    if user_id == current_user.id:
+        raise UnauthorizedException("Nem törölheted a saját fiókodat")
+        
     try:
         user: User = User.get_by_id_or_exception(int(user_id))
         
-        if user.id == user_id:
-            raise UnauthorizedException("Nem törölheted a saját fiókodat")
-        elif user.is_employee:
+        if user.is_employee:
             raise UnauthorizedException("Az alkalmazotti típusú fiókok nem törölhetőek")
 
         user.delete()
