@@ -1,4 +1,4 @@
-from flask import jsonify, Blueprint, request
+from flask import jsonify, Blueprint, request, Response
 from ..models import User
 from src.exceptions import *
 from flask_jwt_extended import jwt_required, current_user
@@ -68,3 +68,26 @@ def get_me():
         return jsonify(user.to_dto()), 200
     except ValueError:
         raise InvalidUserIDException()
+    
+@api.delete("/<int:user_id>")
+@jwt_required()
+def delete_user(user_id: int):
+    if not user_id:
+        raise InvalidMealIDException()
+    
+    if not current_user or not current_user.is_employee:
+        raise UnauthorizedException("Nem rendelkezel a megfelelő jogosultságokkal a felhasználók törléséhez")
+    
+    try:
+        user: User = User.get_by_id_or_exception(int(user_id))
+        
+        if user.id == user_id:
+            raise UnauthorizedException("Nem törölheted a saját fiókodat")
+        elif user.is_employee:
+            raise UnauthorizedException("Az alkalmazotti típusú fiókok nem törölhetőek")
+
+        user.delete()
+    except ValueError:
+        raise InvalidUserIDException()
+    
+    return Response(status=204)

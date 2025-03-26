@@ -145,6 +145,10 @@ class User(db.Model):
         db.session.refresh(self)
         
         return self
+    
+    def delete(self) -> None:
+        db.session.delete(self)
+        db.session.commit()
 
 class MealType(str, enum.Enum):
     BEVERAGE = "BEVERAGE"
