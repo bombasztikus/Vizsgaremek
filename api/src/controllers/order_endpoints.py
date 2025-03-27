@@ -163,6 +163,7 @@ def update_order_item(order_id: int, item_id: int):
     })
 
     quantity = dto.get("quantity")
+
     item.set_quantity(quantity)
     
     return Response(status=204)
@@ -179,7 +180,10 @@ def delete_order_item(order_id: int, item_id: int):
         raise UnauthorizedException("Nem rendelkezel a megfelelő jogosultságokkal a rendelés elemeinek frissítéséhez")
     
     try:
-        order_id=int(order_id)
+        order: Order = Order.get_by_id_or_exception(int(order_id))
+
+        if order.get_item_count() == 1:
+            raise OrderItemUndeletableException("A rendelés utolsó tétele nem törölhető mert a rendelésnek legalább 1 db. tétele kell legyen")
     except ValueError:
         raise InvalidOrderIDException()
     
@@ -187,7 +191,7 @@ def delete_order_item(order_id: int, item_id: int):
         item_id=int(item_id)
     except ValueError:
         raise InvalidOrderItemIDException()
-    
+
     item = OrderItem.get_by_id_or_exception(
         order_id=int(order_id),
         meal_id=int(item_id)

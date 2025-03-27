@@ -437,6 +437,9 @@ class Order(db.Model):
     def get_items(self) -> list["OrderItem"]:
         return OrderItem.get_by_order_id_or_none(self.id) or []
     
+    def get_item_count(self) -> int:
+        return db.session.query(OrderItem).where(OrderItem.order_id == self.id).count()
+    
     def get_detailed_items(self) -> list[tuple["OrderItem", "Meal"]]:
         return db.session.query(OrderItem, Meal).join(Meal, OrderItem.meal_id == Meal.id).where(OrderItem.order_id == self.id).all()
     

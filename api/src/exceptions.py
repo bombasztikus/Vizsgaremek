@@ -122,3 +122,7 @@ class InvalidOrderItemIDException(FlashedException):
 class InvalidMealIDException(FlashedException):
     def __init__(self, flash_message = "Érvénytelen termék azonosító", css_class = "danger", http_code = 422, error_code: str = "invalid_meal_id", *args):
         super().__init__(flash_message, css_class, http_code, error_code, *args)
+
+class OrderItemUndeletableException(FlashedException):
+    def __init__(self, flash_message = "A rendelés tétele nem törölhető", css_class = "warning", http_code = 409, error_code = "order_item_undeletable", *args):
+        super().__init__(flash_message, css_class, http_code, error_code, *args)
