@@ -107,11 +107,10 @@ def order_to_dto_with_items(order: "Order", items: list["OrderItem"]) -> dict:
 
     return dto
 
-def detailed_order_to_dto(rows: list[tuple["Order", "OrderItem", "Meal"]]) -> dict:
+def detailed_order_to_dto(the_order: "Order", order_items: list[tuple["OrderItem", "Meal"]]) -> dict:
     items: list[dict] = []
-    the_order = None
     
-    for order, item, meal in rows:
+    for order, item, meal in order_items:
         if not the_order:
             the_order = order
 

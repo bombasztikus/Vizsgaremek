@@ -211,6 +211,9 @@ def get_order_items(order_id: int):
 
         items = order.get_detailed_items()
 
-        return jsonify(detailed_order_to_dto(items)), 200
+        return jsonify(detailed_order_to_dto(
+            the_order=order,
+            order_items=items
+        )), 200
     except ValueError:
         raise InvalidOrderIDException()
