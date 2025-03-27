@@ -48,8 +48,8 @@ def validate_description(description: Optional[str]) -> Optional[str]:
     
     return description.strip()
 
-def validate_meal_stars(stars: Optional[str]) -> int:
-    if not stars:
+def validate_meal_stars(stars: Optional[int]) -> int:
+    if stars is None:
         return 0
     
     try:
@@ -108,8 +108,8 @@ def validate_address(address: Optional[str]) -> str:
     
     return address
 
-def validate_quantity(quantity: Optional[str]) -> int:
-    if not quantity:
+def validate_quantity(quantity: Optional[int]) -> int:
+    if quantity is None:
         raise InvalidQuantityException("Hiányzó mennyiség")
     
     try:
