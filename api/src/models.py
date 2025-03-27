@@ -2,7 +2,7 @@ from datetime import datetime, timezone
 from typing import Optional, Self
 import enum
 from src.exceptions import *
-from sqlalchemy import exc, select, text
+from sqlalchemy import exc, select, text, delete
 from sqlalchemy.orm import aliased
 from sqlalchemy.sql import func, over
 from flask import request
@@ -552,3 +552,8 @@ class OrderItem(db.Model):
         db.session.commit()
         db.session.refresh(self)
         return self
+    
+    @staticmethod
+    def delete_all(order: Order) -> None:
+        statement = delete(OrderItem).where(OrderItem.order_id == order.id)
+        db.session.execute(statement)

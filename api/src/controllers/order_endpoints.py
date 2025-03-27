@@ -126,6 +126,8 @@ def delete_order(order_id: int):
     try:
         order = Order.get_by_id_or_exception(int(order_id))
         
+        OrderItem.delete_all(order)
+
         order.delete()
     except ValueError:
         raise InvalidOrderIDException()
