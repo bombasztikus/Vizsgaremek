@@ -498,6 +498,8 @@ class OrderItem(db.Model):
             result = db.session.query(OrderItem).filter_by(order_id=order_id, meal_id=meal_id).first()
             if not result:
                 raise OrderItemNotFoundException()
+            
+            return result
         except:
             print(traceback.format_exc())
             raise OrderItemNotFoundException()
