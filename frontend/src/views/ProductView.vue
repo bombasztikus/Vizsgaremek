@@ -40,7 +40,9 @@ const addToCart = () => {
             price: meal.value.price,
         });
     } else {
-        cart[idx].quantity++;
+        if (cart[idx].quantity < 100) {
+            cart[idx].quantity++;
+        }
     }
 };
 </script>

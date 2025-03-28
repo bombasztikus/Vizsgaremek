@@ -15,7 +15,9 @@ const quantity = computed(() => idx.value !== -1 ? cart.value[idx.value].quantit
 
 const incrementQuantity = () => {
     if (idx.value !== -1) {
-        cart.value[idx.value].quantity++;
+        if (quantity.value < 100) {
+            cart.value[idx.value].quantity++;
+        }
     }
 };
 
