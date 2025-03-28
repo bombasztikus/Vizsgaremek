@@ -10,6 +10,7 @@ import { storeToRefs } from 'pinia';
 import { useCreateOrder } from '@/composables/useCreateOrder';
 import { useRouter } from 'vue-router';
 import type { APIError, Order } from '@/lib/models';
+import AppAlert from '../app/AppAlert.vue';
 
 const paymentProcessors = [ImageKHSzepkartya, ImageOTPSzepkartya, ImageMBHSzepkartya, ImageCashAccepted];
 
@@ -17,6 +18,8 @@ const { totalPrice, items, itemCount } = storeToRefs(useCartStore());
 const user = await useUser();
 const promptForLogin = computed(() => !user);
 const router = useRouter();
+
+const error = ref<APIError | null>(null);
 
 interface BaseDeliveryMethod {
   label: string;
@@ -99,7 +102,7 @@ const submit = async () => {
     if (!order) {
         return;
     } else if (order.is_error === true) {
-        console.error((order as APIError).error)
+        error.value = order as APIError;
         return;
     }
 
@@ -142,20 +145,21 @@ const submit = async () => {
                         <b v-else-if="chosenDeliveryMethod.id === 'table'">pincérnél</b>
                         <b v-else-if="chosenDeliveryMethod.id === 'delivery'">futárnál</b>
                         tudsz majd.</p>
-                    <div class="mb-4">
-                        <label for="inputDeliveryType" class="form-label text-uppercase fw-bold mb-2">Átvétel formája</label>
-                        <select id="inputDeliveryType" class="form-select border-dark rounded-3" v-model="chosenDeliveryMethod" aria-describedby="deliveryMethodHelp" :disabled="itemCount === 0">
-                            <option v-for="method in deliveryMethods" :key="method.id" :value="method">{{ method.label }}</option>
-                        </select>
-                        <div id="deliveryMethodHelp" class="form-text mt-2">Válaszd ki, hogyan szeretnéd átvenni a rendelésed.</div>
-                    </div>
-                    <div class="mb-3" v-if="chosenDeliveryMethod.requiresCustomInput">
-                        <label for="inputAddress" class="form-label text-uppercase fw-bold mb-2">{{ chosenDeliveryMethod.customInputLabel }}</label>
-                        <input :type="chosenDeliveryMethod.customInputType" class="form-control border-dark rounded-3" id="inputAddress" aria-describedby="addressHelp" required v-model="customInputValue" :placeholder="chosenDeliveryMethod.customInputPlaceholder">
-                        <div id="addressHelp" class="form-text mt-2">{{ chosenDeliveryMethod.customInputDescription }}</div>
-                    </div>
-                    <hr>
-                        <button type="submit" class="btn btn-dark d-block rounded-pill mt-4 fw-bold px-4 py-2 w-100" :class="{ 'disabled': itemCount === 0 }">MEGRENDELEM</button>
+                        <div class="mb-4">
+                            <label for="inputDeliveryType" class="form-label text-uppercase fw-bold mb-2">Átvétel formája</label>
+                            <select id="inputDeliveryType" class="form-select border-dark rounded-3" v-model="chosenDeliveryMethod" aria-describedby="deliveryMethodHelp" :disabled="itemCount === 0">
+                                <option v-for="method in deliveryMethods" :key="method.id" :value="method">{{ method.label }}</option>
+                            </select>
+                            <div id="deliveryMethodHelp" class="form-text mt-2">Válaszd ki, hogyan szeretnéd átvenni a rendelésed.</div>
+                        </div>
+                        <div class="mb-3" v-if="chosenDeliveryMethod.requiresCustomInput">
+                            <label for="inputAddress" class="form-label text-uppercase fw-bold mb-2">{{ chosenDeliveryMethod.customInputLabel }}</label>
+                            <input :type="chosenDeliveryMethod.customInputType" class="form-control border-dark rounded-3" id="inputAddress" aria-describedby="addressHelp" required v-model="customInputValue" :placeholder="chosenDeliveryMethod.customInputPlaceholder">
+                            <div id="addressHelp" class="form-text mt-2">{{ chosenDeliveryMethod.customInputDescription }}</div>
+                        </div>
+                        <hr>
+                        <button type="submit" class="btn btn-dark d-block rounded-pill my-4 fw-bold px-4 py-2 w-100" :class="{ 'disabled': itemCount === 0 }">MEGRENDELEM</button>
+                        <AppAlert :text="error.error" :type="error?.css_class" v-if="error" />
                     <div class="row gap-2 justify-content-center mt-4">
                         <img :src="processor" alt="" width="40" height="26" class="col-auto" v-for="processor in paymentProcessors" :key="processor">
                     </div>
