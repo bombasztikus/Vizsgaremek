@@ -1,6 +1,6 @@
 from typing import Optional
 from flask import jsonify, Blueprint, request, Response
-from ..models import Order, OrderItem
+from ..models import Meal, Order, OrderItem
 from src.exceptions import *
 from flask_jwt_extended import jwt_required, current_user
 from src.utils import orders_to_dto, order_to_dto_with_items, detailed_order_to_dto
@@ -169,6 +169,40 @@ def update_order_item(order_id: int, item_id: int):
     item.set_quantity(quantity)
     
     return jsonify(item.to_dto()), 200
+
+@api.post("/<order_id>/items")
+@jwt_required()
+def add_order_item(order_id: int):
+    if not order_id:
+        raise InvalidOrderIDException()
+    
+    if not current_user or not current_user.is_employee:
+        raise UnauthorizedException("Nem rendelkezel a megfelelő jogosultságokkal új tétel hozzáadásához")
+
+    try:
+        order: Order = Order.get_by_id_or_exception(order_id)
+
+        dto = validate_dto_or_exception(dto=request.json, fields={
+            "id": InvalidMealIDException(),
+            "quantity": InvalidQuantityException()
+        })
+
+        quantity = dto.get("quantity")
+        meal_id = dto.get("id")
+
+        try:
+            meal = Meal.get_by_id_or_exception(int(meal_id))
+
+            new_item = order.add_item(
+                meal_id=meal_id,
+                quantity=quantity
+            )
+
+            return jsonify(new_item.to_dto()), 201
+        except ValueError:
+            raise InvalidMealIDException()
+    except:
+        raise
 
 @api.delete("/<order_id>/items/<item_id>")
 @jwt_required()
