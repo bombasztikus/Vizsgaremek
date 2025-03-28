@@ -168,7 +168,7 @@ def update_order_item(order_id: int, item_id: int):
 
     item.set_quantity(quantity)
     
-    return Response(status=204)
+    return jsonify(item.to_dto()), 200
 
 @api.delete("/<order_id>/items/<item_id>")
 @jwt_required()
