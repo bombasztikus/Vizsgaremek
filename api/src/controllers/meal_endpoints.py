@@ -75,12 +75,15 @@ def delete_meal(meal_id: int):
         raise UnauthorizedException("Nem rendelkezel a megfelelő jogosultságokkal a termék törléséhez")
     
     try:
-        meal = Meal.get_by_id_or_exception(int(meal_id))
-        
-        meal.delete()
+        meal_id = int(meal_id)
     except ValueError:
         raise InvalidMealIDException()
+
     
+    meal: Meal = Meal.get_by_id_or_exception(meal_id)
+    
+    meal.delete()
+
     return Response(status=204)
 
 @api.put("/<int:meal_id>")
@@ -93,11 +96,12 @@ def update_meal(meal_id: int):
         raise UnauthorizedException("Nem rendelkezel a megfelelő jogosultságokkal a termék törléséhez")
     
     try:
-        meal: Meal = Meal.get_by_id_or_exception(int(meal_id))
-
-        meal = meal.update_from_dict(request.json)
-        
-        return jsonify(meal.to_dto()), 200
+        meal_id = int(meal_id)
     except ValueError:
         raise InvalidMealIDException()
+
+    meal: Meal = Meal.get_by_id_or_exception(meal_id)
+    meal = meal.update_from_dict(request.json)
+    
+    return jsonify(meal.to_dto()), 200
     

@@ -296,8 +296,11 @@ class Meal(db.Model):
             raise MealNotFoundException()
         
     def delete(self) -> None:
-        db.session.delete(self)
-        db.session.commit()
+        try:
+            db.session.delete(self)
+            db.session.commit()
+        except:
+            MealDeletionException()
 
     def update_from_dict(self, values: dict) -> Self:
         commit_changes = False
