@@ -48,7 +48,7 @@ class User(db.Model):
             
             email_exists = db.session.query(User.email).filter_by(email=email).scalar()
             if email_exists:
-                raise UserCreationException("Az email cím már használatban van")
+                raise EmailUnavailableException("Az email cím már használatban van")
 
             full_name = validate_full_name(full_name)
 
