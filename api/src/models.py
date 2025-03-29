@@ -270,7 +270,7 @@ class Meal(db.Model):
 
             db.session.refresh(new_meal)
             return new_meal
-        except FlashedException as e:
+        except APIException as e:
             print(traceback.format_exc())
             db.session.rollback()
             raise MealCreationException(e.flash_message, e.css_class, e.http_code)
@@ -285,16 +285,13 @@ class Meal(db.Model):
         
     @staticmethod
     def get_by_id_or_exception(id: int) -> Self:
-        try:
-            result = db.session.query(Meal).filter_by(id=id).first()
-            if result is None:
-                raise MealNotFoundException()
-            
-            return result
-        except:
-            print(traceback.format_exc())
+        result = db.session.query(Meal).filter_by(id=id).first()
+
+        if not result:
             raise MealNotFoundException()
         
+        return result
+
     def delete(self) -> None:
         try:
             db.session.delete(self)

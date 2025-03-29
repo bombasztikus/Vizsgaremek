@@ -1,6 +1,6 @@
 from enum import Enum
-from typing import TYPE_CHECKING, List, TypeVar
-from src.exceptions import FlashedException, InvalidEnumValueException
+from typing import TYPE_CHECKING, Any, List, TypeVar
+from src.exceptions import APIException, InvalidEnumValueException
 
 if TYPE_CHECKING:
     from src.models import Meal, MealType, User, Order, OrderItem
@@ -127,3 +127,12 @@ def detailed_order_to_dto(the_order: "Order", order_items: list[tuple["OrderItem
         "items": items,
         "is_error": False,
     }
+
+def validate_int_request_param(param: Any, exception: APIException) -> int:
+    if not isinstance(param, int):
+        try:
+            param = int(param)
+        except ValueError:
+            raise exception
+    
+    return param
