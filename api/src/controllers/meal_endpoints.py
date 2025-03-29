@@ -1,8 +1,9 @@
 from flask import Response, jsonify, Blueprint, request
-from src.utils import meal_type_to_display_name, meals_to_dto, str_to_enum_value
+from src.utils import meal_type_to_display_name, meals_to_dto, str_to_enum_value, validate_int_request_param
 from ..models import MealType, Meal
 from src.exceptions import *
 from flask_jwt_extended import jwt_required, current_user
+from ..security import AuthorizationHandler
 
 api = Blueprint("meals", __name__, url_prefix="/meals")
 
@@ -34,8 +35,10 @@ def get_meal(meal_type: str):
 @api.post("/<string:meal_type>")
 @jwt_required()
 def post_meal(meal_type: str):
-    if not current_user or not current_user.is_employee:
-        raise UnauthorizedException("Nem rendelkezel a megfelelő jogosultságokkal ételek létrehozásához")
+    AuthorizationHandler.require_employment(
+        user=current_user,
+        message="Nem rendelkezel a megfelelő jogosultságokkal ételek létrehozásához"
+    )
 
     name = request.json.get("name")
     price = request.json.get("price")
@@ -57,28 +60,28 @@ def post_meal(meal_type: str):
 
 @api.get("/<int:meal_id>")
 @jwt_required(optional=True)
-def get_individual_meal(meal_id: str):
-    meal = Meal.get_by_id_or_none(id=meal_id)
-
-    if not meal:
-        raise MealNotFoundException()
+def get_individual_meal(meal_id: int):
+    meal_id = validate_int_request_param(
+        param=meal_id,
+        exception=InvalidMealIDException,
+    )
+        
+    meal = Meal.get_by_id_or_exception(meal_id)
     
     return jsonify(meal.to_dto()), 200
 
 @api.delete("/<int:meal_id>")
 @jwt_required()
 def delete_meal(meal_id: int):
-    if not meal_id:
-        raise InvalidMealIDException()
+    meal_id = validate_int_request_param(
+        param=meal_id,
+        exception=InvalidMealIDException,
+    )
     
-    if not current_user or not current_user.is_employee:
-        raise UnauthorizedException("Nem rendelkezel a megfelelő jogosultságokkal a termék törléséhez")
-    
-    try:
-        meal_id = int(meal_id)
-    except ValueError:
-        raise InvalidMealIDException()
-
+    AuthorizationHandler.require_employment(
+        user=current_user,
+        message="Nem rendelkezel a megfelelő jogosultságokkal a termék törléséhez"
+    )
     
     meal: Meal = Meal.get_by_id_or_exception(meal_id)
     
@@ -89,16 +92,15 @@ def delete_meal(meal_id: int):
 @api.put("/<int:meal_id>")
 @jwt_required()
 def update_meal(meal_id: int):
-    if not meal_id:
-        raise InvalidMealIDException()
+    meal_id = validate_int_request_param(
+        param=meal_id,
+        exception=InvalidMealIDException,
+    )
     
-    if not current_user or not current_user.is_employee:
-        raise UnauthorizedException("Nem rendelkezel a megfelelő jogosultságokkal a termék törléséhez")
-    
-    try:
-        meal_id = int(meal_id)
-    except ValueError:
-        raise InvalidMealIDException()
+    AuthorizationHandler.require_employment(
+        user=current_user,
+        message="Nem rendelkezel a megfelelő jogosultságokkal a termék törléséhez"
+    )
 
     meal: Meal = Meal.get_by_id_or_exception(meal_id)
     meal = meal.update_from_dict(request.json)
