@@ -1,94 +1,88 @@
 from flask import jsonify, Blueprint, request, Response
+
+from ..security import AuthorizationHandler
 from ..models import User
 from src.exceptions import *
 from flask_jwt_extended import jwt_required, current_user
-from src.utils import users_to_dto
+from src.utils import users_to_dto, validate_int_request_param
 
 api = Blueprint("users", __name__, url_prefix="/users")
 
 @api.get("/<int:user_id>")
 @jwt_required(optional=True)
 def get_user(user_id: int):
-    if not user_id:
-        raise InvalidUserIDException()
+    user_id = validate_int_request_param(
+        param=user_id,
+        exception=InvalidUserIDException()
+    )
     
-    try:
-        user = User.get_by_id_or_none(int(user_id))
-        if not user:    
-            raise UserNotFoundException()
+    user = User.get_by_id_or_none(user_id)
+
+    AuthorizationHandler.require_employment_or_ownership(
+        user=current_user,
+        owner_user_id=user_id
+    )
         
-        if current_user:
-            if str(user_id).strip() != current_user.get_id() and not current_user.is_employee:
-                raise UnauthorizedException()
-        else:
-            raise UnauthorizedException()
-        
-        return jsonify(user.to_dto())
-    except ValueError:
-        raise InvalidUserIDException()
+    return jsonify(user.to_dto()), 200
     
 @api.put("/<int:user_id>")
 @jwt_required()
 def update_user(user_id: int):
-    if not user_id:
-        raise InvalidMealIDException()
+    user_id = validate_int_request_param(
+        param=user_id,
+        exception=InvalidUserIDException()
+    )
     
-    if not current_user or not current_user.is_employee:
-        raise UnauthorizedException("Nem rendelkezel a megfelelő jogosultságokkal a felhasználói adatok frissítéséhez")
+    AuthorizationHandler.require_employment(
+        user=current_user,
+        message="Nem rendelkezel a megfelelő jogosultságokkal a felhasználói adatok frissítéséhez"
+    )
     
-    try:
-        user: User = User.get_by_id_or_exception(int(user_id))
+    user: User = User.get_by_id_or_exception(user_id)
+    
+    user = user.update_from_dict(request.json)
 
-        user = user.update_from_dict(request.json)
-
-        return jsonify(user.to_dto()), 200
-    except ValueError:
-        raise InvalidUserIDException()
+    return jsonify(user.to_dto()), 200
     
 @api.get("")
 @jwt_required(optional=False)
 def get_users():
-    if not current_user or not current_user.is_employee:
-        raise UnauthorizedException("Nem rendelkezel a megfelelő jogosultságokkal a felhasználók lekérdezéséhez")
+    AuthorizationHandler.require_employment(
+        user=current_user,
+        message="Nem rendelkezel a megfelelő jogosultságokkal a felhasználók lekérdezéséhez"
+    )
     
     items = User.get_all()
+
     return jsonify(users_to_dto(items)), 200
 
 @api.get("/me")
 @jwt_required()
 def get_me():
-    try:
-        if not current_user:
-            raise UnauthorizedException()
+    user = User.get_by_id_or_exception(current_user.id)
 
-        user = User.get_by_id_or_none(current_user.id)
-        if not user:
-            raise UserNotFoundException()
-        
-        return jsonify(user.to_dto()), 200
-    except ValueError:
-        raise InvalidUserIDException()
+    return jsonify(user.to_dto()), 200
     
 @api.delete("/<int:user_id>")
 @jwt_required()
 def delete_user(user_id: int):
-    if not user_id:
-        raise InvalidMealIDException()
-    
-    if not current_user or not current_user.is_employee:
-        raise UnauthorizedException("Nem rendelkezel a megfelelő jogosultságokkal a felhasználók törléséhez")
+    user_id = validate_int_request_param(
+        param=user_id,
+        exception=InvalidUserIDException()
+    )
+
+    AuthorizationHandler.require_employment(
+        user=current_user,
+        message="Nem rendelkezel a megfelelő jogosultságokkal a felhasználók törléséhez"
+    )
     
     if user_id == current_user.id:
         raise UnauthorizedException("Nem törölheted a saját fiókodat")
         
-    try:
-        user: User = User.get_by_id_or_exception(int(user_id))
-        
-        if user.is_employee:
-            raise UnauthorizedException("Az alkalmazotti típusú fiókok nem törölhetőek")
+    user: User = User.get_by_id_or_exception(user_id)
+    if user.is_employee:
+        raise UnauthorizedException("Az alkalmazotti típusú fiókok nem törölhetőek")
 
-        user.delete()
-    except ValueError:
-        raise InvalidUserIDException()
+    user.delete()
     
     return Response(status=204)
