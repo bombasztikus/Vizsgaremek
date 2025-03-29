@@ -28,14 +28,6 @@ class User(db.Model):
     def __repr__(self):
         return f"<User {self.id} ({self.email})>"
     
-    @staticmethod  
-    def get_by_id_or_none(id: int) -> Self | None:
-        try:
-            return db.session.query(User).filter_by(id=id).first()
-        except:
-            print(traceback.format_exc())
-            return None
-    
     @staticmethod
     def get_all() -> list[Self]:
         users = db.session.query(User).all()
@@ -274,14 +266,6 @@ class Meal(db.Model):
             print(traceback.format_exc())
             db.session.rollback()
             raise MealCreationException(e.flash_message, e.css_class, e.http_code)
-
-    @staticmethod
-    def get_by_id_or_none(id: int) -> Optional[Self]:
-        try:
-            return db.session.query(Meal).filter_by(id=id).first()
-        except:
-            print(traceback.format_exc())
-            return None
         
     @staticmethod
     def get_by_id_or_exception(id: int) -> Self:
@@ -351,14 +335,6 @@ class Order(db.Model):
 
     def __repr__(self):
         return f"<Order {self.id} ({self.user_id})>"
-    
-    @staticmethod
-    def get_by_id_or_none(id: int) -> Self | None:
-        try:
-            return db.session.query(Order).filter_by(id=id).first()
-        except:
-            print(traceback.format_exc())
-            return None
         
     @staticmethod
     def get_by_id_or_exception(id: int) -> Self:
@@ -380,9 +356,7 @@ class Order(db.Model):
     @staticmethod
     def create(user_id: int, address: str) -> Self:
         try:
-            user = User.get_by_id_or_none(user_id)
-            if not user:
-                raise UserNotFoundException()
+            user: User = User.get_by_id_or_exception(user_id)
 
             address = validate_address(address)
 
@@ -422,9 +396,7 @@ class Order(db.Model):
         db.session.commit()
 
     def add_item(self, meal_id: int, quantity: Optional[int] = 1) -> "OrderItem":
-        meal = Meal.get_by_id_or_none(meal_id)
-        if not meal:
-            raise MealNotFoundException()
+        meal: Meal = Meal.get_by_id_or_exception(meal_id)
         
         new_order_item = OrderItem.create(
             order_id=self.id,
@@ -480,14 +452,6 @@ class OrderItem(db.Model):
         except:
             print(traceback.format_exc())
             return []
-    
-    @staticmethod
-    def get_by_id_or_none(order_id: int, meal_id: int) -> Self | None:
-        try:
-            return db.session.query(OrderItem).filter_by(order_id=order_id, meal_id=meal_id).first()
-        except:
-            print(traceback.format_exc())
-            return []
         
     @staticmethod
     def get_by_id_or_exception(order_id: int, meal_id: int) -> Self:
@@ -507,13 +471,9 @@ class OrderItem(db.Model):
             raise InvalidPayloadException("Hiányos JSON mezők")
         
         try:
-            order = Order.get_by_id_or_none(order_id)
-            if not order:
-                raise OrderNotFoundException()
+            order: Order = Order.get_by_id_or_exception(order_id)
             
-            meal = Meal.get_by_id_or_none(meal_id)
-            if not meal:
-                raise MealNotFoundException()
+            meal: Meal = Meal.get_by_id_or_exception(meal_id)
             
             quantity = validate_quantity(quantity)
 

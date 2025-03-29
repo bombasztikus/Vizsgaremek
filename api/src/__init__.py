@@ -31,7 +31,12 @@ def create_app():
     @jwt.user_lookup_loader
     def user_lookup_callback(jwt_header, jwt_data):
         identity = jwt_data["sub"]
-        return User.get_by_id_or_none(identity)
+
+        try:
+            user = User.get_by_id_or_exception(identity)
+            return user
+        except UserNotFoundException  as e:
+            return None
     
     @jwt.expired_token_loader
     def expired_token_callback(jwt_header, jwt_data):

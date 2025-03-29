@@ -16,7 +16,7 @@ def get_user(user_id: int):
         exception=InvalidUserIDException()
     )
     
-    user = User.get_by_id_or_none(user_id)
+    user: User = User.get_by_id_or_exception(user_id)
 
     AuthorizationHandler.require_employment_or_ownership(
         user=current_user,
