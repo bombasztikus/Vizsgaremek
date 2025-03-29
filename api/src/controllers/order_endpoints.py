@@ -1,9 +1,10 @@
 from typing import Optional
 from flask import jsonify, Blueprint, request, Response
+from ..security import AuthorizationHandler
 from ..models import Meal, Order, OrderItem
 from src.exceptions import *
 from flask_jwt_extended import jwt_required, current_user
-from src.utils import orders_to_dto, order_to_dto_with_items, detailed_order_to_dto
+from src.utils import orders_to_dto, order_to_dto_with_items, detailed_order_to_dto, validate_int_request_param
 from src.validation import validate_dto_or_exception
 
 api = Blueprint("orders", __name__, url_prefix="/orders")
@@ -20,48 +21,33 @@ def get_orders():
 @api.get("/<order_id>")
 @jwt_required()
 def get_order(order_id: int):
-    if not order_id:
-        raise InvalidOrderIDException()
+    order_id = validate_int_request_param(
+        param=order_id,
+        exception=InvalidOrderIDException()
+    )
+
+    order: Order = Order.get_by_id_or_exception(order_id)
+
+    AuthorizationHandler.require_employment_or_ownership(
+        user=current_user,
+        owner_user_id=order.user_id
+    )    
     
-    try:
-        order = Order.get_by_id_or_exception(int(order_id))
-        
-        if current_user:
-            if (order.user_id != current_user.id):
-                if not current_user.is_employee:
-                    raise UnauthorizedException()
-            
-            order_items = order.get_items()
-            return jsonify(order_to_dto_with_items(
-                order=order,
-                items=order_items
-            )), 200
-        else:
-            raise UnauthorizedException()
-    except ValueError:
-        raise InvalidOrderIDException()
+    order_items = order.get_items()
+
+    return jsonify(order_to_dto_with_items(
+        order=order,
+        items=order_items
+    )), 200
 
 @api.post("")
 @jwt_required()
 def post_order():
-    if not current_user:
-        raise UnauthorizedException("A rendelés létrehozásához bejelentkezés szükséges")
-    
-    # {
-    #     "address": "string",
-    #     "items": [
-    #         {
-    #             "id": 0,
-    #             "quantity": 0
-    #         }
-    #     ]
-    # }
-
     address = request.json.get("address", None)
     items = request.json.get("items", [])
 
     if len(items) == 0:
-        raise InvalidPayloadException()
+        raise InvalidPayloadException("A rendeléshez legalább 1 tétel megadása szükséges")
     elif not address:
         raise InvalidAddressException()
 
@@ -93,71 +79,70 @@ def post_order():
 @api.put("/<order_id>")
 @jwt_required()
 def put_order(order_id: int):
-    if not order_id:
-        raise InvalidOrderIDException()
+    order_id = validate_int_request_param(
+        param=order_id,
+        exception=InvalidOrderIDException()
+    )
     
-    if not current_user or not current_user.is_employee:
-        raise UnauthorizedException("Nem rendelkezel a megfelelő jogosultságokkal a rendelés utólagos módosításához")
+    AuthorizationHandler.require_employment(
+        user=current_user,
+        message="Nem rendelkezel a megfelelő jogosultságokkal a rendelés utólagos módosításához"
+    )
     
-    try:
-        order: Order = Order.get_by_id_or_exception(int(order_id))
+    order: Order = Order.get_by_id_or_exception(order_id)
 
-        address = request.json.get("address", None)
-        if address:
-            order = order.set_address(address)
+    address = request.json.get("address", None)
 
-        is_completed = request.json.get("is_completed", None)
-        if isinstance(is_completed, bool):
-            order = order.set_is_completed(is_completed)
-    except ValueError:
-        raise InvalidOrderIDException()
+    if address:
+        order = order.set_address(address)
+    is_completed = request.json.get("is_completed", None)
+
+    if isinstance(is_completed, bool):
+        order = order.set_is_completed(is_completed)
     
     return jsonify(order.to_dto()), 200
 
 @api.delete("/<order_id>")
 @jwt_required()
 def delete_order(order_id: int):
-    if not order_id:
-        raise InvalidOrderIDException()
+    order_id = validate_int_request_param(
+        param=order_id,
+        exception=InvalidOrderIDException()
+    )
     
-    if not current_user or not current_user.is_employee:
-        raise UnauthorizedException("Nem rendelkezel a megfelelő jogosultságokkal a rendelés törléséhez")
+    AuthorizationHandler.require_employment(
+        user=current_user,
+        message="Nem rendelkezel a megfelelő jogosultságokkal a rendelés törléséhez"
+    )
     
-    try:
-        order = Order.get_by_id_or_exception(int(order_id))
-        
-        OrderItem.delete_all(order)
-
-        order.delete()
-    except ValueError:
-        raise InvalidOrderIDException()
+    order = Order.get_by_id_or_exception(order_id)
+    
+    OrderItem.delete_all(order)
+    order.delete()
     
     return Response(status=204)
 
 @api.put("/<order_id>/items/<item_id>")
 @jwt_required()
 def update_order_item(order_id: int, item_id: int):
-    if not order_id:
-        raise InvalidOrderIDException()
-    elif not item_id:
-        raise InvalidOrderItemIDException()
-    
-    if not current_user or not current_user.is_employee:
-        raise UnauthorizedException("Nem rendelkezel a megfelelő jogosultságokkal a rendelés elemeinek frissítéséhez")
-    
-    try:
-        order_id=int(order_id)
-    except ValueError:
-        raise InvalidOrderIDException()
-    
-    try:
-        item_id=int(item_id)
-    except ValueError:
-        raise InvalidOrderItemIDException()
+    order_id = validate_int_request_param(
+        param=order_id,
+        exception=InvalidOrderIDException()
+    )
+
+    item_id = validate_int_request_param(
+        param=item_id,
+        exception=InvalidOrderItemIDException()
+    )
+
+    AuthorizationHandler.require_employment(
+        user=current_user,
+        message="Nem rendelkezel a megfelelő jogosultságokkal a rendelés elemeinek frissítéséhez"
+    )
 
     item = OrderItem.get_by_id_or_exception(
-        order_id=int(order_id),
-        meal_id=int(item_id)
+        order_id=order_id,
+        meal_id=item_id
     )
 
     dto = validate_dto_or_exception(dto=request.json, fields={
@@ -173,64 +158,59 @@ def update_order_item(order_id: int, item_id: int):
 @api.post("/<order_id>/items")
 @jwt_required()
 def add_order_item(order_id: int):
-    if not order_id:
-        raise InvalidOrderIDException()
-    
-    if not current_user or not current_user.is_employee:
-        raise UnauthorizedException("Nem rendelkezel a megfelelő jogosultságokkal új tétel hozzáadásához")
+    order_id = validate_int_request_param(
+        param=order_id,
+        exception=InvalidOrderIDException()
+    )
 
-    try:
-        order: Order = Order.get_by_id_or_exception(order_id)
+    AuthorizationHandler.require_employment(
+        user=current_user,
+        message="Nem rendelkezel a megfelelő jogosultságokkal a rendelés elemeinek hozzáadásához"
+    )
 
-        dto = validate_dto_or_exception(dto=request.json, fields={
-            "id": InvalidMealIDException(),
-            "quantity": InvalidQuantityException()
-        })
+    order: Order = Order.get_by_id_or_exception(order_id)
 
-        quantity = dto.get("quantity")
-        meal_id = dto.get("id")
+    dto = validate_dto_or_exception(dto=request.json, fields={
+        "id": InvalidMealIDException(),
+        "quantity": InvalidQuantityException()
+    })
 
-        try:
-            meal = Meal.get_by_id_or_exception(int(meal_id))
+    quantity = dto.get("quantity")
+    meal_id = dto.get("id")
 
-            new_item = order.add_item(
-                meal_id=meal_id,
-                quantity=quantity
-            )
+    new_item = order.add_item(
+        meal_id=meal_id,
+        quantity=quantity
+    )
 
-            return jsonify(new_item.to_dto()), 201
-        except ValueError:
-            raise InvalidMealIDException()
-    except:
-        raise
+    return jsonify(new_item.to_dto()), 201
 
 @api.delete("/<order_id>/items/<item_id>")
 @jwt_required()
 def delete_order_item(order_id: int, item_id: int):
-    if not order_id:
-        raise InvalidOrderIDException()
-    elif not item_id:
-        raise InvalidOrderItemIDException()
-    
-    if not current_user or not current_user.is_employee:
-        raise UnauthorizedException("Nem rendelkezel a megfelelő jogosultságokkal a rendelés elemeinek frissítéséhez")
-    
-    try:
-        order: Order = Order.get_by_id_or_exception(int(order_id))
+    order_id = validate_int_request_param(
+        param=order_id,
+        exception=InvalidOrderIDException()
+    )
 
-        if order.get_item_count() == 1:
-            raise OrderItemUndeletableException("A rendelés utolsó tétele nem törölhető mert a rendelésnek legalább 1 db. tétele kell legyen")
-    except ValueError:
-        raise InvalidOrderIDException()
+    item_id = validate_int_request_param(
+        param=item_id,
+        exception=InvalidOrderItemIDException()
+    )
     
-    try:
-        item_id=int(item_id)
-    except ValueError:
-        raise InvalidOrderItemIDException()
+    AuthorizationHandler.require_employment(
+        user=current_user,
+        message="Nem rendelkezel a megfelelő jogosultságokkal a rendelés elemeinek törléséhez"
+    )
+    
+    order: Order = Order.get_by_id_or_exception(order_id)
+
+    if order.get_item_count() == 1:
+        raise OrderItemUndeletableException("A rendelés utolsó tétele nem törölhető mert a rendelésnek legalább 1 db. tétele kell legyen")
 
     item = OrderItem.get_by_id_or_exception(
-        order_id=int(order_id),
-        meal_id=int(item_id)
+        order_id=order_id,
+        meal_id=item_id
     )
         
     item.delete()
@@ -240,20 +220,21 @@ def delete_order_item(order_id: int, item_id: int):
 @api.get("/<order_id>/items")
 @jwt_required()
 def get_order_items(order_id: int):
-    if not order_id:
-        raise InvalidOrderIDException()
+    order_id = validate_int_request_param(
+        param=order_id,
+        exception=InvalidOrderIDException()
+    )
     
-    if not current_user or not current_user.is_employee:
-        raise UnauthorizedException("Nem rendelkezel a megfelelő jogosultságokkal a rendelés elemeinek frissítéséhez")
+    AuthorizationHandler.require_employment(
+        user=current_user,
+        message="Nem rendelkezel a megfelelő jogosultságokkal a rendelés elemeinek frissítéséhez"
+    )
     
-    try:
-        order: Order = Order.get_by_id_or_exception(int(order_id))
+    order: Order = Order.get_by_id_or_exception(order_id)
 
-        items = order.get_detailed_items()
-
-        return jsonify(detailed_order_to_dto(
-            the_order=order,
-            order_items=items
-        )), 200
-    except ValueError:
-        raise InvalidOrderIDException()
+    items = order.get_detailed_items()
+    
+    return jsonify(detailed_order_to_dto(
+        the_order=order,
+        order_items=items
+    )), 200

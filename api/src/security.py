@@ -1,7 +1,8 @@
-from typing import Self
+from typing import Optional, Self
 from .models import User
 from flask_jwt_extended import create_access_token
 from datetime import timedelta
+from .exceptions import UnauthorizedException
 
 class AccessToken:
     """
@@ -79,3 +80,60 @@ class AuthenticationHandler:
         return AccessToken.from_user(
             user=user
         )
+    
+class AuthorizationHandler:
+    """
+    Handles authorization for users.
+    """
+
+    @staticmethod
+    def require_employment(user: User, message: Optional[str] = None) -> None:
+        """
+        Raises an UnauthorizedException if the user is not an employee. Doesn't return anything.
+
+        :param user: The User object.
+        :param message: Optional message for the exception.
+        :raises UnauthorizedException: If the user is not an employee.
+        :return: None
+        """
+
+        if not user or not user.is_employee:
+            if message:
+                raise UnauthorizedException(message)
+            else:
+                raise UnauthorizedException()
+            
+    @staticmethod
+    def require_ownership(user: User, owner_user_id: int) -> None:
+        """
+        Raises an UnauthorizedException if the user is not the owner of the resource. Doesn't return anything.
+
+        :param user: The User object.
+        :param owner_user_id: The ID of the target user.
+        :raises UnauthorizedException: If the user is not the owner of the resource.
+        :return: None
+        """
+
+        if not user or user.id != owner_user_id:
+            raise UnauthorizedException()
+        
+    @staticmethod
+    def require_employment_or_ownership(user: User, owner_user_id: int) -> None:
+        """
+        Raises an UnauthorizedException if the user is neither an employee nor the owner of the resource. Doesn't return anything."
+        
+        :param user: The User object.
+        :param owner_user_id: The ID of the target user.
+        :raises UnauthorizedException: If the user is neither an employee nor the owner of the resource.
+        :return: None
+        """
+        try:
+            AuthorizationHandler.require_ownership(
+                user=user,
+                owner_user_id=owner_user_id
+            )
+        except UnauthorizedException:
+            # If the user is not the owner, check if they are an employee
+            AuthorizationHandler.require_employment(
+                user=user
+            )
