@@ -397,6 +397,9 @@ class Order(db.Model):
 
     def add_item(self, meal_id: int, quantity: Optional[int] = 1) -> "OrderItem":
         meal: Meal = Meal.get_by_id_or_exception(meal_id)
+
+        if OrderItem.exists(self.id, meal.id):
+            raise OrderItemCreationConflictException()
         
         new_order_item = OrderItem.create(
             order_id=self.id,
@@ -517,3 +520,8 @@ class OrderItem(db.Model):
     def delete_all(order: Order) -> None:
         statement = delete(OrderItem).where(OrderItem.order_id == order.id)
         db.session.execute(statement)
+
+    @staticmethod
+    def exists(order_id: int, meal_id: int) -> bool:
+        result = db.session.query(OrderItem).filter_by(order_id=order_id, meal_id=meal_id).first()
+        return True if result else False

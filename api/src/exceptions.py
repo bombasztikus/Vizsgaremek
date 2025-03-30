@@ -130,3 +130,7 @@ class OrderItemUndeletableException(APIException):
 class MealDeletionException(APIException):
     def __init__(self, flash_message: str = "Ismeretlen hiba történt a termék törlése közben", css_class: str = "danger", http_code: int = 500, error_code: str = "meal_deletion_error", *args: object) -> None:
         super().__init__(flash_message, css_class, http_code, error_code, *args)
+
+class OrderItemCreationConflictException(APIException):
+    def __init__(self, flash_message: str = "A tétel már létezik", css_class: str = "warning", http_code: int = 409, error_code: str = "order_item_creation_conflict", *args: object) -> None:
+        super().__init__(flash_message, css_class, http_code, error_code, *args)
