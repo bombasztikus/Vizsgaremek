@@ -24,6 +24,10 @@ docker-compose up -d --build
 
 Amennyiben nem tudod, vagy nem akarod Docker-rel futtatni, lásd a dokumentáció Futtatás c. fejezetét.
 
+# Admin kliens
+
+[https://github.com/creppzguy/Viszgaremek_Admin](https://github.com/creppzguy/Viszgaremek_Admin)
+
 # Demó adatok
 
 Alkalmazotti fiók:
