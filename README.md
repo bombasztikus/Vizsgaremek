@@ -9,8 +9,9 @@
     - Kőszegi Tamás Attila ([GitHub](https://github.com/Hentai-IsArt))
     - Halász Wilhelm Bendegúz ([GitHub](https://github.com/bombasztikus))
 
-# Dokumentáció
-[https://1drv.ms/w/s!AtApH5_A2yFwfj4DsSru2pBM1gk?e=sQ85K7](https://1drv.ms/w/c/7021dbc09f1f29d0/EdqMabXVNERCgB9AwJ2vLcEBTcImepnXHcpLOWkEhsrgAQ?e=Mqo4JN)
+# Dokumentáció, prezentáció
+- Dokumentáció: [https://1drv.ms/w/c/7021dbc09f1f29d0/EdqMabXVNERCgB9AwJ2vLcEBTcImepnXHcpLOWkEhsrgAQ?e=Mqo4JN](https://1drv.ms/w/c/7021dbc09f1f29d0/EdqMabXVNERCgB9AwJ2vLcEBTcImepnXHcpLOWkEhsrgAQ?e=Mqo4JN)
+- Prezentáció: [https://1drv.ms/p/c/54181cab4b8b3e60/ERd6NVrcQ3NCgA-k6wPgX9oBw7X_h3Lvogq1nI5M8xdI_g?e=heRgNn](https://1drv.ms/p/c/54181cab4b8b3e60/ERd6NVrcQ3NCgA-k6wPgX9oBw7X_h3Lvogq1nI5M8xdI_g?e=heRgNn)
 
 # Repository struktúra
 - `api/` - Backend/REST API
